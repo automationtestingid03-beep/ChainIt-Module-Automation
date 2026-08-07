@@ -21,6 +21,10 @@ class HomePage {
     return cy.contains('a, button', 'Explore Developer Docs');
   }
 
+  get explorePlatformButton() {
+    return cy.contains('a, button', 'Explore the ChainIT Platform');
+  }
+
   get chainitLogo() {
     return cy.get('img[alt="ChainIT"]').first();
   }
@@ -118,6 +122,11 @@ class HomePage {
   verifyPrimaryCtaLinksAreVisible() {
     this.requestArchitectureButton.should('be.visible');
     this.exploreDocsButton.should('be.visible');
+    return this;
+  }
+
+  clickExplorePlatformButton() {
+    this.explorePlatformButton.click({ force: true });
     return this;
   }
 }
