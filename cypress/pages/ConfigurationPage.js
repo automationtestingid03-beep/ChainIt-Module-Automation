@@ -1,60 +1,113 @@
-class ConfigurationPage {
+import BasePage from './BasePage';
 
-    configurationbtn(){
-        return cy.contains("Configuration");
-    }
-    
-    pactverabtn(){
-        return cy.contains("Pactvera Template");
-    }
+class ConfigurationPage extends BasePage {
 
-    documemtbtn(){
-        return cy.contains("Document Templates");
-    }
+  // Locators
 
-    formbtn(){
-        return cy.contains("Form Templates");
-    }
+  get configurationButton() {
+    return cy.contains('Configuration');
+  }
 
-    //actions methods
-    
-    clickconfigurationbtn(){
-        this.configurationbtn().click();
-        return this;
-    }
+  get pactveraButton() {
+    return cy.contains('Pactvera Template');
+  }
 
-    clickpactverabtn(){
-        this.pactverabtn().click();
-        return this;
-    }
+  get documentButton() {
+    return cy.contains('Document Templates');
+  }
 
-    varifypactverapage(){
-        this.pactverabtn().should('be.visible');
-        return this;
-    }
+  get formButton() {
+    return cy.contains('Form Templates');
+  }
 
-    clickdocumentbtn(){
-        this.documemtbtn().click();
-        return this;
-    }
+  // Configuration
 
-    verifydocumentpage(){
-        this.documemtbtn().should('be.visible');
-        return this;
-    }
+  clickConfigurationButton() {
+    cy.log('Clicking Configuration button');
 
-    clickformbtn(){
-        this.formbtn().click();
-        return this;
-    }
+    this.configurationButton
+      .should('be.visible')
+      .click();
 
-    verifyformpage(){
-        this.formbtn().should('be.visible');
-        return this;
-    }
+    cy.log('Configuration button clicked successfully');
 
-    
+    return this;
+  }
 
+  // Pactvera Templates
+
+  clickPactveraButton() {
+    cy.log('Clicking Pactvera Template button');
+
+    this.pactveraButton
+      .should('be.visible')
+      .click();
+
+    cy.log('Pactvera Template button clicked successfully');
+
+    return this;
+  }
+
+  verifyPactveraPage() {
+    cy.log('Verifying Pactvera Template page');
+
+    this.pactveraButton
+      .should('be.visible');
+
+    cy.log('Pactvera Template page verified successfully');
+
+    return this;
+  }
+
+  // Document Templates
+
+  clickDocumentButton() {
+    cy.log('Clicking Document Templates button');
+
+    this.documentButton
+      .should('be.visible')
+      .click();
+
+    cy.log('Document Templates button clicked successfully');
+
+    return this;
+  }
+
+  verifyDocumentPage() {
+    cy.log('Verifying Document Templates page');
+
+    this.documentButton
+      .should('be.visible');
+
+    cy.log('Document Templates page verified successfully');
+
+    return this;
+  }
+
+  // Form Templates
+
+  clickFormButton() {
+    cy.log('Clicking Form Templates button');
+
+    this.formButton
+      .should('be.visible')
+      .click();
+
+    cy.log('Form Templates button clicked successfully');
+
+    return this;
+  }
+
+  verifyFormPage() {
+    cy.log('Verifying Form Templates page');
+
+    this.formButton
+      .should('be.visible');
+
+    cy.log('Form Templates page verified successfully');
+
+    return this;
+  }
 }
 
 export default new ConfigurationPage();

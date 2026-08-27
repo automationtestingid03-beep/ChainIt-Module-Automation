@@ -1,17 +1,29 @@
 {
   "name": "chainit-framework",
   "version": "1.0.0",
-  "description": "",
+  "description": "Cypress-based E2E test automation framework for ChainIT platform",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "cypress:run:headed": "cypress run --headed",
+    "cypress:run:chrome": "cypress run --browser chrome",
+    "cypress:run:edge": "cypress run --browser edge",
+    "cypress:run:chrome:headed": "cypress run --browser chrome --headed",
+    "cypress:run:edge:headed": "cypress run --browser edge --headed",
+    "test": "npm run cypress:run"
   },
-  "keywords": [],
+  "keywords": [
+    "cypress",
+    "e2e",
+    "test-automation",
+    "chainit"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "cypress": "^15.19.0",
+    "cypress": "^15.21.1",
     "cypress-iframe": "^1.0.1"
   }
 }

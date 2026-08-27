@@ -1,4 +1,9 @@
-class DownloadPage {
+import BasePage from './BasePage';
+
+class DownloadPage extends BasePage {
+
+  // Locators
+
   get heroText() {
     return cy.contains('The app that verifies everything');
   }
@@ -35,29 +40,73 @@ class DownloadPage {
     return cy.contains('a', /Login/i);
   }
 
+  // URL Verification
+
   verifyUrl(expectedUrl) {
-    cy.url().should('eq', expectedUrl);
+    cy.log(`Verifying URL: "${expectedUrl}"`);
+
+    cy.url()
+      .should('eq', expectedUrl);
+
+    cy.log(`URL verified successfully: "${expectedUrl}"`);
+
     return this;
   }
+
+  // Hero Section Verification
 
   verifyHeroText() {
-    this.heroText.should('be.visible');
+    cy.log('Verifying hero text');
+
+    this.heroText
+      .should('be.visible');
+
+    cy.log('Hero text is visible');
+
     return this;
   }
+
+  // Logo Verification
 
   verifyLogoIsVisible() {
-    this.chainitLogo.should('be.visible');
+    cy.log('Verifying ChainIT logo');
+
+    this.chainitLogo
+      .should('be.visible');
+
+    cy.log('ChainIT logo is visible');
+
     return this;
   }
 
+  // Header Links Verification
+
   verifyHeaderLinksAreVisible() {
-    this.platformLink.should('be.visible');
-    this.executionLink.should('be.visible');
-    this.solutionsLink.should('be.visible');
-    this.developersLink.should('be.visible');
-    this.resourcesLink.should('be.visible');
-    this.demoLink.should('be.visible');
-    this.loginLink.should('be.visible');
+    cy.log('Verifying header navigation links');
+
+    this.platformLink
+      .should('be.visible');
+
+    this.executionLink
+      .should('be.visible');
+
+    this.solutionsLink
+      .should('be.visible');
+
+    this.developersLink
+      .should('be.visible');
+
+    this.resourcesLink
+      .should('be.visible');
+
+    this.demoLink
+      .should('be.visible');
+
+    this.loginLink
+      .should('be.visible');
+
+    cy.log('All header navigation links are visible');
+
     return this;
   }
 }

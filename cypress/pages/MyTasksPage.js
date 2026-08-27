@@ -1,15 +1,8 @@
-/**
- * MyTasksPage
- * Page object for the personal My Tasks page (/personal/my-tasks).
- *
- * Sidebar links are stored as a single array and iterated — no repetition.
- */
-class MyTasksPage {
-  // ── Header ────────────────────────────────────────────────────────────────
+import BasePage from './BasePage';
 
-  get userNameInHeader() {
-    return cy.contains('GAURAV SONAR');
-  }
+class MyTasksPage extends BasePage {
+
+  // Locators
 
   get personalBadge() {
     return cy.contains('Personal');
@@ -19,10 +12,8 @@ class MyTasksPage {
     return cy.contains('a, button', /logout/i);
   }
 
-  // ── Page Content ──────────────────────────────────────────────────────────
-
   get pageHeading() {
-    return cy.contains("My Tasks");
+    return cy.contains('My Tasks');
   }
 
   get todoTab() {
@@ -37,12 +28,6 @@ class MyTasksPage {
     return cy.contains('Start Task');
   }
 
-  // ── Sidebar ───────────────────────────────────────────────────────────────
-
-  /**
-   * Sidebar link labels — defined once as an array so verifySidebarLinks()
-   * can iterate without duplicating any assertion.
-   */
   get sidebarLinkLabels() {
     return [
       'Home',
@@ -51,64 +36,134 @@ class MyTasksPage {
       'Sharing Center',
       'Configuration',
       'Subscription & Billing',
-      'Pactvera',
+      'Pactvera'
     ];
   }
 
-  // ── Verifications ─────────────────────────────────────────────────────────
+  // URL Verification
 
   verifyUrl() {
-    // Uses a 30-second timeout because navigation after the Switch Account
-    // modal click can be slower than the default 10-second command timeout.
-    cy.url({ timeout: 30000 }).should('include', '/personal/my-tasks');
+    cy.log('Verifying My Tasks page URL');
+
+    cy.url({ timeout: 30000 })
+      .should('include', '/personal/my-tasks');
+
+    cy.log('My Tasks page URL verified successfully');
+
     return this;
   }
+
+  // Page Heading Verification
 
   verifyPageHeading() {
-    this.pageHeading.should('be.visible');
+    cy.log('Verifying My Tasks page heading');
+
+    this.pageHeading
+      .should('be.visible');
+
+    cy.log('My Tasks page heading is visible');
+
     return this;
   }
 
-  verifyUserIdentity() {
-    this.userNameInHeader.should('be.visible');
-    this.personalBadge.should('be.visible');
+  // User Identity Verification
+
+  verifyUserIdentity(accountName) {
+    cy.log(`Verifying user identity: "${accountName}"`);
+
+    cy.contains(accountName)
+      .should('be.visible');
+
+    cy.log(`User "${accountName}" is visible`);
+
+    cy.log('Verifying Personal badge');
+
+    this.personalBadge
+      .should('be.visible');
+
+    cy.log('Personal badge is visible');
+
     return this;
   }
+
+  // Logout Verification
 
   verifyLogoutButton() {
-    this.logoutButton.should('be.visible');
+    cy.log('Verifying Logout button');
+
+    this.logoutButton
+      .should('be.visible');
+
+    cy.log('Logout button is visible');
+
     return this;
   }
+
+  // To-Do Tab Verification
 
   verifyToDoTabActive() {
-    this.todoTab.should('be.visible');
+    cy.log('Verifying To-Do tab');
+
+    this.todoTab
+      .should('be.visible');
+
+    cy.log('To-Do tab is visible');
+
     return this;
   }
+
+  // Task List Verification
 
   verifyStartTaskButtons() {
-    this.startTaskButtons.should('be.visible');
+    cy.log('Verifying Start Task buttons');
+
+    this.startTaskButtons
+      .should('be.visible');
+
+    cy.log('Start Task button is visible');
+
     return this;
   }
 
-  /**
-   * Iterates the sidebarLinkLabels array — no repeated assertions.
-   */
+  // Sidebar Verification
+
   verifySidebarLinks() {
+    cy.log('Verifying sidebar navigation links');
+
     this.sidebarLinkLabels.forEach((label) => {
-      cy.contains(label).should('be.visible');
+      cy.log(`Verifying sidebar link: "${label}"`);
+
+      cy.contains(label)
+        .should('be.visible');
     });
+
+    cy.log('All sidebar navigation links are visible');
+
     return this;
   }
 
-  // ── Actions ───────────────────────────────────────────────────────────────
+  // Completed Tab
 
   clickCompletedTab() {
-    this.completedTab.click();
+    cy.log('Clicking Completed tab');
+
+    this.completedTab
+      .should('be.visible')
+      .click();
+
+    cy.log('Completed tab clicked successfully');
+
     return this;
   }
 
   verifyCompletedTabActive() {
-    this.completedTab.should('be.visible');
+    cy.log('Verifying Completed tab');
+
+    this.completedTab
+      .should('be.visible');
+
+    cy.log('Completed tab is visible');
+
     return this;
   }
 }
