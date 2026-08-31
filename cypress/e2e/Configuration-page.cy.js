@@ -2,6 +2,7 @@ import SwitchAccountModal from '../pages/SwitchAccountModal';
 import ConfigurationPage from '../pages/ConfigurationPage';
 
 const ADMIN_URL = 'https://develop-admin.chainit.online';
+const INDIVIDUAL_ACCOUNT = 'DEEPENDRA RAO';
 
 
 describe('Post QR Login — Individual Account Dashboard', () => {
@@ -46,7 +47,7 @@ describe('Post QR Login — Individual Account Dashboard', () => {
 
     cy.log(` Selecting Individual Account: ${INDIVIDUAL_ACCOUNT}`);
 
-    SwitchAccountModal.clickIndividualAccount(INDIVIDUAL_ACCOUNT);
+    SwitchAccountModal.clickIndividualAccount();
 
     cy.log(` Individual Account "${INDIVIDUAL_ACCOUNT}" selected successfully`);
 

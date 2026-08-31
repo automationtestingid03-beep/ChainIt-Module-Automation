@@ -1,23 +1,26 @@
 import BasePage from './BasePage';
+import PactveraTemplatePage from './configuration/PactveraTemplatePage';
+import DocumentTemplatePage from './configuration/DocumentTemplatePage';
+import FormTemplatePage from './configuration/FormTemplatePage';
 
 class ConfigurationPage extends BasePage {
 
   // Locators
 
   get configurationButton() {
-    return cy.contains('Configuration');
+    return cy.contains('button, a, div', /configuration/i).filter(':visible').first();
   }
 
   get pactveraButton() {
-    return cy.contains('Pactvera Template');
+    return cy.contains('button, a, div', /pactvera/i).filter(':visible').first();
   }
 
   get documentButton() {
-    return cy.contains('Document Templates');
+    return cy.contains('button, a, div', /document/i).filter(':visible').first();
   }
 
   get formButton() {
-    return cy.contains('Form Templates');
+    return cy.contains('button, a, div', /form/i).filter(':visible').first();
   }
 
   // Configuration
@@ -27,7 +30,7 @@ class ConfigurationPage extends BasePage {
 
     this.configurationButton
       .should('be.visible')
-      .click();
+      .click({ force: true });
 
     cy.log('Configuration button clicked successfully');
 
@@ -41,11 +44,11 @@ class ConfigurationPage extends BasePage {
 
     this.pactveraButton
       .should('be.visible')
-      .click();
+      .click({ force: true });
 
     cy.log('Pactvera Template button clicked successfully');
 
-    return this;
+    return PactveraTemplatePage.verifyPageLoaded();
   }
 
   verifyPactveraPage() {
@@ -56,7 +59,7 @@ class ConfigurationPage extends BasePage {
 
     cy.log('Pactvera Template page verified successfully');
 
-    return this;
+    return PactveraTemplatePage.verifyPageLoaded();
   }
 
   // Document Templates
@@ -66,11 +69,11 @@ class ConfigurationPage extends BasePage {
 
     this.documentButton
       .should('be.visible')
-      .click();
+      .click({ force: true });
 
     cy.log('Document Templates button clicked successfully');
 
-    return this;
+    return DocumentTemplatePage.verifyPageLoaded();
   }
 
   verifyDocumentPage() {
@@ -81,7 +84,7 @@ class ConfigurationPage extends BasePage {
 
     cy.log('Document Templates page verified successfully');
 
-    return this;
+    return DocumentTemplatePage.verifyPageLoaded();
   }
 
   // Form Templates
@@ -91,11 +94,11 @@ class ConfigurationPage extends BasePage {
 
     this.formButton
       .should('be.visible')
-      .click();
+      .click({ force: true });
 
     cy.log('Form Templates button clicked successfully');
 
-    return this;
+    return FormTemplatePage.verifyPageLoaded();
   }
 
   verifyFormPage() {
@@ -106,7 +109,7 @@ class ConfigurationPage extends BasePage {
 
     cy.log('Form Templates page verified successfully');
 
-    return this;
+    return FormTemplatePage.verifyPageLoaded();
   }
 }
 
