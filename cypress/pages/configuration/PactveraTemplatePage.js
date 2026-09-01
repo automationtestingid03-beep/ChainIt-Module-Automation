@@ -62,9 +62,9 @@ class PactveraTemplatePage extends BasePage {
     return cy.contains('button', 'Form');
   }
 
-  get uploadNewButton() {
-    return cy.contains('button', 'Upload New');
-  }
+  get createNewFormButton() {
+  return cy.contains('button', 'Create New Form');
+}
 
   get selectTemplateButton() {
     return cy.contains('button', 'Select a Template');
@@ -119,38 +119,10 @@ class PactveraTemplatePage extends BasePage {
   }
 
   get dropZoneArea() {
-    return cy.document().then(($document) => {
-      const selectors = [
-        '[data-testid*="drop-zone"]',
-        '[data-testid*="dropzone"]',
-        '[class*="drop-zone"]',
-        '[class*="dropzone"]',
-        '[class*="canvas"]',
-        '[class*="pdf-container"]',
-        '[class*="document-stage"]',
-        'svg',
-        'canvas'
-      ];
-
-      for (const selector of selectors) {
-        const match = $document.querySelector(selector);
-        if (match) {
-          return cy.wrap(match);
-        }
-      }
-
-      const fallbackMatch = Array.from($document.querySelectorAll('*')).find((element) => {
-        const text = (element.textContent || '').trim();
-        return text.includes('Pactvera Summary Report') || text.includes('Summary');
-      });
-
-      if (fallbackMatch) {
-        return cy.wrap(fallbackMatch);
-      }
-
-      throw new Error('Pactvera drop-zone/canvas element was not found. Check the Add Fields UI structure for this app version.');
-    });
-  }
+  return cy.get('.react-pdf__Page canvas')
+    .should('exist')
+    .should('be.visible');
+}
 
   get saveTemplateButton() {
     return cy.contains('button', /^Save Template$/i).filter(':visible').first();
@@ -223,18 +195,18 @@ class PactveraTemplatePage extends BasePage {
   }
 
   clickSave() {
-    cy.log('**Action: Click the active "Save" button**');
+  cy.log('**Action: Click the final "Save" button**');
 
-    cy.contains('button', /save/i)
-      .filter(':visible')
-      .last()
-      .should('be.visible')
-      .should('not.be.disabled')
-      .click({ force: true });
+  cy.contains('button', /^Save$/i, { timeout: 30000 })
+    .should('exist')
+    .should('be.visible')
+    .should('not.be.disabled')
+    .click();
 
-    cy.log('✔ Save button click attempt completed');
-    return this;
-  }
+  cy.log('✔ Final Save button clicked successfully');
+
+  return this;
+}
 
   clickCancel() {
     cy.log('**Action: Click "Cancel" button**');
@@ -276,12 +248,18 @@ class PactveraTemplatePage extends BasePage {
     return this;
   }
 
-  clickUploadNew() {
-    cy.log('**Action: Click "Upload New" option**');
-    this.uploadNewButton.should('be.visible').click();
-    cy.log('✔ Upload New option clicked successfully');
-    return this;
-  }
+  clickCreateNewForm() {
+  cy.log('**Action: Click "Create New Form" option**');
+
+  this.createNewFormButton
+    .should('be.visible')
+    .should('not.be.disabled')
+    .click();
+
+  cy.log('✔ Create New Form option clicked successfully');
+
+  return this;
+}
 
   uploadPdfFile(filePath) {
     cy.log(`**Action: Select and upload PDF file → "${filePath}"**`);
@@ -379,45 +357,81 @@ class PactveraTemplatePage extends BasePage {
   }
 
   dragFieldToCanvas(fieldSelector) {
-    cy.log('**Action: Drag field onto the document canvas**');
+  cy.log('**Action: Drag field onto the document canvas**');
 
-    fieldSelector.should('exist').and('be.visible').then(($field) => {
-      const fieldEl = $field && $field[0] ? $field[0] : $field;
-      expect(fieldEl, 'field DOM node').to.exist;
-      expect(fieldEl.getBoundingClientRect, 'field DOM node with getBoundingClientRect').to.be.a('function');
+  fieldSelector
+    .should('be.visible')
+    .then(($field) => {
 
-      const fieldRect = fieldEl.getBoundingClientRect();
+      const fieldRect = $field[0].getBoundingClientRect();
+
       const startX = fieldRect.left + fieldRect.width / 2;
       const startY = fieldRect.top + fieldRect.height / 2;
 
-      this.dropZoneArea.should('exist').and('be.visible').then(($dropZone) => {
-        const dropEl = $dropZone && $dropZone[0] ? $dropZone[0] : $dropZone;
-        expect(dropEl, 'drop zone DOM node').to.exist;
-        expect(dropEl.getBoundingClientRect, 'drop zone DOM node with getBoundingClientRect').to.be.a('function');
+      this.dropZoneArea
+        .should('be.visible')
+        .then(($dropZone) => {
 
-        const dropRect = dropEl.getBoundingClientRect();
-        const endX = dropRect.left + dropRect.width / 2;
-        const endY = dropRect.top + dropRect.height / 2;
+          const dropRect = $dropZone[0].getBoundingClientRect();
 
-        const steps = 5;
-        const deltaX = (endX - startX) / steps;
-        const deltaY = (endY - startY) / steps;
+          // Drop somewhere inside the document
+          const endX = dropRect.left + dropRect.width / 2;
+          const endY = dropRect.top + dropRect.height / 2;
 
-        cy.wrap(fieldEl).trigger('mousedown', { button: 0, clientX: startX, clientY: startY, force: true });
+          cy.log(`Drag start: ${startX}, ${startY}`);
+          cy.log(`Drop position: ${endX}, ${endY}`);
 
-        for (let i = 1; i <= steps; i++) {
-          const stepX = startX + deltaX * i;
-          const stepY = startY + deltaY * i;
-          cy.wrap(fieldEl).trigger('mousemove', { button: 0, clientX: stepX, clientY: stepY, force: true });
-        }
+          // Move mouse to field
+          cy.wrap($field)
+            .trigger('mousedown', {
+              button: 0,
+              clientX: startX,
+              clientY: startY,
+              force: true
+            });
 
-        cy.wrap(dropEl).trigger('mousemove', { button: 0, clientX: endX, clientY: endY, force: true }).trigger('mouseup', { button: 0, clientX: endX, clientY: endY, force: true });
-      });
+          // Move through intermediate positions
+          cy.wrap($field)
+            .trigger('mousemove', {
+              button: 0,
+              clientX: startX + 50,
+              clientY: startY + 20,
+              force: true
+            });
+
+          cy.wrap($field)
+            .trigger('mousemove', {
+              button: 0,
+              clientX: endX,
+              clientY: endY,
+              force: true
+            });
+
+          // Move over actual drop zone
+          cy.wrap($dropZone)
+            .trigger('mousemove', {
+              button: 0,
+              clientX: endX,
+              clientY: endY,
+              force: true
+            });
+
+          // Release
+          cy.wrap($dropZone)
+            .trigger('mouseup', {
+              button: 0,
+              clientX: endX,
+              clientY: endY,
+              force: true
+            });
+
+        });
     });
 
-    cy.log('✔ Field drag sequence completed');
-    return this;
-  }
+  cy.log('✔ Drag-and-drop sequence completed');
+
+  return this;
+}
 
   verifySignatureFieldPlacedOnCanvas() {
     cy.log('**Action: Verify Signature field is placed in the right-side preview area**');

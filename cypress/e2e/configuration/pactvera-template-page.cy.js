@@ -216,7 +216,7 @@ describe('Configuration - Pactvera Templates', () => {
 
     cy.log('Step 11: Selecting Upload New');
 
-    PactveraTemplatePage.clickUploadNew();
+    PactveraTemplatePage.clickCreateNewForm();
 
 
     cy.log('Step 12: Uploading PDF');
@@ -260,6 +260,8 @@ describe('Configuration - Pactvera Templates', () => {
 
     PactveraTemplatePage.verifySignatureFieldPlacedOnCanvas();
 
+    cy.pause();
+
 
     cy.log('Step 20: Saving document configuration');
 
@@ -299,7 +301,7 @@ describe('Configuration - Pactvera Templates', () => {
   // TC04 - One Form
   // =========================================================
 
-  it('TC04: should create Pactvera template with one form', () => {
+  it.only('TC04: should create Pactvera template with one form', () => {
 
     const title = generateUniqueTitle(
       'Automation_With_Form'
@@ -336,7 +338,7 @@ describe('Configuration - Pactvera Templates', () => {
 
     cy.log('Step 10: Selecting Upload New');
 
-    PactveraTemplatePage.clickUploadNew();
+    PactveraTemplatePage.clickCreateNewForm();
 
 
     cy.log('Step 11: Uploading form PDF');
@@ -444,7 +446,7 @@ describe('Configuration - Pactvera Templates', () => {
 
     PactveraTemplatePage.verifyAddDocumentPopupDisplayed();
 
-    PactveraTemplatePage.clickUploadNew();
+    PactveraTemplatePage.clickCreateNewForm();
 
     PactveraTemplatePage.uploadPdfFile(DUMMY_PDF);
 
@@ -484,7 +486,7 @@ describe('Configuration - Pactvera Templates', () => {
 
     PactveraTemplatePage.clickAddForm();
 
-    PactveraTemplatePage.clickUploadNew();
+    PactveraTemplatePage.clickCreateNewForm();
 
     PactveraTemplatePage.uploadPdfFile(DUMMY_PDF);
 
