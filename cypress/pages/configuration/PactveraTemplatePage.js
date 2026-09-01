@@ -62,12 +62,16 @@ class PactveraTemplatePage extends BasePage {
     return cy.contains('button', 'Form');
   }
 
-  get uploadNewButton() {
-    return cy.contains('button', 'Upload New');
-  }
+  get createNewFormButton() {
+  return cy.contains('button', 'Create New Form');
+}
 
   get selectTemplateButton() {
     return cy.contains('button', 'Select a Template');
+  }
+
+  get uploadNewButton() {
+    return cy.contains('button', /^Upload New$/i).filter(':visible').first();
   }
 
   get fileInput() {
@@ -102,6 +106,50 @@ class PactveraTemplatePage extends BasePage {
     return cy.contains('Add Fields');
   }
 
+  get formBuilderTitleInput() {
+    return cy.get('input[placeholder="Enter Title"]').filter(':visible').first();
+  }
+
+  get formBuilderHeading() {
+    return cy.contains('Build Form');
+  }
+
+  get formBuilderBasicSection() {
+   return this.getFormBuilderIframe()
+    .find('button[aria-controls="group-basic"]');
+ }
+
+ get formBuilderAdvancedSection() {
+  return this.getFormBuilderIframe()
+    .find('button[aria-controls="group-advanced"]');
+ }
+
+
+  get formBuilderDropZone() {
+    return this.getFormBuilderIframe().contains('Drag and Drop a form component').filter(':visible').first();
+  }
+
+  get formBuilderDataSection() {
+    return this.getFormBuilderIframe()
+      .find('button[aria-controls="group-data"]');
+  }
+
+   get formBuilderLayoutSection() {
+    return this.getFormBuilderIframe()
+      .find('button[aria-controls="group-layout"]');
+  }
+
+  get formBuilderIndividualSection() {
+    return this.getFormBuilderIframe()
+      .find('button[aria-controls="group-individualIvdtSection"]');
+  }
+
+  get formBuilderDocumentSection() {
+    return this.getFormBuilderIframe()
+      .find('button[aria-controls="group-individualDocumentsSection"]');
+  }
+
+
   get fieldTypes() {
     return ['Signature', 'Initials', 'Email', 'Name', 'Date', 'Text', 'Number', 'Radio', 'Checkbox', 'Dropdown'];
   }
@@ -119,38 +167,10 @@ class PactveraTemplatePage extends BasePage {
   }
 
   get dropZoneArea() {
-    return cy.document().then(($document) => {
-      const selectors = [
-        '[data-testid*="drop-zone"]',
-        '[data-testid*="dropzone"]',
-        '[class*="drop-zone"]',
-        '[class*="dropzone"]',
-        '[class*="canvas"]',
-        '[class*="pdf-container"]',
-        '[class*="document-stage"]',
-        'svg',
-        'canvas'
-      ];
-
-      for (const selector of selectors) {
-        const match = $document.querySelector(selector);
-        if (match) {
-          return cy.wrap(match);
-        }
-      }
-
-      const fallbackMatch = Array.from($document.querySelectorAll('*')).find((element) => {
-        const text = (element.textContent || '').trim();
-        return text.includes('Pactvera Summary Report') || text.includes('Summary');
-      });
-
-      if (fallbackMatch) {
-        return cy.wrap(fallbackMatch);
-      }
-
-      throw new Error('Pactvera drop-zone/canvas element was not found. Check the Add Fields UI structure for this app version.');
-    });
-  }
+  return cy.get('.react-pdf__Page canvas')
+    .should('exist')
+    .should('be.visible');
+}
 
   get saveTemplateButton() {
     return cy.contains('button', /^Save Template$/i).filter(':visible').first();
@@ -163,6 +183,14 @@ class PactveraTemplatePage extends BasePage {
   get placedFieldOnCanvas() {
     return this.dropZoneArea.find('[class*="field"], [class*="placed"]');
   }
+
+  getFormBuilderIframe() {
+  return cy
+    .get('iframe[title="Form Builder"]')
+    .should('be.visible')
+    .its('0.contentDocument.body')
+    .should('not.be.empty');
+}
 
   // =====================================================
   // ACTIONS - Templates List Page
@@ -223,18 +251,18 @@ class PactveraTemplatePage extends BasePage {
   }
 
   clickSave() {
-    cy.log('**Action: Click the active "Save" button**');
+  cy.log('**Action: Click the final "Save" button**');
 
-    cy.contains('button', /save/i)
-      .filter(':visible')
-      .last()
-      .should('be.visible')
-      .should('not.be.disabled')
-      .click({ force: true });
+  cy.contains('button', /^Save$/i, { timeout: 30000 })
+    .should('exist')
+    .should('be.visible')
+    .should('not.be.disabled')
+    .click();
 
-    cy.log('✔ Save button click attempt completed');
-    return this;
-  }
+  cy.log('✔ Final Save button clicked successfully');
+
+  return this;
+}
 
   clickCancel() {
     cy.log('**Action: Click "Cancel" button**');
@@ -268,6 +296,16 @@ class PactveraTemplatePage extends BasePage {
     return this;
   }
 
+  clickUploadNew() {
+    cy.log('**Action: Click "Upload New" button**');
+    this.uploadNewButton
+      .should('be.visible')
+      .should('not.be.disabled')
+      .click({ force: true });
+    cy.log('✔ Upload New button clicked successfully');
+    return this;
+  }
+
   verifyAddDocumentPopupDisplayed() {
     cy.log('**Action: Verify "Add Document" popup shows Upload New and Select Template options**');
     this.uploadNewButton.should('be.visible');
@@ -276,10 +314,463 @@ class PactveraTemplatePage extends BasePage {
     return this;
   }
 
-  clickUploadNew() {
-    cy.log('**Action: Click "Upload New" option**');
-    this.uploadNewButton.should('be.visible').click();
-    cy.log('✔ Upload New option clicked successfully');
+  clickCreateNewForm() {
+    cy.log('**Action: Click "Create New Form" option**');
+
+    this.createNewFormButton
+      .should('be.visible')
+      .should('not.be.disabled')
+      .click();
+
+    this.formBuilderHeading.should('be.visible', { timeout: 30000 });
+    cy.log('✔ Create New Form option clicked successfully');
+
+    return this;
+  }
+
+  scrollBuildFormToLowerSections() {
+    cy.log('Action: Scrolling Form Builder sidebar to lower sections');
+
+  this.getFormBuilderIframe()
+    .find('[class*="builder-sidebar_scroll"]')
+    .should('exist')
+    .scrollTo('bottom');
+
+  cy.log('Build Form sidebar scrolled to bottom');
+
+  return this;
+  }
+
+  verifyCreateNewFormPageDisplayed() {
+      cy.log('Action: Verifying Form Builder sections');
+
+  const iframe = () => this.getFormBuilderIframe();
+
+  // Basic
+  iframe()
+    .find('button[aria-controls="group-basic"]')
+    .should('exist')
+    .and('be.visible');
+
+  // Advanced
+  iframe()
+    .find('button[aria-controls="group-advanced"]')
+    .should('exist')
+    .and('be.visible');
+
+  cy.log('Basic and Advanced sections are visible');
+
+  // Scroll iframe sidebar
+  this.scrollBuildFormToLowerSections();
+
+  // Layout
+  iframe()
+    .find('button[aria-controls="group-layout"]')
+    .scrollIntoView()
+    .should('exist')
+    .and('be.visible');
+
+  // Data
+  iframe()
+    .find('button[aria-controls="group-data"]')
+    .scrollIntoView()
+    .should('exist')
+    .and('be.visible');
+
+  // Individual
+  iframe()
+    .find('button[aria-controls="group-individualIvdtSection"]')
+    .scrollIntoView()
+    .should('exist')
+    .and('be.visible');
+
+  // Documents
+  iframe()
+    .find('button[aria-controls="group-individualDocumentsSection"]')
+    .scrollIntoView()
+    .should('exist')
+    .and('be.visible');
+
+  cy.log('All Form Builder sections are visible');
+
+  return this;
+  }
+
+  verifyFormBuilderBasicFieldsVisible() {
+      cy.log('Action: Verify all Basic form fields are visible');
+
+  const basicFieldKeys = [
+    'textfield',
+    'textarea',
+    'number',
+    'checkbox',
+    'selectboxes',
+    'select',
+    'radio'
+  ];
+
+  basicFieldKeys.forEach((key) => {
+    this.getFormBuilderIframe()
+      .find(`#group-basic [data-group="basic"][data-key="${key}"]`)
+      .should('exist')
+      .and('be.visible');
+
+    cy.log(`Verified Basic field: ${key}`);
+  });
+
+  cy.log('VERIFIED: All Basic form fields are visible');
+
+  return this;
+  }
+
+  clickFormBuilderAccordion(groupName) {
+    cy.log(`Action: Expand accordion "${groupName}" in Build Form`);
+
+  const accordionMap = {
+    Basic: 'group-basic',
+    Advanced: 'group-advanced',
+    Layout: 'group-layout',
+    Data: 'group-data',
+    Individual: 'group-individualIvdtSection',
+    Documents: 'group-individualDocumentsSection'
+  };
+
+  const accordionId = accordionMap[groupName];
+
+  expect(
+    accordionId,
+    `Accordion mapping for "${groupName}"`
+  ).to.exist;
+
+  cy.get('iframe[title="Form Builder"]')
+    .should('exist')
+    .then(($iframe) => {
+      const body = $iframe[0].contentDocument.body;
+
+      expect(body, 'Form Builder iframe body').to.exist;
+
+      cy.wrap(body)
+        .find(`button[aria-controls="${accordionId}"]`)
+        .should('exist')
+        .scrollIntoView({ block: 'center' })
+        .should('be.visible')
+        .click({ force: true });
+    });
+
+  cy.log(`Accordion "${groupName}" clicked successfully`);
+
+  return this;
+  }
+
+  verifyLayoutFieldsVisible() {
+   cy.log('Action: Verify all Layout form fields are visible');
+
+  const layoutFieldKeys = [
+    'htmlelement',
+    'content',
+    'columns',
+    'fieldset',
+    'panel',
+    'tabs'
+  ];
+
+  layoutFieldKeys.forEach((key) => {
+    this.getFormBuilderIframe()
+      .find(`#group-layout [data-group="layout"][data-key="${key}"]`)
+      .should('exist')
+      .and('be.visible');
+
+    cy.log(`Verified Layout field: ${key}`);
+  });
+
+  cy.log('VERIFIED: All Layout fields are visible');
+
+  return this;
+  }
+
+  verifyDataFieldsVisible() {
+    cy.log('Action: Verify all Data group fields are visible');
+
+  const dataFieldKeys = [
+    'container',
+    'datamap',
+    'datagrid',
+    'editgrid'
+  ];
+
+  dataFieldKeys.forEach((key) => {
+    this.getFormBuilderIframe()
+      .find(`#group-data [data-group="data"][data-key="${key}"]`)
+      .should('exist')
+      .and('be.visible');
+
+    cy.log(`Verified Data field: ${key}`);
+  });
+
+  cy.log('VERIFIED: All Data fields are visible');
+
+  return this;
+  }
+
+  verifyIvdtAndDocumentGroupsVisible() {
+    cy.log('**Action: Verify Individual (IVDT) and Documents (IVDT) groups are visible**');
+
+    ['Individual (IVDT)', 'Documents (IVDT)'].forEach((group) => {
+      this.getFormBuilderIframe().contains(group).filter(':visible').should('be.visible');
+      cy.log(`   ↳ ✔ "${group}" group is visible`);
+    });
+
+    cy.log('✔ VERIFIED: IVDT and Document groups are visible');
+    return this;
+  }
+
+  verifyDocumentsFieldsVisible() {
+    cy.log('**Action: Verify Documents (IVDT) fields while scrolling**');
+
+  const documentFields = [
+    { name: 'ID Type', key: 'idType' },
+    { name: 'Prefilled Grid', key: 'documentsPrefilledGrid' },
+    { name: 'ID Number', key: 'idNumber' },
+    { name: 'ID Issue Date', key: 'issueDate' },
+    { name: 'ID Expiration Date', key: 'expirationDate' },
+    { name: 'ID Verification Status', key: 'docVerificationStatus' },
+    { name: 'ID Expiration Status', key: 'docExpirationStatus' }
+  ];
+
+  documentFields.forEach(({ name, key }) => {
+
+    cy.log(`Checking Documents field: "${name}"`);
+
+    this.getFormBuilderIframe()
+      .find(`[data-key="${key}"]`)
+      .should('exist')
+      .scrollIntoView()
+      .should('be.visible');
+
+    cy.log(`✔ "${name}" Documents (IVDT) field is visible`);
+  });
+
+  cy.log('✔ VERIFIED: All Documents (IVDT) fields are visible');
+
+  return this;
+  }
+
+  verifyIndividualFieldsVisible() {
+     cy.log('**Action: Verify Individual (IVDT) fields while scrolling**');
+
+  const individualFields = [
+    { name: 'Full Name', key: 'fullName' },
+    { name: 'Date of Birth', key: 'dateOfBirth' },
+    { name: 'BeingID Level', key: 'beingIdLevel' },
+    { name: 'BeingID Level Description', key: 'beingIdLevelDescription' },
+    { name: 'ChainIT ID', key: 'chainItId' },
+    { name: 'First Name', key: 'firstName' },
+    { name: 'Middle Name', key: 'middleName' },
+    { name: 'Last Name', key: 'lastName' },
+    { name: 'Age', key: 'age' },
+    { name: 'Best Achievable BeingID Level', key: 'bestAchievableBeingIdLevel' },
+    { name: 'Email Address', key: 'emailAddress' },
+    { name: 'Phone Number', key: 'individualPhoneNumber' },
+    { name: 'Home Full Address', key: 'homeFullAddress' },
+    { name: 'Home City', key: 'homeCity' },
+    { name: 'Home State', key: 'homeState' },
+    { name: 'Home Zip Code', key: 'homeZipCode' },
+    { name: 'Home Country', key: 'homeCountry' },
+    { name: 'Home Address Line 1', key: 'homeAddressLine1' },
+    { name: 'Home Address Line 2', key: 'homeAddressLine2' },
+    { name: 'GPS Verification Status', key: 'addressGpsStatus' },
+    { name: 'OFAC Screening', key: 'ofacScreening' },
+    { name: 'PEP Screening', key: 'pepScreening' },
+    { name: 'Criminal Background Check', key: 'criminalBackgroundCheck' },
+    { name: 'Sex Offender Screening', key: 'sexOffenderScreening' },
+    { name: 'SSN Verification Status', key: 'ssnVerificationStatus' }
+  ];
+
+  const sidebarSelector =
+    '[class*="builder-sidebar_scroll"], [class*="builder-sidebar"], [class*="sidebar"]';
+
+  individualFields.forEach(({ name, key }) => {
+
+    const selector =
+      `#group-individualIvdtSection [data-group="individualIvdtSection"][data-key="${key}"]`;
+
+    cy.log(`Checking Individual field: "${name}"`);
+
+    // First try normal scroll
+    this.getFormBuilderIframe()
+      .find(selector)
+      .should('exist')
+      .then(($field) => {
+
+        if ($field.is(':visible')) {
+          cy.log(`✔ "${name}" is already visible`);
+          return;
+        }
+
+        cy.log(`"${name}" not visible - scrolling field into view`);
+
+        this.getFormBuilderIframe()
+          .find(selector)
+          .scrollIntoView()
+          .should('be.visible');
+
+        cy.log(`✔ "${name}" is visible after scrolling`);
+      });
+  });
+
+  cy.log('✔ VERIFIED: All Individual (IVDT) fields are visible');
+
+  return this;
+  } 
+
+ verifyFieldByScrolling(selector, fieldName) {
+  cy.log(`Checking Individual field: "${fieldName}"`);
+
+  this.getFormBuilderIframe()
+    .find(selector)
+    .should('exist')
+    .scrollIntoView()
+    .should('be.visible');
+
+  cy.log(`✔ "${fieldName}" is visible`);
+
+  return this;
+}
+
+ verifyFormBuilderAdvancedFieldsVisible() {
+   cy.log('**Action: Verify all Advanced form fields are visible while scrolling**');
+
+  const advancedFields = [
+    'Email',
+    'Url',
+    'Phone Number',
+    'Tags',
+    'Address',
+    'Date/Time',
+    'Day',
+    'Time',
+    'Currency',
+    'File Upload',
+    'Survey',
+    'Signature'
+  ];
+
+  advancedFields.forEach((field) => {
+    this.getFormBuilderIframe()
+      .contains(field)
+      .first()
+      .scrollIntoView()
+      .should('be.visible');
+
+    cy.log(`   ↳ ✔ "${field}" Advanced field is visible`);
+  });
+
+  cy.log('✔ VERIFIED: All Advanced form fields are visible');
+
+  return this;
+}
+
+verifyFieldByScrolling(fieldName) {
+  const iframe = this.getFormBuilderIframe();
+
+  cy.log(`Checking field: "${fieldName}"`);
+
+  iframe.contains(fieldName).first().then(($field) => {
+    if ($field.length === 0) {
+      throw new Error(`Field "${fieldName}" not found`);
+    }
+
+    if ($field.is(':visible')) {
+      cy.log(`✔ "${fieldName}" is visible`);
+      return;
+    }
+
+    // Scroll directly to the field
+    cy.wrap($field)
+      .scrollIntoView()
+      .should('be.visible');
+
+    cy.log(`✔ "${fieldName}" found after scrolling`);
+  });
+
+  return this;
+}
+
+  verifyAllFormBuilderFieldsVisible() {
+    this.verifyFormBuilderBasicFieldsVisible();
+    this.clickFormBuilderAccordion('Advanced');
+    this.verifyFormBuilderAdvancedFieldsVisible();
+    this.clickFormBuilderAccordion('Data');
+    this.verifyDataFieldsVisible();
+    this.clickFormBuilderAccordion('Layout');
+    this.verifyLayoutFieldsVisible();
+    this.clickFormBuilderAccordion('Individual');
+    this.verifyIndividualFieldsVisible();
+    this.clickFormBuilderAccordion('Documents');
+    this.verifyDocumentsFieldsVisible();
+    return this;
+  }
+
+  dragBasicFieldToForm(fieldLabel) {
+    cy.log(`**Action: Drag basic field "${fieldLabel}" to the form builder area**`);
+
+    cy.contains('div, button, span', fieldLabel, { matchCase: false })
+      .filter(':visible')
+      .first()
+      .then(($field) => {
+        const fieldEl = $field[0];
+        const fieldRect = fieldEl.getBoundingClientRect();
+        const startX = fieldRect.left + fieldRect.width / 2;
+        const startY = fieldRect.top + fieldRect.height / 2;
+
+        this.formBuilderDropZone.then(($dropZone) => {
+          const dropEl = $dropZone[0];
+          const dropRect = dropEl.getBoundingClientRect();
+          const endX = dropRect.left + dropRect.width / 2;
+          const endY = dropRect.top + dropRect.height / 2;
+
+          cy.wrap(fieldEl)
+            .trigger('mousedown', { button: 0, clientX: startX, clientY: startY, force: true });
+
+          for (let i = 1; i <= 5; i++) {
+            const stepX = startX + ((endX - startX) / 5) * i;
+            const stepY = startY + ((endY - startY) / 5) * i;
+            cy.wrap(fieldEl).trigger('mousemove', { button: 0, clientX: stepX, clientY: stepY, force: true });
+          }
+
+          cy.wrap(dropEl)
+            .trigger('mousemove', { button: 0, clientX: endX, clientY: endY, force: true })
+            .trigger('mouseup', { button: 0, clientX: endX, clientY: endY, force: true });
+        });
+      });
+
+    cy.log(`✔ Dragged "${fieldLabel}" to the form builder area`);
+    return this;
+  }
+
+  clickContinueFromFormBuilder() {
+    cy.log('**Action: Click the Continue button on the Build Form page**');
+
+    cy.contains('button', /^Continue$/i, { timeout: 30000 })
+      .filter(':visible')
+      .first()
+      .should('be.visible')
+      .click({ force: true });
+
+    cy.log('✔ Continue clicked on the Build Form page');
+    return this;
+  }
+
+  verifyFormTitleRequiredError() {
+    cy.log('**Action: Verify the required form title validation error is shown**');
+
+    cy.get('body').then(($body) => {
+      const text = $body.text();
+      const matched = /enter title|title is required|required title|please enter title/i.test(text);
+      expect(matched, 'Expected the required form title validation message to be visible').to.be.true;
+    });
+
+    cy.log('✔ VERIFIED: Form title validation error is displayed');
     return this;
   }
 
@@ -453,56 +944,43 @@ class PactveraTemplatePage extends BasePage {
   }
 
   dragFieldToCanvas(fieldSelector) {
-    cy.log('**Action: Drag field from left palette to document area**');
+    cy.log('**Action: Drag field onto the document canvas**');
 
-    cy.get('body').then(($body) => {
-      const bodyText = $body.text();
-      const popupVisible = /Incomplete Signer Setup|required|field is required|add at least one field|at least one field|not been assigned any fields/i.test(bodyText);
+    fieldSelector.should('exist').and('be.visible').then(($field) => {
+      const fieldEl = $field && $field[0] ? $field[0] : $field;
+      expect(fieldEl, 'field DOM node').to.exist;
+      expect(fieldEl.getBoundingClientRect, 'field DOM node with getBoundingClientRect').to.be.a('function');
 
-      if (popupVisible) {
-        cy.contains('button', /^Close$/i, { timeout: 15000 })
-          .filter(':visible')
-          .first()
-          .click({ force: true });
-      }
+      const fieldRect = fieldEl.getBoundingClientRect();
+      const startX = fieldRect.left + fieldRect.width / 2;
+      const startY = fieldRect.top + fieldRect.height / 2;
+
+      this.dropZoneArea.should('exist').and('be.visible').then(($dropZone) => {
+        const dropEl = $dropZone && $dropZone[0] ? $dropZone[0] : $dropZone;
+        expect(dropEl, 'drop zone DOM node').to.exist;
+        expect(dropEl.getBoundingClientRect, 'drop zone DOM node with getBoundingClientRect').to.be.a('function');
+
+        const dropRect = dropEl.getBoundingClientRect();
+        const endX = dropRect.left + dropRect.width / 2;
+        const endY = dropRect.top + dropRect.height / 2;
+
+        const steps = 5;
+        const deltaX = (endX - startX) / steps;
+        const deltaY = (endY - startY) / steps;
+
+        cy.wrap(fieldEl).trigger('mousedown', { button: 0, clientX: startX, clientY: startY, force: true });
+
+        for (let i = 1; i <= steps; i++) {
+          const stepX = startX + deltaX * i;
+          const stepY = startY + deltaY * i;
+          cy.wrap(fieldEl).trigger('mousemove', { button: 0, clientX: stepX, clientY: stepY, force: true });
+        }
+
+        cy.wrap(dropEl).trigger('mousemove', { button: 0, clientX: endX, clientY: endY, force: true }).trigger('mouseup', { button: 0, clientX: endX, clientY: endY, force: true });
+      });
     });
 
-    fieldSelector
-      .should('exist')
-      .and('be.visible')
-      .then(($field) => {
-        const field = $field[0];
-        const sourceRect = field.getBoundingClientRect();
-        const startX = sourceRect.left + sourceRect.width / 2;
-        const startY = sourceRect.top + sourceRect.height / 2;
-
-        cy.log(`Drag source: ${startX}, ${startY}`);
-
-        this.getDropTarget().then(($target) => {
-          const rect = $target[0].getBoundingClientRect();
-          const endX = rect.left + rect.width * 0.5;
-          const endY = rect.top + rect.height * 0.45;
-
-          cy.log(`Drop target: ${endX}, ${endY}`);
-
-          this.triggerMouseDown(startX, startY);
-          cy.wait(300);
-
-          const steps = 18;
-          for (let i = 1; i <= steps; i++) {
-            const p = i / steps;
-            const x = startX + (endX - startX) * p;
-            const y = startY + (endY - startY) * p;
-            this.triggerMouseMove(x, y, 1);
-          }
-
-          cy.wait(500);
-          this.triggerMouseUp(endX, endY);
-          cy.wait(1500);
-        });
-      });
-
-    cy.log('✔ Signature field drag-and-drop completed');
+    cy.log('✔ Field drag sequence completed');
     return this;
   }
 

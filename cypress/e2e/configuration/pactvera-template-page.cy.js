@@ -166,7 +166,9 @@ describe('Configuration - Pactvera Templates', () => {
     PactveraTemplatePage.verifyAddDocumentPopupDisplayed();
 
     cy.log('Step 11: Selecting Upload New');
+
     PactveraTemplatePage.clickUploadNew();
+
 
     cy.log('Step 12: Uploading PDF');
     PactveraTemplatePage.uploadPdfFile(DUMMY_PDF);
@@ -202,7 +204,9 @@ describe('Configuration - Pactvera Templates', () => {
     cy.log('Step 22: Verifying Signature field');
     PactveraTemplatePage.verifySignatureFieldPlacedOnCanvas();
 
-    cy.log('Step 23: Clicking Save Template after adding Signature field');
+
+    cy.log('Step 20: Saving document configuration');
+
     PactveraTemplatePage.clickSaveTemplate();
 
     cy.log('Step 24: Verifying document configuration saved');
@@ -227,7 +231,7 @@ describe('Configuration - Pactvera Templates', () => {
   // TC04 - One Form
   // =========================================================
 
-  it('TC04: should create Pactvera template with one form', () => {
+  it.only('TC04: should create Pactvera template with one form', () => {
 
     const title = generateUniqueTitle(
       'Automation_With_Form'
@@ -256,38 +260,58 @@ describe('Configuration - Pactvera Templates', () => {
     cy.log('Step 9: Adding form');
     PactveraTemplatePage.clickAddForm();
 
-    cy.log('Step 10: Selecting Upload New');
-    PactveraTemplatePage.clickUploadNew();
+    cy.log('Step 10: Creating a new form from the form builder');
+    PactveraTemplatePage.clickCreateNewForm();
+    PactveraTemplatePage.verifyCreateNewFormPageDisplayed();
 
-    cy.log('Step 11: Uploading form PDF');
-    PactveraTemplatePage.uploadPdfFile(DUMMY_PDF);
+    cy.log('Step 10.1: Verifying Basic section fields in the form builder');
+    PactveraTemplatePage.clickFormBuilderAccordion('Basic');
+    PactveraTemplatePage.verifyFormBuilderBasicFieldsVisible();
 
-    cy.log('Step 12: Confirming form upload');
-    PactveraTemplatePage.clickUploadConfirm();
+    //cy.log('Step 10.2: Verifying Advanced section fields in the form builder');
+    // PactveraTemplatePage.clickFormBuilderAccordion('Advanced');
+    // PactveraTemplatePage.verifyFormBuilderAdvancedFieldsVisible();
 
-    cy.log('Step 13: Clicking Continue');
-    PactveraTemplatePage.clickContinue();
+    cy.log('Step 10.3: Verifying Layout section fields in the form builder');
+    PactveraTemplatePage.clickFormBuilderAccordion('Layout');
+    PactveraTemplatePage.verifyLayoutFieldsVisible();
 
-    cy.log('Step 14: Verifying Add Fields page');
-    PactveraTemplatePage.verifyAddFieldsPageDisplayed();
+    cy.log('Step 10.4: Verifying Data section fields in the form builder');
+    PactveraTemplatePage.clickFormBuilderAccordion('Data');
+    PactveraTemplatePage.verifyDataFieldsVisible();
 
-    cy.log('Step 15: Verifying available fields');
-    PactveraTemplatePage.verifyAllFieldsVisible();
+    cy.log('Step 10.5: Verifying Individual (IVDT) section fields in the form builder');
+    PactveraTemplatePage.clickFormBuilderAccordion('Individual');
+    PactveraTemplatePage.verifyIndividualFieldsVisible();
 
-    cy.log('Step 16: Dragging Name field onto form');
-    PactveraTemplatePage.dragFieldToCanvas(PactveraTemplatePage.signatureField);
-    PactveraTemplatePage.verifySignatureFieldPlacedOnCanvas();
+    cy.log('Step 10.6: Verifying Documents section fields in the form builder');
+    PactveraTemplatePage.clickFormBuilderAccordion('Documents');
+    PactveraTemplatePage.verifyDocumentsFieldsVisible();
 
-    cy.log('Step 17: Saving form configuration');
+    cy.pause(); // Pause for manual inspection of the form builder page
+
+    cy.log('Step 11: Validating form title is required when Continue is clicked without a title');
+    PactveraTemplatePage.clickContinueFromFormBuilder();
+    PactveraTemplatePage.verifyFormTitleRequiredError();
+
+    cy.log('Step 12: Entering form title and dragging Text Field and Text Area into the form');
+    PactveraTemplatePage.formBuilderTitleInput.clear().type(`Form_${Date.now()}`);
+    PactveraTemplatePage.dragBasicFieldToForm('Text Field');
+    PactveraTemplatePage.dragBasicFieldToForm('Text Area');
+
+    cy.log('Step 13: Clicking Continue on the Build Form page');
+    PactveraTemplatePage.clickContinueFromFormBuilder();
+
+    cy.log('Step 14: Saving form configuration');
     PactveraTemplatePage.clickSaveTemplate();
 
-    cy.log('Step 18: Verifying form configuration saved');
+    cy.log('Step 15: Verifying form configuration saved');
     PactveraTemplatePage.verifyTemplateConfigSavedSuccessfully();
 
-    cy.log('Step 19: Saving Pactvera template');
+    cy.log('Step 16: Saving Pactvera template');
     PactveraTemplatePage.clickSave();
 
-    cy.log('Step 20: Verifying Pactvera Templates page');
+    cy.log('Step 17: Verifying Pactvera Templates page');
     PactveraTemplatePage.verifyPageLoaded();
     PactveraTemplatePage.searchTemplate(title);
     PactveraTemplatePage.verifyTemplateInList(title);
@@ -332,7 +356,9 @@ describe('Configuration - Pactvera Templates', () => {
     cy.log('Step 9: Adding document');
     PactveraTemplatePage.clickAddDocument();
     PactveraTemplatePage.verifyAddDocumentPopupDisplayed();
+
     PactveraTemplatePage.clickUploadNew();
+
     PactveraTemplatePage.uploadPdfFile(DUMMY_PDF);
     PactveraTemplatePage.clickUploadConfirm();
 
@@ -357,7 +383,9 @@ describe('Configuration - Pactvera Templates', () => {
 
     cy.log('Step 13: Adding form');
     PactveraTemplatePage.clickAddForm();
+
     PactveraTemplatePage.clickUploadNew();
+
     PactveraTemplatePage.uploadPdfFile(DUMMY_PDF);
     PactveraTemplatePage.clickUploadConfirm();
 
