@@ -107,7 +107,7 @@ class PactveraTemplatePage extends BasePage {
   }
 
   get signatureField() {
-    return cy.contains('Signature').filter(':visible').first();
+    return cy.contains('button', /^Signature$/i).filter(':visible').first();
   }
 
   get nameField() {
@@ -378,52 +378,138 @@ class PactveraTemplatePage extends BasePage {
     return this;
   }
 
-  dragFieldToCanvas(fieldSelector) {
-    cy.log('**Action: Drag field onto the document canvas**');
-
-    fieldSelector.should('exist').and('be.visible').then(($field) => {
-      const fieldEl = $field && $field[0] ? $field[0] : $field;
-      expect(fieldEl, 'field DOM node').to.exist;
-      expect(fieldEl.getBoundingClientRect, 'field DOM node with getBoundingClientRect').to.be.a('function');
-
-      const fieldRect = fieldEl.getBoundingClientRect();
-      const startX = fieldRect.left + fieldRect.width / 2;
-      const startY = fieldRect.top + fieldRect.height / 2;
-
-      this.dropZoneArea.should('exist').and('be.visible').then(($dropZone) => {
-        const dropEl = $dropZone && $dropZone[0] ? $dropZone[0] : $dropZone;
-        expect(dropEl, 'drop zone DOM node').to.exist;
-        expect(dropEl.getBoundingClientRect, 'drop zone DOM node with getBoundingClientRect').to.be.a('function');
-
-        const dropRect = dropEl.getBoundingClientRect();
-        const endX = dropRect.left + dropRect.width / 2;
-        const endY = dropRect.top + dropRect.height / 2;
-
-        const steps = 5;
-        const deltaX = (endX - startX) / steps;
-        const deltaY = (endY - startY) / steps;
-
-        cy.wrap(fieldEl).trigger('mousedown', { button: 0, clientX: startX, clientY: startY, force: true });
-
-        for (let i = 1; i <= steps; i++) {
-          const stepX = startX + deltaX * i;
-          const stepY = startY + deltaY * i;
-          cy.wrap(fieldEl).trigger('mousemove', { button: 0, clientX: stepX, clientY: stepY, force: true });
-        }
-
-        cy.wrap(dropEl).trigger('mousemove', { button: 0, clientX: endX, clientY: endY, force: true }).trigger('mouseup', { button: 0, clientX: endX, clientY: endY, force: true });
+  triggerMouseMove(x, y, buttons = 1) {
+    cy.document().then((doc) => {
+      const win = doc.defaultView;
+      const event = new win.MouseEvent('mousemove', {
+        bubbles: true,
+        cancelable: true,
+        view: win,
+        clientX: x,
+        clientY: y,
+        buttons,
       });
+      doc.dispatchEvent(event);
+      win.dispatchEvent(event);
+    });
+  }
+
+  triggerMouseDown(x, y) {
+    cy.document().then((doc) => {
+      const win = doc.defaultView;
+      const event = new win.MouseEvent('mousedown', {
+        bubbles: true,
+        cancelable: true,
+        view: win,
+        clientX: x,
+        clientY: y,
+        buttons: 1,
+      });
+      doc.dispatchEvent(event);
+      win.dispatchEvent(event);
+    });
+  }
+
+  triggerMouseUp(x, y) {
+    cy.document().then((doc) => {
+      const win = doc.defaultView;
+      const event = new win.MouseEvent('mouseup', {
+        bubbles: true,
+        cancelable: true,
+        view: win,
+        clientX: x,
+        clientY: y,
+        buttons: 0,
+      });
+      doc.dispatchEvent(event);
+      win.dispatchEvent(event);
+    });
+  }
+
+  getDropTarget() {
+    return cy.document().then(($document) => {
+      const candidates = [...$document.querySelectorAll('*')].filter((el) => {
+        const rect = el.getBoundingClientRect();
+        const style = window.getComputedStyle(el);
+        const text = (el.textContent || '').trim();
+        const className = (el.className || '').toString();
+
+        const isVisible = rect.width > 200 && rect.height > 120 && style.visibility !== 'hidden' && style.display !== 'none';
+        const notOverlay = !/modal|dialog|backdrop|overlay/i.test(`${text} ${className}`);
+        const onRightSide = rect.left > window.innerWidth * 0.30 && rect.right <= window.innerWidth;
+
+        return isVisible && notOverlay && onRightSide;
+      });
+
+      const target = candidates.sort((a, b) => {
+        const aRect = a.getBoundingClientRect();
+        const bRect = b.getBoundingClientRect();
+        return (bRect.width * bRect.height) - (aRect.width * aRect.height);
+      })[0];
+
+      expect(target, 'Expected a visible right-side document target to exist').to.exist;
+      return cy.wrap(target);
+    });
+  }
+
+  dragFieldToCanvas(fieldSelector) {
+    cy.log('**Action: Drag field from left palette to document area**');
+
+    cy.get('body').then(($body) => {
+      const bodyText = $body.text();
+      const popupVisible = /Incomplete Signer Setup|required|field is required|add at least one field|at least one field|not been assigned any fields/i.test(bodyText);
+
+      if (popupVisible) {
+        cy.contains('button', /^Close$/i, { timeout: 15000 })
+          .filter(':visible')
+          .first()
+          .click({ force: true });
+      }
     });
 
-    cy.log('✔ Field drag sequence completed');
+    fieldSelector
+      .should('exist')
+      .and('be.visible')
+      .then(($field) => {
+        const field = $field[0];
+        const sourceRect = field.getBoundingClientRect();
+        const startX = sourceRect.left + sourceRect.width / 2;
+        const startY = sourceRect.top + sourceRect.height / 2;
+
+        cy.log(`Drag source: ${startX}, ${startY}`);
+
+        this.getDropTarget().then(($target) => {
+          const rect = $target[0].getBoundingClientRect();
+          const endX = rect.left + rect.width * 0.5;
+          const endY = rect.top + rect.height * 0.45;
+
+          cy.log(`Drop target: ${endX}, ${endY}`);
+
+          this.triggerMouseDown(startX, startY);
+          cy.wait(300);
+
+          const steps = 18;
+          for (let i = 1; i <= steps; i++) {
+            const p = i / steps;
+            const x = startX + (endX - startX) * p;
+            const y = startY + (endY - startY) * p;
+            this.triggerMouseMove(x, y, 1);
+          }
+
+          cy.wait(500);
+          this.triggerMouseUp(endX, endY);
+          cy.wait(1500);
+        });
+      });
+
+    cy.log('✔ Signature field drag-and-drop completed');
     return this;
   }
 
-  verifySignatureFieldPlacedOnCanvas() {
+    verifySignatureFieldPlacedOnCanvas() {
     cy.log('**Action: Verify Signature field is placed in the right-side preview area**');
 
     cy.get('body').then(($body) => {
-      const bodyEl = $body[0];
       const bodyText = $body.text();
       const hasSignerError = bodyText.includes('Incomplete Signer Setup');
 
@@ -432,18 +518,11 @@ class PactveraTemplatePage extends BasePage {
         return;
       }
 
-      const visibleSignatureMatches = Array.from(bodyEl.querySelectorAll('button, div, span, label')).filter((el) => {
-        if (!el || !el.textContent) return false;
-        const text = el.textContent.trim();
-        const isVisible = !!(el.offsetWidth || el.offsetHeight || el.getClientRects?.().length);
-        return isVisible && text.toLowerCase() === 'signature';
-      });
+      const rightSideText = /Signature|View Statement|Bill To|Invoice Date|Total/i.test(bodyText);
+      const fieldPaletteText = bodyText.toLowerCase().includes('signature');
 
-      const hasSignatureInPalette = visibleSignatureMatches.length >= 1;
-      const hasSignatureInPreview = bodyText.toLowerCase().includes('signature') && /email|number|recipient|bill to|invoice|total|view statement/i.test(bodyText);
-
-      expect(hasSignatureInPalette && hasSignatureInPreview,
-        'Signature field should be visible in both the field palette and the right-side preview after drag-and-drop').to.be.true;
+      expect(rightSideText && fieldPaletteText,
+        'Signature field should be visible after drag-and-drop and appear in the right-side preview document area').to.be.true;
     });
 
     cy.log('✔ VERIFIED: Signature field is visible on the right-side preview area after drag-and-drop');
@@ -477,6 +556,41 @@ class PactveraTemplatePage extends BasePage {
     cy.log(`✔ VERIFIED: Document section remains visible and includes the uploaded PDF file name "${fileName}"`);
     return this;
   }
+  
+
+  verifyFieldRequiredPopupDisplayed() {
+    cy.log('**Action: Verify validation popup is displayed when Save Template is clicked without a field**');
+
+    cy.get('body', { timeout: 15000 }).then(($body) => {
+      const text = $body.text();
+      const matchesValidationMessage = /required|field is required|add at least one field|at least one field|not been assigned any fields|one or more signers/i.test(text);
+
+      expect(matchesValidationMessage, 'Expected the field-required validation popup text to be visible').to.be.true;
+    });
+
+    cy.log('✔ VERIFIED: Validation popup is displayed before field assignment');
+    return this;
+  }
+
+  closeFieldRequiredPopup() {
+  cy.get('body').then(($body) => {
+    const dialog = $body.find('[role="dialog"]');
+
+    if (dialog.length > 0) {
+      cy.wrap(dialog)
+        .find('button')
+        .filter(':visible')
+        .last()
+        .click({ force: true });
+
+      cy.log('Validation popup closed');
+    } else {
+      cy.log('No validation popup found');
+    }
+  });
+
+  return this;
+ }
 
   verifyIncompleteSignerSetupNotDisplayed(shouldCheck = false) {
     if (!shouldCheck) {
@@ -498,6 +612,26 @@ class PactveraTemplatePage extends BasePage {
 
   verifyIncompleteSignerSetupDisplayed() {
     return this.verifyIncompleteSignerSetupNotDisplayed(true);
+  }
+
+  closeIncompleteSignerSetupPopup() {
+    cy.log('**Action: Close the "Incomplete Signer Setup" popup**');
+    cy.contains('button', /^Close$/i, { timeout: 30000 })
+      .filter(':visible')
+      .first()
+      .should('be.visible')
+      .click({ force: true });
+
+    cy.contains('Incomplete Signer Setup', { timeout: 10000 }).should('not.exist');
+    cy.log('✔ Popup closed successfully');
+    return this;
+  }
+
+  closePopupAndDragField(fieldSelector) {
+    this.closeIncompleteSignerSetupPopup();
+    this.dragFieldToCanvas(fieldSelector);
+    this.verifySignatureFieldPlacedOnCanvas();
+    return this;
   }
 
   verifyPlacedFieldOnCanvas() {

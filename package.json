@@ -24,6 +24,7 @@
   "type": "commonjs",
   "devDependencies": {
     "cypress": "^15.21.1",
-    "cypress-iframe": "^1.0.1"
+    "cypress-iframe": "^1.0.1",
+    "cypress-real-events": "^1.15.0"
   }
 }
