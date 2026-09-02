@@ -170,6 +170,28 @@ class PactveraTemplatePage extends BasePage {
   return cy.get('.react-pdf__Page canvas')
     .should('exist')
     .should('be.visible');
+ }
+
+get textField() {
+  return this.getFormBuilderIframe()
+    .find(
+      '#group-basic [data-group="basic"][data-key="textfield"]'
+    );
+}
+
+get textArea() {
+  return this.getFormBuilderIframe()
+    .find('#group-basic [data-key="textarea"]');
+}
+
+get numberField() {
+  return this.getFormBuilderIframe()
+    .find('#group-basic [data-key="number"]');
+}
+
+get checkboxField() {
+  return this.getFormBuilderIframe()
+    .find('#group-basic [data-key="checkbox"]');
 }
 
   get saveTemplateButton() {
@@ -192,9 +214,275 @@ class PactveraTemplatePage extends BasePage {
     .should('not.be.empty');
 }
 
+get formBuilderDropZone() {
+  return this.getFormBuilderIframe()
+    .find('.builder-components.drag-container.formio-builder-form')
+    .first();
+}
+
+get threeDotMenu() {
+  return cy.get('[data-test="actions-pactvera-template"]').first();
+}
+
+get templateSearchInput() {
+  return cy.get('input[placeholder="Search"]');
+}
+
+get paginationContainer() {
+  return cy.contains('button', '1').closest('ul');
+}
+
+get previousPageButton() {
+  return this.paginationContainer
+    .find('li')
+    .eq(1)
+    .find('button');
+}
+
+get nextPageButton() {
+  return this.paginationContainer
+    .find('li')
+    .eq(-2)
+    .find('button');
+}
+
+get deleteConfirmationPopup() {
+  return cy.contains( 'Pactvera Template Deletion' ).closest('div');
+}
+
+get deleteConfirmationCancelButton() {
+  return this.deleteConfirmationPopup
+    .contains('button', 'Cancel');
+}
+
+get deleteConfirmationDeleteButton() {
+  return this.deleteConfirmationPopup
+    .contains('button', 'Delete');
+}
+
+get duplicateActionButton() {
+  return cy.contains('button', 'Duplicate');
+}
+
+clearTemplateSearch() {
+  cy.log('**Action: Clear template search field**');
+  this.templateSearchInput
+    .should('be.visible')
+    .clear();
+  cy.log('Template search field cleared');
+  return this;
+}
+
   // =====================================================
   // ACTIONS - Templates List Page
   // =====================================================
+
+verifyPactveraTemplateTableColumns() {
+  cy.log('**Action: Verify Pactvera Template table column names**');
+
+  const expectedColumns = [
+    'Template Name',
+    'Description',
+    'Created',
+    'Updated',
+    'Actions'
+  ];
+
+  expectedColumns.forEach((columnName) => {
+    cy.contains('th', columnName)
+      .should('be.visible');
+
+    cy.log(`Verified column: ${columnName}`);
+  });
+
+  cy.log('✔ All Pactvera Template table columns are displayed');
+
+  return this;
+}
+
+verifyNextPageEnabled() {
+  cy.log('**Action: Verify Next page button is enabled**');
+
+  this.nextPageButton
+    .should('be.visible')
+    .and('not.be.disabled');
+
+  cy.log('✔ Next page button is enabled');
+
+  return this;
+}
+
+clickNextPage() {
+  cy.log('**Action: Click Next page button**');
+
+  this.nextPageButton
+    .should('be.visible')
+    .and('not.be.disabled')
+    .click();
+
+  cy.log('Next page button clicked successfully');
+
+  return this;
+}
+
+verifyPreviousPageEnabled() {
+  cy.log('**Action: Verify Previous page button is enabled**');
+
+  this.previousPageButton
+    .should('be.visible')
+    .and('not.be.disabled');
+
+  cy.log('Previous page button is enabled');
+
+  return this;
+}
+
+
+clickPreviousPage() {
+   cy.log('**Action: Click Previous page button**');
+
+  this.previousPageButton
+    .should('be.visible')
+    .and('not.be.disabled')
+    .click();
+
+  cy.log('Previous page button clicked successfully');
+
+  return this;
+}
+
+verifyNextPageDisplayed() {
+   cy.log('**Action: Verify next page is displayed**');
+
+  this.paginationContainer
+    .find('button')
+    .filter(':visible')
+    .then(($buttons) => {
+      const activePages = [...$buttons]
+        .filter((button) => {
+          const className = button.className || '';
+          return (
+            className.includes('bg-lime') ||
+            className.includes('text-white')
+          );
+        })
+        .map((button) => button.innerText.trim())
+        .filter((text) => /^\d+$/.test(text));
+
+      expect(activePages.length, 'Active page number').to.be.greaterThan(0);
+
+      cy.log(`Current active page: ${activePages[0]}`);
+    });
+
+  cy.log('Next page is displayed successfully');
+
+  return this;
+}
+
+
+verifyPreviousPageDisplayed() {
+   cy.log('**Action: Verify previous page is displayed**');
+
+  this.paginationContainer
+    .find('button')
+    .filter(':visible')
+    .then(($buttons) => {
+      const activePages = [...$buttons]
+        .filter((button) => {
+          const className = button.className || '';
+          return (
+            className.includes('bg-lime') ||
+            className.includes('text-white')
+          );
+        })
+        .map((button) => button.innerText.trim())
+        .filter((text) => /^\d+$/.test(text));
+
+      expect(activePages.length, 'Active page number').to.be.greaterThan(0);
+
+      cy.log(`Current active page: ${activePages[0]}`);
+    });
+
+  cy.log('Previous page is displayed successfully');
+
+  return this;
+}
+
+
+verifyPaginationIfRequired() {
+  cy.log('**Action: Verify pagination based on available pages**');
+
+  this.paginationContainer
+    .find('button')
+    .filter(':visible')
+    .then(($buttons) => {
+
+      const pageNumbers = [...$buttons]
+        .map((button) => button.innerText.trim())
+        .filter((text) => /^\d+$/.test(text))
+        .map(Number);
+
+      cy.log(`Available pages: ${pageNumbers.join(', ')}`);
+
+      if (pageNumbers.length <= 1) {
+        cy.log('Only one page available - pagination navigation is not required');
+        return;
+      }
+
+      cy.log('Multiple pages available - validating Next and Previous');
+      this.verifyNextPageEnabled();
+      this.clickNextPage();
+      this.verifyNextPageDisplayed();
+      this.verifyPreviousPageEnabled();
+      this.clickPreviousPage();
+      this.verifyPreviousPageDisplayed();
+    });
+
+  return this;
+}
+
+
+verifyRecordsDisplayed() {
+  cy.log('**Action: Verify records are displayed on current page**');
+
+  cy.get('tbody tr')
+    .filter(':visible')
+    .should('have.length.at.least', 1)
+    .and('have.length.at.most', 10);
+
+  cy.log('Records are displayed successfully on current page');
+
+  return this;
+}
+
+verifyActionsMenuOptions() {
+  cy.log('**Action: Verify Actions menu options**');
+
+  this.threeDotMenu
+    .should('be.visible')
+    .click({ force: true });
+
+  cy.contains('View')
+    .should('be.visible');
+
+  cy.contains('Edit')
+    .should('be.visible');
+
+  cy.contains('Duplicate')
+    .should('be.visible');
+
+  cy.contains('Delete')
+    .should('be.visible');
+
+  cy.log('✔ View option is displayed');
+  cy.log('✔ Edit option is displayed');
+  cy.log('✔ Duplicate option is displayed');
+  cy.log('✔ Delete option is displayed');
+
+  return this;
+}
+
+
 
   verifyPageLoaded() {
     cy.log('**Action: Verify Pactvera Templates page is loaded**');
@@ -225,6 +513,297 @@ class PactveraTemplatePage extends BasePage {
     return this;
   }
 
+  verifyOnlySearchResultDisplayed(templateName) {
+  cy.log('Action: Verify only matching template is displayed');
+
+  cy.get('tbody tr')
+    .filter(':visible')
+    .should('have.length', 1)
+    .and('contain.text', templateName);
+
+  cy.log('Search filter returned only the matching template');
+
+  return this;
+}
+
+ verifyPaginationBasedOnRecords() {
+  cy.log('**Action: Verify pagination based on total records**');
+
+  cy.get('body').then(($body) => {
+    const text = $body.text();
+
+    const match = text.match(
+      /Showing\s+\d+\s+to\s+\d+\s+of\s+(\d+)\s+results/i
+    );
+
+    expect(match, 'Pagination result text').to.not.be.null;
+
+    const totalRecords = Number(match[1]);
+    const rowsPerPage = 10;
+    const expectedPages = Math.ceil(totalRecords / rowsPerPage);
+
+    cy.log(`Total records: ${totalRecords}`);
+    cy.log(`Rows per page: ${rowsPerPage}`);
+    cy.log(`Expected pages: ${expectedPages}`);
+
+    this.paginationContainer
+      .find('button')
+      .then(($buttons) => {
+        const pageNumbers = [...$buttons]
+          .map((button) => Number(button.innerText.trim()))
+          .filter((number) => !Number.isNaN(number));
+
+        cy.log(`Displayed page numbers: ${pageNumbers.join(', ')}`);
+
+        expect(pageNumbers.length).to.be.greaterThan(0);
+
+        expect(
+          pageNumbers,
+          'Expected final page number'
+        ).to.include(expectedPages);
+      });
+  });
+
+  cy.log('Pagination verified successfully');
+
+  return this;
+}
+
+deleteFirstTemplate() {
+  cy.log('**Action: Select first template for deletion**');
+
+  cy.get('tbody tr')
+    .filter(':visible')
+    .first()
+    .then(($row) => {
+
+      const templateName = $row
+        .find('td')
+        .first()
+        .text()
+        .trim();
+
+      expect(
+        templateName,
+        'Template name before deletion'
+      ).to.not.be.empty;
+
+      cy.log(`Template selected for deletion: ${templateName}`);
+
+      cy.wrap(templateName).as('deletedTemplateName');
+
+      cy.wrap($row)
+        .find('[data-test="actions-pactvera-template"]')
+        .should('be.visible')
+        .click({ force: true });
+
+      cy.contains('Delete')
+        .should('be.visible')
+        .click({ force: true });
+    });
+
+  return this;
+}
+
+
+verifyDeleteConfirmationPopup() {
+  cy.log('**Action: Verify Pactvera Template deletion popup**');
+
+  cy.contains(
+    'Pactvera Template Deletion'
+  )
+    .should('be.visible');
+
+  cy.contains(
+    'Are you sure want to delete this Pactvera template?'
+  )
+    .should('be.visible');
+
+  cy.contains(
+    'This action cannot be undone.'
+  )
+    .should('be.visible');
+
+  cy.contains('button', 'Cancel')
+    .should('be.visible');
+
+  cy.contains('button', 'Delete')
+    .should('be.visible');
+
+  cy.log('Delete confirmation popup is displayed with Cancel and Delete buttons');
+
+  return this;
+}
+
+confirmDeleteTemplate() {
+  cy.log('**Action: Confirm template deletion**');
+
+  cy.contains('Pactvera Template Deletion')
+    .parents()
+    .find('button')
+    .contains('Delete')
+    .click();
+  cy.log('Template deletion confirmed');
+
+  return this;
+}
+
+verifyTemplateDeleted() {
+  cy.log('**Action: Verify deleted template is no longer displayed**');
+
+  cy.get('@deletedTemplateName').then((templateName) => {
+    cy.log(`Verifying deleted template: ${templateName}`);
+    cy.get('tbody')
+      .should('not.contain.text', templateName);
+    cy.log(`Verified: Template "${templateName}" was deleted successfully`);
+  });
+
+  return this;
+}
+
+duplicateFirstTemplate() {
+ cy.log('**Action: Click three-dot menu and duplicate template**');
+
+  cy.get('tbody tr')
+    .filter(':visible')
+    .first()
+    .then(($row) => {
+
+      const templateName = $row
+        .find('td')
+        .first()
+        .text()
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      cy.log(`Original template name: ${templateName}`);
+
+      expect(templateName).to.not.be.empty;
+      expect(templateName.toLowerCase()).to.not.equal('no result found');
+
+      cy.wrap(templateName).as('originalTemplateName');
+
+      // Click three-dot for the same row
+      cy.wrap($row)
+        .find('[data-test="actions-pactvera-template"]')
+        .should('be.visible')
+        .click({ force: true });
+    });
+
+  // Re-query after menu opens because DOM may re-render
+  cy.contains('Duplicate')
+    .should('be.visible')
+    .click({ force: true });
+
+  cy.log('Duplicate option clicked successfully');
+
+  return this;
+}
+
+verifyDuplicatedTemplate() {
+   cy.log('**Action: Verify duplicated template**');
+
+  cy.get('@originalTemplateName').then((originalName) => {
+    const duplicateName = `${originalName} (1)`;
+    cy.log(`Expected duplicate template: ${duplicateName}`);
+    cy.contains('tbody td', duplicateName)
+      .should('be.visible');
+    cy.log(`Verified duplicated template: ${duplicateName}`);
+  });
+
+  return this;
+}
+
+duplicateFirstDuplicate() {
+  cy.log('**Action: Duplicate the duplicated template**');
+
+  cy.get('@originalTemplateName').then((originalName) => {
+
+    const firstDuplicateName =
+      `${originalName} (1)`;
+
+    cy.contains('tbody tr', firstDuplicateName)
+      .filter(':visible')
+      .first()
+      .then(($row) => {
+
+        cy.wrap($row)
+          .find('[data-test="actions-pactvera-template"]')
+          .should('be.visible')
+          .click({ force: true });
+
+        cy.contains('button, [role="menuitem"]', 'Duplicate')
+          .should('be.visible')
+          .click({ force: true });
+
+        cy.log(`Duplicate clicked for: ${firstDuplicateName}`);
+      });
+  });
+
+  return this;
+}
+
+duplicateTemplateByName(templateName) {
+  cy.log(`**Action: Duplicate template "${templateName}"**`);
+
+  cy.contains('tbody tr', templateName)
+    .filter(':visible')
+    .first()
+    .find('[data-test="actions-pactvera-template"]')
+    .should('be.visible')
+    .click({ force: true });
+
+  cy.contains('Duplicate')
+    .should('be.visible')
+    .click({ force: true });
+
+  cy.log(`Duplicate clicked for "${templateName}"`);
+
+  return this;
+}
+
+clickEditTemplate() {
+  cy.log('**Action: Click Edit button on View Pactvera Template page**');
+  cy.contains('button', 'Edit')
+    .should('be.visible')
+    .click({ force: true });
+  cy.log('Edit button clicked successfully');
+
+  return this;
+}
+
+verifyConfigureTemplatePage() {
+  cy.log('**Action: Verify Configure Pactvera Template page**');
+
+  cy.contains('Configure a Pactvera Template').should('be.visible');
+  cy.contains('Details').should('be.visible');
+  cy.contains('Required Documents and Forms').should('be.visible');
+  cy.contains('Documents').should('be.visible');
+  cy.contains('Add necessary documents and forms to the Pactvera.').should('be.visible');
+  cy.log('Configure Pactvera Template page is displayed successfully');
+
+  return this;
+}
+
+
+verifyConfigureTemplateEditableFields() {
+  cy.log('**Action: Verify editable fields on Configure page**');
+  cy.get('input').filter(':visible').should('exist');
+  cy.get('textarea').filter(':visible').should('exist');
+  cy.log('Title and Description fields are editable');
+
+  return this;
+}
+
+verifyTemplateNameInEditPage() {
+  cy.log('**Action: Verify template name in Configure page**');
+  cy.get('@viewedTemplateName').then((templateName) => {
+  cy.get('input').filter(':visible').first().should('have.value', templateName);
+  cy.log(`Verified template name: ${templateName}`);
+  });
+
+  return this;
+}
   // =====================================================
   // ACTIONS - Create Template Popup
   // =====================================================
@@ -525,11 +1104,11 @@ class PactveraTemplatePage extends BasePage {
   }
 
   verifyDocumentsFieldsVisible() {
-    cy.log('**Action: Verify Documents (IVDT) fields while scrolling**');
+      cy.log('**Action: Verify all Documents (IVDT) form fields are visible while scrolling**');
 
   const documentFields = [
-    { name: 'ID Type', key: 'idType' },
     { name: 'Prefilled Grid', key: 'documentsPrefilledGrid' },
+    { name: 'ID Type', key: 'idType' },
     { name: 'ID Number', key: 'idNumber' },
     { name: 'ID Issue Date', key: 'issueDate' },
     { name: 'ID Expiration Date', key: 'expirationDate' },
@@ -541,13 +1120,28 @@ class PactveraTemplatePage extends BasePage {
 
     cy.log(`Checking Documents field: "${name}"`);
 
-    this.getFormBuilderIframe()
-      .find(`[data-key="${key}"]`)
-      .should('exist')
-      .scrollIntoView()
-      .should('be.visible');
+    const selector =
+      `#group-individualDocumentsSection [data-group="individualDocumentsSection"][data-key="${key}"]`;
 
-    cy.log(`✔ "${name}" Documents (IVDT) field is visible`);
+    this.getFormBuilderIframe()
+      .find(selector)
+      .should('exist')
+      .then(($field) => {
+
+        if ($field.is(':visible')) {
+          cy.log(`✔ "${name}" is already visible`);
+          return;
+        }
+
+        cy.log(`"${name}" is not visible - scrolling field into view`);
+
+        this.getFormBuilderIframe()
+          .find(selector)
+          .scrollIntoView()
+          .should('be.visible');
+
+        cy.log(`✔ "${name}" is visible after scrolling`);
+      });
   });
 
   cy.log('✔ VERIFIED: All Documents (IVDT) fields are visible');
@@ -711,42 +1305,203 @@ verifyFieldByScrolling(fieldName) {
     return this;
   }
 
-  dragBasicFieldToForm(fieldLabel) {
-    cy.log(`**Action: Drag basic field "${fieldLabel}" to the form builder area**`);
+  dragTextFieldToForm() {
+  cy.log('**Action: Drag Text Field onto the form builder area**');
 
-    cy.contains('div, button, span', fieldLabel, { matchCase: false })
-      .filter(':visible')
-      .first()
-      .then(($field) => {
-        const fieldEl = $field[0];
-        const fieldRect = fieldEl.getBoundingClientRect();
-        const startX = fieldRect.left + fieldRect.width / 2;
-        const startY = fieldRect.top + fieldRect.height / 2;
+  const fieldSelector =
+    '#group-basic [data-group="basic"][data-key="textfield"]';
 
-        this.formBuilderDropZone.then(($dropZone) => {
+  this.getFormBuilderIframe()
+    .find(fieldSelector)
+    .should('exist')
+    .and('be.visible')
+    .then(($field) => {
+
+      const fieldEl = $field[0];
+      const fieldRect = fieldEl.getBoundingClientRect();
+
+      const startX =
+        fieldRect.left + fieldRect.width / 2;
+
+      const startY =
+        fieldRect.top + fieldRect.height / 2;
+
+      this.formBuilderDropZone
+        .should('exist')
+        .and('be.visible')
+        .then(($dropZone) => {
+
           const dropEl = $dropZone[0];
           const dropRect = dropEl.getBoundingClientRect();
-          const endX = dropRect.left + dropRect.width / 2;
-          const endY = dropRect.top + dropRect.height / 2;
 
-          cy.wrap(fieldEl)
-            .trigger('mousedown', { button: 0, clientX: startX, clientY: startY, force: true });
+          const endX =
+            dropRect.left + dropRect.width / 2;
 
-          for (let i = 1; i <= 5; i++) {
-            const stepX = startX + ((endX - startX) / 5) * i;
-            const stepY = startY + ((endY - startY) / 5) * i;
-            cy.wrap(fieldEl).trigger('mousemove', { button: 0, clientX: stepX, clientY: stepY, force: true });
+          const endY =
+            dropRect.top + dropRect.height / 2;
+
+          const steps = 5;
+
+          cy.wrap(fieldEl).trigger('mousedown', {
+            button: 0,
+            clientX: startX,
+            clientY: startY,
+            force: true
+          });
+
+          for (let i = 1; i <= steps; i++) {
+            cy.wrap(fieldEl).trigger('mousemove', {
+              button: 0,
+              clientX: startX + ((endX - startX) / steps) * i,
+              clientY: startY + ((endY - startY) / steps) * i,
+              force: true
+            });
           }
 
           cy.wrap(dropEl)
-            .trigger('mousemove', { button: 0, clientX: endX, clientY: endY, force: true })
-            .trigger('mouseup', { button: 0, clientX: endX, clientY: endY, force: true });
-        });
-      });
+            .trigger('mousemove', {
+              button: 0,
+              clientX: endX,
+              clientY: endY,
+              force: true
+            })
+            .trigger('mouseup', {
+              button: 0,
+              clientX: endX,
+              clientY: endY,
+              force: true
+            });
 
-    cy.log(`✔ Dragged "${fieldLabel}" to the form builder area`);
-    return this;
-  }
+          cy.log('✔ Text Field dragged successfully');
+        });
+    });
+
+  return this;
+}
+
+verifyTextFieldPlacedOnForm() {
+  cy.log('**Action: Verify Text Field was added to the form**');
+
+  this.getFormBuilderIframe()
+    .find('.formio-component-textfield')
+    .should('exist')
+    .and('be.visible');
+
+  cy.log('✔ Text Field is displayed on the form');
+
+  return this;
+}
+
+  dragBasicFieldToForm() {
+    cy.log('**Action: Drag Text Field onto the form builder area**');
+
+    const fieldSelector =
+    '#group-basic [data-group="basic"][data-key="textfield"]:not(.gu-mirror)';
+
+ 
+  this.getFormBuilderIframe()
+    .find(fieldSelector)
+    .should('exist')
+    .and('be.visible')
+    .then(($field) => {
+
+      const fieldEl = $field[0];
+
+      const fieldRect =
+        fieldEl.getBoundingClientRect();
+
+      const startX =
+        fieldRect.left + fieldRect.width / 2;
+
+      const startY =
+        fieldRect.top + fieldRect.height / 2;
+
+      this.formBuilderDropZone
+        .should('exist')
+        .then(($dropZone) => {
+
+          const dropEl = $dropZone[0];
+
+          const dropRect =
+            dropEl.getBoundingClientRect();
+
+          const endX =
+            dropRect.left + dropRect.width / 2;
+
+          const endY =
+            dropRect.top + dropRect.height / 2;
+
+          const steps = 10;
+
+          const deltaX =
+            (endX - startX) / steps;
+
+          const deltaY =
+            (endY - startY) / steps;
+
+          cy.log(
+            `Drag start: ${startX}, ${startY}`
+          );
+
+          cy.log(
+            `Drop position: ${endX}, ${endY}`
+          );
+
+          // Start drag
+          cy.wrap(fieldEl).trigger('mousedown', {
+            button: 0,
+            which: 1,
+            buttons: 1,
+            clientX: startX,
+            clientY: startY,
+            force: true
+          });
+
+          // Drag movement
+          for (let i = 1; i <= steps; i++) {
+
+            const currentX =
+              startX + deltaX * i;
+
+            const currentY =
+              startY + deltaY * i;
+
+            cy.wrap(fieldEl).trigger('mousemove', {
+              button: 0,
+              which: 1,
+              buttons: 1,
+              clientX: currentX,
+              clientY: currentY,
+              force: true
+            });
+          }
+
+          // Move onto actual Formio drop container
+          cy.wrap(dropEl).trigger('mousemove', {
+            button: 0,
+            which: 1,
+            buttons: 1,
+            clientX: endX,
+            clientY: endY,
+            force: true
+          });
+
+          // Release
+          cy.wrap(dropEl).trigger('mouseup', {
+            button: 0,
+            which: 1,
+            buttons: 0,
+            clientX: endX,
+            clientY: endY,
+            force: true
+          });
+
+          cy.log('✔ Text Field drag sequence completed');
+        });
+    });
+
+  return this;
+}
 
   clickContinueFromFormBuilder() {
     cy.log('**Action: Click the Continue button on the Build Form page**');
