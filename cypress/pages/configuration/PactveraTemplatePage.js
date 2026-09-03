@@ -458,21 +458,12 @@ verifyRecordsDisplayed() {
 verifyActionsMenuOptions() {
   cy.log('**Action: Verify Actions menu options**');
 
-  this.threeDotMenu
-    .should('be.visible')
-    .click({ force: true });
+  this.threeDotMenu.should('be.visible').click({ force: true });
 
-  cy.contains('View')
-    .should('be.visible');
-
-  cy.contains('Edit')
-    .should('be.visible');
-
-  cy.contains('Duplicate')
-    .should('be.visible');
-
-  cy.contains('Delete')
-    .should('be.visible');
+  cy.contains('View').should('be.visible');
+  cy.contains('Edit').should('be.visible');
+  cy.contains('Duplicate').should('be.visible');
+  cy.contains('Delete').should('be.visible');
 
   cy.log('✔ View option is displayed');
   cy.log('✔ Edit option is displayed');

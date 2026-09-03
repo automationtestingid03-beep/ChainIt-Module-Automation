@@ -140,7 +140,7 @@ cy.get('tbody tr')
 });
 
   // =========================================================
-  // TC01 - Open Pactvera Templates
+  // TC02 - Open Pactvera Templates
   // =========================================================
 
   it('TC02: should open Pactvera Templates page', () => {
@@ -159,7 +159,7 @@ cy.get('tbody tr')
 
 
   // =========================================================
-  // TC02 - No Document / No Form
+  // TC03 - No Document / No Form
   // =========================================================
 
   it('TC03: should create Pactvera template without document and form', () => {
@@ -209,7 +209,7 @@ cy.get('tbody tr')
 
 
   // =========================================================
-  // TC03 - One Document
+  // TC04 - One Document
   // =========================================================
 
   it('TC04: should create Pactvera template with one document', () => {
@@ -244,9 +244,7 @@ cy.get('tbody tr')
     PactveraTemplatePage.verifyAddDocumentPopupDisplayed();
 
     cy.log('Step 11: Selecting Upload New');
-
     PactveraTemplatePage.clickUploadNew();
-
 
     cy.log('Step 12: Uploading PDF');
     PactveraTemplatePage.uploadPdfFile(DUMMY_PDF);
@@ -305,7 +303,7 @@ cy.get('tbody tr')
 
 
   // =========================================================
-  // TC04 - One Form
+  // TC05 - One Form
   // =========================================================
 
   it('TC05: should create Pactvera template with one form', () => {
@@ -379,7 +377,6 @@ cy.get('tbody tr')
     cy.log('Step 13: Clicking Continue on the Build Form page');
     PactveraTemplatePage.clickContinueFromFormBuilder();
 
-    cy.pause();
     cy.log('Step 14: Saving form configuration');
     PactveraTemplatePage.clickSaveTemplate();
 
