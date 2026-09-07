@@ -62,7 +62,7 @@ describe('Configuration - Pactvera Templates', () => {
 
 
 
-  it.only('TC01: should validate Pactvera Template listing, search, pagination and actions menu', () => {
+  it('TC01: should validate Pactvera Template listing, search, pagination and actions menu', () => {
 
   cy.log('================================================');
   cy.log('TC01: Pactvera Template Listing Validation');
@@ -276,10 +276,8 @@ cy.get('tbody tr')
     cy.log('Step 21: Dragging Signature field onto document');
     PactveraTemplatePage.dragFieldToCanvas(PactveraTemplatePage.signatureField);
     
-
     cy.log('Step 22: Verifying Signature field');
     PactveraTemplatePage.verifySignatureFieldPlacedOnCanvas();
-
 
     cy.log('Step 23: Saving document configuration');
     PactveraTemplatePage.clickSaveTemplate();
