@@ -1,6 +1,7 @@
 import SwitchAccountModal from '../../pages/SwitchAccountModal';
 import ConfigurationPage from '../../pages/ConfigurationPage';
 import PactveraTemplatePage from '../../pages/configuration/PactveraTemplatePage';
+import FormTemplatePage from '../../pages/configuration/FormTemplatePage';
 
 const ADMIN_URL = 'https://develop-admin.chainit.online';
 const DUMMY_PDF = 'cypress/fixtures/gaurav.pdf';
@@ -25,7 +26,7 @@ describe('Configuration - Pactvera Templates', () => {
 
 
     // Step 2: Manual QR scan
-    cy.log('Step 2: Please scan the QR code using the mobile app'  );
+    cy.log('Step 2: Please scan the QR code using the mobile app');
 
     if (Cypress.config('isInteractive')) {
       cy.pause();
@@ -64,80 +65,80 @@ describe('Configuration - Pactvera Templates', () => {
 
   it('TC01: should validate Pactvera Template listing, search, pagination and actions menu', () => {
 
-  cy.log('================================================');
-  cy.log('TC01: Pactvera Template Listing Validation');
-  cy.log('================================================');
+    cy.log('================================================');
+    cy.log('TC01: Pactvera Template Listing Validation');
+    cy.log('================================================');
 
-  cy.log('Step 1: Opening Pactvera Templates');
-  ConfigurationPage.clickPactveraButton();
-  cy.wait('@getTemplates', { timeout: 30000 })
-    .its('response.statusCode')
-    .should('eq', 200);
- PactveraTemplatePage.verifyPageLoaded();
+    cy.log('Step 1: Opening Pactvera Templates');
+    ConfigurationPage.clickPactveraButton();
+    cy.wait('@getTemplates', { timeout: 30000 })
+      .its('response.statusCode')
+      .should('eq', 200);
+    PactveraTemplatePage.verifyPageLoaded();
 
 
-  cy.log('Step 2: Validating Pactvera Template table columns');
-  PactveraTemplatePage.verifyPactveraTemplateTableColumns();
+    cy.log('Step 2: Validating Pactvera Template table columns');
+    PactveraTemplatePage.verifyPactveraTemplateTableColumns();
 
-  cy.log('Step 3: Validating records displayed on first page');
-  PactveraTemplatePage.verifyRecordsDisplayed();
+    cy.log('Step 3: Validating records displayed on first page');
+    PactveraTemplatePage.verifyRecordsDisplayed();
 
-  cy.log('Step 4: Validating pagination');
-  PactveraTemplatePage.verifyPaginationIfRequired();
+    cy.log('Step 4: Validating pagination');
+    PactveraTemplatePage.verifyPaginationIfRequired();
 
-  cy.log('Step 5: Opening Actions menu');
-  PactveraTemplatePage.verifyActionsMenuOptions();
- 
-  cy.log('Step 6: Validating Search filter');
+    cy.log('Step 5: Opening Actions menu');
+    PactveraTemplatePage.verifyActionsMenuOptions();
 
-cy.get('tbody tr')
-  .filter(':visible')
-  .first()
-  .find('td')
-  .first()
-  .invoke('text')
-  .then((templateName) => {
+    cy.log('Step 6: Validating Search filter');
 
-    const searchText = templateName.trim();
-    expect(searchText, 'First record template name').to.not.be.empty;
+    cy.get('tbody tr')
+      .filter(':visible')
+      .first()
+      .find('td')
+      .first()
+      .invoke('text')
+      .then((templateName) => {
 
-    cy.log(`Step 7:First record template name: ${searchText}`);
-    PactveraTemplatePage.searchTemplate(searchText);
-    PactveraTemplatePage.verifyTemplateInList(searchText);
-    PactveraTemplatePage.verifyOnlySearchResultDisplayed(searchText);
+        const searchText = templateName.trim();
+        expect(searchText, 'First record template name').to.not.be.empty;
 
-    cy.log('Step 8: Validating Delete action');
-    PactveraTemplatePage.deleteFirstTemplate();
-    PactveraTemplatePage.verifyDeleteConfirmationPopup();
-    PactveraTemplatePage.confirmDeleteTemplate();
-    PactveraTemplatePage.verifyTemplateDeleted();
-    PactveraTemplatePage.clearTemplateSearch();
-    cy.log(`Search filter validated successfully for: ${searchText}`);
+        cy.log(`Step 7:First record template name: ${searchText}`);
+        PactveraTemplatePage.searchTemplate(searchText);
+        PactveraTemplatePage.verifyTemplateInList(searchText);
+        PactveraTemplatePage.verifyOnlySearchResultDisplayed(searchText);
 
-    cy.log('Step 13: Validating Duplicate action');
-    cy.wait(2000); // Wait for the list to refresh after deletion
-    PactveraTemplatePage.duplicateFirstTemplate();
-    cy.wait(3000); // Wait for duplication to complete
-    PactveraTemplatePage.verifyDuplicatedTemplate();
+        cy.log('Step 8: Validating Delete action');
+        PactveraTemplatePage.deleteFirstTemplate();
+        PactveraTemplatePage.verifyDeleteConfirmationPopup();
+        PactveraTemplatePage.confirmDeleteTemplate();
+        PactveraTemplatePage.verifyTemplateDeleted();
+        PactveraTemplatePage.clearTemplateSearch();
+        cy.log(`Search filter validated successfully for: ${searchText}`);
 
-    cy.log('Step 14: Clicking Edit button');
-    PactveraTemplatePage.clickEditTemplate();
+        cy.log('Step 13: Validating Duplicate action');
+        cy.wait(2000); // Wait for the list to refresh after deletion
+        PactveraTemplatePage.duplicateFirstTemplate();
+        cy.wait(3000); // Wait for duplication to complete
+        PactveraTemplatePage.verifyDuplicatedTemplate();
 
-    cy.log('Step 15: Verifying Configure Pactvera Template page');
-    PactveraTemplatePage.verifyConfigureTemplatePage();
+        cy.log('Step 14: Clicking Edit button');
+        PactveraTemplatePage.clickEditTemplate();
 
-    cy.log('Step 16: Verifying editable fields');
-    PactveraTemplatePage.verifyConfigureTemplateEditableFields();
+        cy.log('Step 15: Verifying Configure Pactvera Template page');
+        PactveraTemplatePage.verifyConfigureTemplatePage();
 
-    cy.log('Step 17: Verifying template name');
-    PactveraTemplatePage.verifyTemplateNameInEditPage();
-  
+        cy.log('Step 16: Verifying editable fields');
+        PactveraTemplatePage.verifyConfigureTemplateEditableFields();
+
+        cy.log('Step 17: Verifying template name');
+        PactveraTemplatePage.verifyTemplateNameInEditPage();
+
+      });
+
+    cy.log('================================================');
+    cy.log('TC01 completed successfully');
+    cy.log('================================================');
   });
-
-  cy.log('================================================');
-  cy.log('TC01 completed successfully');
-  cy.log('================================================');
-});
 
   // =========================================================
   // TC02 - Open Pactvera Templates
@@ -164,7 +165,7 @@ cy.get('tbody tr')
 
   it('TC03: should create Pactvera template without document and form', () => {
 
-    const title = generateUniqueTitle(  'Automation Pactvera Template');
+    const title = generateUniqueTitle('Automation Pactvera Template');
     const description = 'This is a generated Pactvera template for Cypress automation';
 
 
@@ -275,9 +276,10 @@ cy.get('tbody tr')
 
     cy.log('Step 21: Dragging Signature field onto document');
     PactveraTemplatePage.dragFieldToCanvas(PactveraTemplatePage.signatureField);
-    
+
     cy.log('Step 22: Verifying Signature field');
     PactveraTemplatePage.verifySignatureFieldPlacedOnCanvas();
+
 
     cy.log('Step 23: Saving document configuration');
     PactveraTemplatePage.clickSaveTemplate();
@@ -369,8 +371,8 @@ cy.get('tbody tr')
     PactveraTemplatePage.formBuilderTitleInput.clear().type(`Form_${Date.now()}`);
 
     PactveraTemplatePage.clickFormBuilderAccordion('Basic');
-    PactveraTemplatePage.dragBasicFieldToForm();
-    
+    FormTemplatePage.dragBasicFieldToForm();
+
     cy.wait(2000);
     cy.log('Step 13: Clicking Continue on the Build Form page');
     PactveraTemplatePage.clickContinueFromFormBuilder();
@@ -409,7 +411,7 @@ cy.get('tbody tr')
     cy.log('================================================');
 
 
- cy.log('Step 7: Opening Pactvera Templates');
+    cy.log('Step 7: Opening Pactvera Templates');
     ConfigurationPage.clickPactveraButton();
 
     cy.wait('@getTemplates', { timeout: 30000 })
@@ -460,7 +462,7 @@ cy.get('tbody tr')
 
     cy.log('Step 21: Dragging Signature field onto document');
     PactveraTemplatePage.dragFieldToCanvas(PactveraTemplatePage.signatureField);
-    
+
     cy.log('Step 22: Verifying Signature field');
     PactveraTemplatePage.verifySignatureFieldPlacedOnCanvas();
 
@@ -473,7 +475,7 @@ cy.get('tbody tr')
     cy.log('Step 25: Creating a new form from the form builder');
     PactveraTemplatePage.clickCreateNewForm();
     PactveraTemplatePage.dragBasicFieldToForm();
-    
+
     cy.wait(2000);
     cy.log('Step 26: Validating form title is required when Continue is clicked without a title');
     PactveraTemplatePage.clickContinueFromFormBuilder();

@@ -1,5 +1,6 @@
 import './commands';
 import 'cypress-iframe';
+import 'cypress-real-events/support';
 
 // Prevent Cypress from failing tests on uncaught application exceptions
 // such as API or application-side errors.
