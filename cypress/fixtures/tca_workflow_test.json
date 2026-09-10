@@ -1,0 +1,4213 @@
+{
+  "schemaVersion": 1,
+  "exportedAt": "2026-08-24T12:19:39.242Z",
+  "workflow": {
+    "name": "TCA Workflow Test",
+    "description": "Testing the Basic Buyer and Seller Scneario"
+  },
+  "nodes": [
+    {
+      "id": "8db90c07-eaff-4fe3-8e88-48e1a3960514",
+      "name": "Manual Trigger",
+      "description": "",
+      "type": "manual_trigger",
+      "parentId": null,
+      "config": {
+        "skip": false,
+        "formId": "",
+        "eventName": "transaction.pactvera.parties.approved.and.tca.escrow.transfer.done",
+        "continueOnError": false
+      },
+      "context": {
+        "base": {
+          "fields": [
+            {
+              "key": "status",
+              "enum": [
+                "waiting",
+                "in_progress",
+                "success",
+                "failed"
+              ],
+              "label": "status",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "eventName",
+              "enum": [
+                "employee.onboarding",
+                "transaction.pactvera.parties.approved.and.tca.escrow.transfer.done"
+              ],
+              "label": "eventName",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "input",
+              "enum": [],
+              "label": "input",
+              "fields": [
+                {
+                  "key": "pactveraId",
+                  "enum": [],
+                  "label": "pactveraId",
+                  "fields": [],
+                  "fieldType": "string",
+                  "systemGenerated": true,
+                  "allowedOperators": [
+                    "==",
+                    "!=",
+                    "===",
+                    "contains"
+                  ]
+                },
+                {
+                  "key": "Buyer",
+                  "label": "Buyer",
+                  "fields": [
+                    {
+                      "key": "participantId",
+                      "label": "participantId",
+                      "fieldType": "string",
+                      "systemGenerated": true
+                    },
+                    {
+                      "key": "partyType",
+                      "label": "partyType",
+                      "fieldType": "enum",
+                      "systemGenerated": true
+                    },
+                    {
+                      "key": "email",
+                      "label": "email",
+                      "fieldType": "email",
+                      "systemGenerated": true
+                    },
+                    {
+                      "key": "name",
+                      "label": "name",
+                      "fieldType": "string",
+                      "systemGenerated": true
+                    },
+                    {
+                      "key": "phoneNumber",
+                      "label": "phoneNumber",
+                      "fieldType": "phone",
+                      "systemGenerated": true
+                    },
+                    {
+                      "key": "role",
+                      "label": "role",
+                      "fieldType": "string",
+                      "systemGenerated": true
+                    }
+                  ],
+                  "locked": true,
+                  "fieldType": "role_party",
+                  "systemGenerated": true
+                },
+                {
+                  "key": "Seller",
+                  "label": "Seller",
+                  "fields": [
+                    {
+                      "key": "participantId",
+                      "label": "participantId",
+                      "fieldType": "string",
+                      "systemGenerated": true
+                    },
+                    {
+                      "key": "partyType",
+                      "label": "partyType",
+                      "fieldType": "enum",
+                      "systemGenerated": true
+                    },
+                    {
+                      "key": "email",
+                      "label": "email",
+                      "fieldType": "email",
+                      "systemGenerated": true
+                    },
+                    {
+                      "key": "name",
+                      "label": "name",
+                      "fieldType": "string",
+                      "systemGenerated": true
+                    },
+                    {
+                      "key": "phoneNumber",
+                      "label": "phoneNumber",
+                      "fieldType": "phone",
+                      "systemGenerated": true
+                    },
+                    {
+                      "key": "role",
+                      "label": "role",
+                      "fieldType": "string",
+                      "systemGenerated": true
+                    }
+                  ],
+                  "locked": true,
+                  "fieldType": "role_party",
+                  "systemGenerated": true
+                },
+                {
+                  "key": "document_1",
+                  "enum": [],
+                  "label": "Document 1",
+                  "fields": [],
+                  "fieldType": "pactvera_document",
+                  "systemGenerated": false,
+                  "allowedOperators": []
+                },
+                {
+                  "key": "document_2",
+                  "enum": [],
+                  "label": "Document 2",
+                  "fields": [],
+                  "fieldType": "pactvera_document",
+                  "systemGenerated": false,
+                  "allowedOperators": []
+                },
+                {
+                  "key": "qc_form",
+                  "enum": [],
+                  "label": "QC Form",
+                  "fields": [],
+                  "fieldType": "pactvera_form",
+                  "systemGenerated": false,
+                  "allowedOperators": []
+                },
+                {
+                  "key": "value_transfer",
+                  "enum": [],
+                  "label": "Value Transfer",
+                  "fields": [],
+                  "fieldType": "asset_configuration",
+                  "systemGenerated": false,
+                  "allowedOperators": []
+                }
+              ],
+              "fieldType": "object",
+              "systemGenerated": true,
+              "allowedOperators": []
+            }
+          ],
+          "includeFieldGroups": []
+        },
+        "conditions": [
+          {
+            "add": {
+              "includeFieldGroups": [
+                "INVITE_EVENT_SHARED_CONTEXT"
+              ]
+            },
+            "when": {
+              "field": "eventName",
+              "value": "employee.onboarding"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "input",
+                  "enum": [],
+                  "label": "input",
+                  "fields": [
+                    {
+                      "key": "pactveraId",
+                      "enum": [],
+                      "label": "pactveraId",
+                      "fields": [],
+                      "fieldType": "string",
+                      "systemGenerated": true,
+                      "allowedOperators": [
+                        "==",
+                        "!=",
+                        "===",
+                        "contains"
+                      ]
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ],
+              "includeFieldGroups": []
+            },
+            "when": {
+              "field": "eventName",
+              "value": "transaction.pactvera.parties.approved.and.tca.escrow.transfer.done"
+            },
+            "remove": {}
+          }
+        ],
+        "fieldGroups": {
+          "END_USER_INVITE": [
+            {
+              "key": "jobTitle",
+              "enum": [],
+              "label": "jobTitle",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "firstName",
+              "enum": [],
+              "label": "firstName",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "lastName",
+              "enum": [],
+              "label": "lastName",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "email",
+              "enum": [],
+              "label": "email",
+              "fields": [],
+              "fieldType": "email",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "startDate",
+              "enum": [],
+              "label": "startDate",
+              "fields": [],
+              "fieldType": "date",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                ">",
+                "<",
+                ">=",
+                "<="
+              ]
+            },
+            {
+              "key": "groupIds",
+              "enum": [],
+              "label": "groupIds",
+              "fields": [],
+              "fieldType": "string[]",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "in",
+                "notIn"
+              ]
+            }
+          ],
+          "TRANSACTION_PACTVERA": [
+            {
+              "key": "pactveraId",
+              "enum": [],
+              "label": "pactveraId",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            }
+          ],
+          "INVITE_COMMON_CONTEXT": [
+            {
+              "key": "id",
+              "enum": [],
+              "label": "id",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            }
+          ],
+          "INVITE_EVENT_SHARED_CONTEXT": [
+            {
+              "key": "input",
+              "enum": [],
+              "label": "input",
+              "fields": [
+                {
+                  "key": "invite",
+                  "enum": [],
+                  "label": "invite",
+                  "fields": [],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": [],
+                  "includeFieldGroups": [
+                    "INVITE_COMMON_CONTEXT",
+                    "END_USER_INVITE"
+                  ]
+                }
+              ],
+              "fieldType": "object",
+              "systemGenerated": true,
+              "allowedOperators": []
+            }
+          ]
+        }
+      },
+      "retryAttempts": 0,
+      "retryDelayMs": 0,
+      "position": {
+        "x": 100,
+        "y": 590
+      },
+      "credentialId": null
+    },
+    {
+      "id": "0613c1eb-e726-45f4-a83e-57f5fdd1fa3b",
+      "name": "Send Document 1",
+      "description": "Send a specific Pactvera document to recipients by selecting it from the document picker",
+      "type": "send_pactvera_document",
+      "parentId": null,
+      "config": {
+        "skip": false,
+        "documentId": "{{$.input.document_1}}",
+        "pactveraId": "{{$.input.pactveraId}}",
+        "continueOnError": false
+      },
+      "context": {
+        "base": {
+          "fields": [
+            {
+              "key": "status",
+              "enum": [
+                "waiting",
+                "in_progress",
+                "success",
+                "failed"
+              ],
+              "label": "status",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "documentId",
+              "enum": [],
+              "label": "documentId",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "documentTitle",
+              "enum": [],
+              "label": "documentTitle",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            }
+          ],
+          "includeFieldGroups": []
+        },
+        "conditions": [],
+        "fieldGroups": {}
+      },
+      "retryAttempts": 0,
+      "retryDelayMs": 0,
+      "position": {
+        "x": 400,
+        "y": 590
+      },
+      "credentialId": null
+    },
+    {
+      "id": "b9338565-af83-44c2-8f53-f603d58e2dec",
+      "name": "Wait for Condition",
+      "description": "Pauses the workflow execution until a specified external condition or event is met, or until the configured timeout expires.",
+      "type": "wait_for_condition",
+      "parentId": null,
+      "config": {
+        "skip": false,
+        "operator": "&&",
+        "waitUntil": {
+          "time": 2,
+          "unit": "weeks"
+        },
+        "conditions": [
+          {
+            "nodeId": "0613c1eb-e726-45f4-a83e-57f5fdd1fa3b",
+            "metadata": {},
+            "eventType": "pactvera.document.signed"
+          }
+        ],
+        "continueOnError": false
+      },
+      "context": {
+        "base": {
+          "fields": [
+            {
+              "key": "status",
+              "enum": [
+                "waiting",
+                "in_progress",
+                "success",
+                "failed"
+              ],
+              "label": "status",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "resumeAt",
+              "enum": [],
+              "label": "resumeAt",
+              "fields": [],
+              "fieldType": "number",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                ">",
+                "<",
+                ">=",
+                "<="
+              ]
+            }
+          ],
+          "includeFieldGroups": []
+        },
+        "conditions": [
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "org_ubo_completed",
+                      "enum": [],
+                      "label": "org_ubo_completed",
+                      "fields": [
+                        {
+                          "key": "orgId",
+                          "enum": [],
+                          "label": "orgId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "org.ubo.completed"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "kyc_verification_status",
+                      "enum": [],
+                      "label": "kyc_verification_status",
+                      "fields": [
+                        {
+                          "key": "status",
+                          "enum": [
+                            "PENDING",
+                            "REJECTED",
+                            "COMPLETED"
+                          ],
+                          "label": "status",
+                          "fields": [],
+                          "fieldType": "enum",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "in",
+                            "notIn"
+                          ]
+                        },
+                        {
+                          "key": "userId",
+                          "enum": [],
+                          "label": "userId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        },
+                        {
+                          "key": "orgId",
+                          "enum": [],
+                          "label": "orgId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "kyc.verification.status"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "kyb_verification_status",
+                      "enum": [],
+                      "label": "kyb_verification_status",
+                      "fields": [
+                        {
+                          "key": "status",
+                          "enum": [
+                            "INVITED",
+                            "ACTIVE",
+                            "REJECTED"
+                          ],
+                          "label": "status",
+                          "fields": [],
+                          "fieldType": "enum",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "in",
+                            "notIn"
+                          ]
+                        },
+                        {
+                          "key": "userId",
+                          "enum": [],
+                          "label": "userId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        },
+                        {
+                          "key": "orgId",
+                          "enum": [],
+                          "label": "orgId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "kyb.verification.status"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "pactvera_status_changed",
+                      "enum": [],
+                      "label": "pactvera_status_changed",
+                      "fields": [
+                        {
+                          "key": "pactveraId",
+                          "enum": [],
+                          "label": "pactveraId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "pactvera.status.changed"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "chainitpay_merchant_created",
+                      "enum": [],
+                      "label": "chainitpay_merchant_created",
+                      "fields": [
+                        {
+                          "key": "merchantId",
+                          "enum": [],
+                          "label": "merchantId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "chainitpay.merchant.created"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "chainitpay_underwriting_status_change",
+                      "enum": [],
+                      "label": "chainitpay_underwriting_status_change",
+                      "fields": [
+                        {
+                          "key": "status",
+                          "enum": [],
+                          "label": "status",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "chainitpay.underwriting.status.changed"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "employee_attestation_completed",
+                      "enum": [],
+                      "label": "employee_attestation_completed",
+                      "fields": [
+                        {
+                          "key": "userId",
+                          "enum": [],
+                          "label": "userId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "employee.attestation.completed"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "pactvera_document_signed",
+                      "enum": [],
+                      "label": "pactvera_document_signed",
+                      "fields": [
+                        {
+                          "key": "documentRequestId",
+                          "enum": [],
+                          "label": "documentRequestId",
+                          "fields": [],
+                          "fieldType": "pactvera_document",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!="
+                          ]
+                        },
+                        {
+                          "key": "status",
+                          "enum": [
+                            "DRAFT",
+                            "PENDING",
+                            "COMPLETED",
+                            "REJECTED",
+                            "CANCELLED",
+                            "PARTIALLY_REJECTED",
+                            "CONFIGURED",
+                            "UNASSIGNED"
+                          ],
+                          "label": "status",
+                          "fields": [],
+                          "fieldType": "enum",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "in",
+                            "notIn"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "pactvera.document.signed"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "pactvera_form_submitted",
+                      "enum": [],
+                      "label": "pactvera_form_submitted",
+                      "fields": [
+                        {
+                          "key": "formRequestId",
+                          "enum": [],
+                          "label": "formRequestId",
+                          "fields": [],
+                          "fieldType": "pactvera_form",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!="
+                          ]
+                        },
+                        {
+                          "key": "status",
+                          "enum": [
+                            "DRAFT",
+                            "PENDING",
+                            "SUBMITTED",
+                            "REJECTED",
+                            "CANCELLED",
+                            "CONFIGURED",
+                            "UNASSIGNED"
+                          ],
+                          "label": "status",
+                          "fields": [],
+                          "fieldType": "enum",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "in",
+                            "notIn"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "pactvera.form.submitted"
+            },
+            "remove": {}
+          }
+        ],
+        "fieldGroups": {}
+      },
+      "retryAttempts": 0,
+      "retryDelayMs": 0,
+      "position": {
+        "x": 700,
+        "y": 590
+      },
+      "credentialId": null
+    },
+    {
+      "id": "a5b9ba37-e51a-4f78-9ed2-035e53c9d6df",
+      "name": "Send Payment",
+      "description": "Create a payment task and wait for payment completion before continuing the workflow",
+      "type": "send_payment",
+      "parentId": null,
+      "config": {
+        "skip": false,
+        "timeout": 15,
+        "assetKey": "{{$.input.value_transfer}}",
+        "pactveraId": "{{$.input.pactveraId}}",
+        "timeoutUnit": "days",
+        "continueOnError": false,
+        "paymentConfigurationType": "PAYMENT_INTENT"
+      },
+      "context": {
+        "base": {
+          "fields": [
+            {
+              "key": "status",
+              "enum": [
+                "waiting",
+                "in_progress",
+                "success",
+                "failed"
+              ],
+              "label": "status",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "taskId",
+              "enum": [],
+              "label": "taskId",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "correlationId",
+              "enum": [],
+              "label": "correlationId",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "resumeAt",
+              "enum": [],
+              "label": "resumeAt",
+              "fields": [],
+              "fieldType": "number",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                ">",
+                "<",
+                ">=",
+                "<="
+              ]
+            }
+          ],
+          "includeFieldGroups": []
+        },
+        "conditions": [],
+        "fieldGroups": {}
+      },
+      "retryAttempts": 0,
+      "retryDelayMs": 0,
+      "position": {
+        "x": 1000,
+        "y": 450
+      },
+      "credentialId": null
+    },
+    {
+      "id": "f8cea746-5aec-4af0-8614-e8ddb178a6f0",
+      "name": "Reverse Payment / Escrow Transfer",
+      "description": "Reverse FBO-held payment then return escrowed Product VDT on unhappy TCA paths; soft-skips missing legs and hard-fails irreversible settlement",
+      "type": "reverse_payment_escrow_transfer",
+      "parentId": null,
+      "config": {
+        "skip": false,
+        "pactveraId": "{{$.input.pactveraId}}",
+        "continueOnError": false
+      },
+      "context": {
+        "base": {
+          "fields": [
+            {
+              "key": "status",
+              "enum": [
+                "waiting",
+                "in_progress",
+                "success",
+                "failed"
+              ],
+              "label": "status",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "paymentReverseStatus",
+              "enum": [
+                "REVERSED",
+                "SKIPPED_NOT_HELD",
+                "ALREADY_FINAL",
+                "FAILED"
+              ],
+              "label": "paymentReverseStatus",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "vdtReverseStatus",
+              "enum": [
+                "RETURNED",
+                "SKIPPED_NOT_IN_ESCROW",
+                "ALREADY_FINAL",
+                "FAILED"
+              ],
+              "label": "vdtReverseStatus",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "legsFulfilled",
+              "enum": [],
+              "label": "legsFulfilled",
+              "fields": [],
+              "fieldType": "number",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                ">",
+                "<",
+                ">=",
+                "<="
+              ]
+            },
+            {
+              "key": "riskFlag",
+              "enum": [],
+              "label": "riskFlag",
+              "fields": [],
+              "fieldType": "boolean",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!="
+              ]
+            },
+            {
+              "key": "terminalStatus",
+              "enum": [],
+              "label": "terminalStatus",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "tcaId",
+              "enum": [],
+              "label": "tcaId",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "pactveraId",
+              "enum": [],
+              "label": "pactveraId",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "audit",
+              "enum": [],
+              "label": "audit",
+              "fields": [],
+              "fieldType": "object",
+              "systemGenerated": true,
+              "allowedOperators": []
+            }
+          ],
+          "includeFieldGroups": []
+        },
+        "conditions": [],
+        "fieldGroups": {}
+      },
+      "retryAttempts": 0,
+      "retryDelayMs": 0,
+      "position": {
+        "x": 1000,
+        "y": 590
+      },
+      "credentialId": null
+    },
+    {
+      "id": "fc0fccd8-0d8b-45a0-8297-29cd33985da7",
+      "name": "Send Document 2",
+      "description": "Send a specific Pactvera document to recipients by selecting it from the document picker",
+      "type": "send_pactvera_document",
+      "parentId": null,
+      "config": {
+        "skip": false,
+        "documentId": "{{$.input.document_2}}",
+        "pactveraId": "{{$.input.pactveraId}}",
+        "continueOnError": false
+      },
+      "context": {
+        "base": {
+          "fields": [
+            {
+              "key": "status",
+              "enum": [
+                "waiting",
+                "in_progress",
+                "success",
+                "failed"
+              ],
+              "label": "status",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "documentId",
+              "enum": [],
+              "label": "documentId",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "documentTitle",
+              "enum": [],
+              "label": "documentTitle",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            }
+          ],
+          "includeFieldGroups": []
+        },
+        "conditions": [],
+        "fieldGroups": {}
+      },
+      "retryAttempts": 0,
+      "retryDelayMs": 0,
+      "position": {
+        "x": 1300,
+        "y": 310
+      },
+      "credentialId": null
+    },
+    {
+      "id": "95d12000-1d7a-4d19-b1dc-57d4067967f1",
+      "name": "Add Trigger",
+      "description": "",
+      "type": "void_node",
+      "parentId": null,
+      "config": {
+        "skip": true,
+        "continueOnError": false
+      },
+      "context": {
+        "base": {},
+        "conditions": [],
+        "fieldGroups": {}
+      },
+      "retryAttempts": 0,
+      "retryDelayMs": 0,
+      "position": {
+        "x": 1300,
+        "y": 450
+      },
+      "credentialId": null
+    },
+    {
+      "id": "586e771b-e4ce-4e76-98d2-f071e888716a",
+      "name": "Add Trigger",
+      "description": "",
+      "type": "void_node",
+      "parentId": null,
+      "config": {
+        "skip": true,
+        "continueOnError": false
+      },
+      "context": {
+        "base": {},
+        "conditions": [],
+        "fieldGroups": {}
+      },
+      "retryAttempts": 0,
+      "retryDelayMs": 0,
+      "position": {
+        "x": 1300,
+        "y": 590
+      },
+      "credentialId": null
+    },
+    {
+      "id": "a747e23b-a8e1-4e58-9531-53730736bd83",
+      "name": "Wait for Condition",
+      "description": "Pauses the workflow execution until a specified external condition or event is met, or until the configured timeout expires.",
+      "type": "wait_for_condition",
+      "parentId": null,
+      "config": {
+        "skip": false,
+        "operator": "&&",
+        "waitUntil": {
+          "time": 12,
+          "unit": "days"
+        },
+        "conditions": [
+          {
+            "nodeId": "fc0fccd8-0d8b-45a0-8297-29cd33985da7",
+            "metadata": {},
+            "eventType": "pactvera.document.signed"
+          }
+        ],
+        "continueOnError": false
+      },
+      "context": {
+        "base": {
+          "fields": [
+            {
+              "key": "status",
+              "enum": [
+                "waiting",
+                "in_progress",
+                "success",
+                "failed"
+              ],
+              "label": "status",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "resumeAt",
+              "enum": [],
+              "label": "resumeAt",
+              "fields": [],
+              "fieldType": "number",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                ">",
+                "<",
+                ">=",
+                "<="
+              ]
+            }
+          ],
+          "includeFieldGroups": []
+        },
+        "conditions": [
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "org_ubo_completed",
+                      "enum": [],
+                      "label": "org_ubo_completed",
+                      "fields": [
+                        {
+                          "key": "orgId",
+                          "enum": [],
+                          "label": "orgId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "org.ubo.completed"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "kyc_verification_status",
+                      "enum": [],
+                      "label": "kyc_verification_status",
+                      "fields": [
+                        {
+                          "key": "status",
+                          "enum": [
+                            "PENDING",
+                            "REJECTED",
+                            "COMPLETED"
+                          ],
+                          "label": "status",
+                          "fields": [],
+                          "fieldType": "enum",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "in",
+                            "notIn"
+                          ]
+                        },
+                        {
+                          "key": "userId",
+                          "enum": [],
+                          "label": "userId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        },
+                        {
+                          "key": "orgId",
+                          "enum": [],
+                          "label": "orgId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "kyc.verification.status"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "kyb_verification_status",
+                      "enum": [],
+                      "label": "kyb_verification_status",
+                      "fields": [
+                        {
+                          "key": "status",
+                          "enum": [
+                            "INVITED",
+                            "ACTIVE",
+                            "REJECTED"
+                          ],
+                          "label": "status",
+                          "fields": [],
+                          "fieldType": "enum",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "in",
+                            "notIn"
+                          ]
+                        },
+                        {
+                          "key": "userId",
+                          "enum": [],
+                          "label": "userId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        },
+                        {
+                          "key": "orgId",
+                          "enum": [],
+                          "label": "orgId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "kyb.verification.status"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "pactvera_status_changed",
+                      "enum": [],
+                      "label": "pactvera_status_changed",
+                      "fields": [
+                        {
+                          "key": "pactveraId",
+                          "enum": [],
+                          "label": "pactveraId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "pactvera.status.changed"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "chainitpay_merchant_created",
+                      "enum": [],
+                      "label": "chainitpay_merchant_created",
+                      "fields": [
+                        {
+                          "key": "merchantId",
+                          "enum": [],
+                          "label": "merchantId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "chainitpay.merchant.created"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "chainitpay_underwriting_status_change",
+                      "enum": [],
+                      "label": "chainitpay_underwriting_status_change",
+                      "fields": [
+                        {
+                          "key": "status",
+                          "enum": [],
+                          "label": "status",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "chainitpay.underwriting.status.changed"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "employee_attestation_completed",
+                      "enum": [],
+                      "label": "employee_attestation_completed",
+                      "fields": [
+                        {
+                          "key": "userId",
+                          "enum": [],
+                          "label": "userId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "employee.attestation.completed"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "pactvera_document_signed",
+                      "enum": [],
+                      "label": "pactvera_document_signed",
+                      "fields": [
+                        {
+                          "key": "documentRequestId",
+                          "enum": [],
+                          "label": "documentRequestId",
+                          "fields": [],
+                          "fieldType": "pactvera_document",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!="
+                          ]
+                        },
+                        {
+                          "key": "status",
+                          "enum": [
+                            "DRAFT",
+                            "PENDING",
+                            "COMPLETED",
+                            "REJECTED",
+                            "CANCELLED",
+                            "PARTIALLY_REJECTED",
+                            "CONFIGURED",
+                            "UNASSIGNED"
+                          ],
+                          "label": "status",
+                          "fields": [],
+                          "fieldType": "enum",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "in",
+                            "notIn"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "pactvera.document.signed"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "pactvera_form_submitted",
+                      "enum": [],
+                      "label": "pactvera_form_submitted",
+                      "fields": [
+                        {
+                          "key": "formRequestId",
+                          "enum": [],
+                          "label": "formRequestId",
+                          "fields": [],
+                          "fieldType": "pactvera_form",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!="
+                          ]
+                        },
+                        {
+                          "key": "status",
+                          "enum": [
+                            "DRAFT",
+                            "PENDING",
+                            "SUBMITTED",
+                            "REJECTED",
+                            "CANCELLED",
+                            "CONFIGURED",
+                            "UNASSIGNED"
+                          ],
+                          "label": "status",
+                          "fields": [],
+                          "fieldType": "enum",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "in",
+                            "notIn"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "pactvera.form.submitted"
+            },
+            "remove": {}
+          }
+        ],
+        "fieldGroups": {}
+      },
+      "retryAttempts": 0,
+      "retryDelayMs": 0,
+      "position": {
+        "x": 1600,
+        "y": 310
+      },
+      "credentialId": null
+    },
+    {
+      "id": "922972e1-5aa2-4f96-b1cf-60bf7b6e6cc9",
+      "name": "Send QC Form",
+      "description": "Send a specific Pactvera form to recipients by selecting it from the form picker",
+      "type": "send_pactvera_form",
+      "parentId": null,
+      "config": {
+        "skip": false,
+        "formId": "{{$.input.qc_form}}",
+        "pactveraId": "{{$.input.pactveraId}}",
+        "continueOnError": false
+      },
+      "context": {
+        "base": {
+          "fields": [
+            {
+              "key": "status",
+              "enum": [
+                "waiting",
+                "in_progress",
+                "success",
+                "failed"
+              ],
+              "label": "status",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "formId",
+              "enum": [],
+              "label": "formId",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "formTitle",
+              "enum": [],
+              "label": "formTitle",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            }
+          ],
+          "includeFieldGroups": []
+        },
+        "conditions": [],
+        "fieldGroups": {}
+      },
+      "retryAttempts": 0,
+      "retryDelayMs": 0,
+      "position": {
+        "x": 1900,
+        "y": 240
+      },
+      "credentialId": null
+    },
+    {
+      "id": "55005897-1ba5-40d9-8158-4749458a34ee",
+      "name": "Reverse Payment / Escrow Transfer",
+      "description": "Reverse FBO-held payment then return escrowed Product VDT on unhappy TCA paths; soft-skips missing legs and hard-fails irreversible settlement",
+      "type": "reverse_payment_escrow_transfer",
+      "parentId": null,
+      "config": {
+        "skip": false,
+        "pactveraId": "{{$.input.pactveraId}}",
+        "continueOnError": false
+      },
+      "context": {
+        "base": {
+          "fields": [
+            {
+              "key": "status",
+              "enum": [
+                "waiting",
+                "in_progress",
+                "success",
+                "failed"
+              ],
+              "label": "status",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "paymentReverseStatus",
+              "enum": [
+                "REVERSED",
+                "SKIPPED_NOT_HELD",
+                "ALREADY_FINAL",
+                "FAILED"
+              ],
+              "label": "paymentReverseStatus",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "vdtReverseStatus",
+              "enum": [
+                "RETURNED",
+                "SKIPPED_NOT_IN_ESCROW",
+                "ALREADY_FINAL",
+                "FAILED"
+              ],
+              "label": "vdtReverseStatus",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "legsFulfilled",
+              "enum": [],
+              "label": "legsFulfilled",
+              "fields": [],
+              "fieldType": "number",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                ">",
+                "<",
+                ">=",
+                "<="
+              ]
+            },
+            {
+              "key": "riskFlag",
+              "enum": [],
+              "label": "riskFlag",
+              "fields": [],
+              "fieldType": "boolean",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!="
+              ]
+            },
+            {
+              "key": "terminalStatus",
+              "enum": [],
+              "label": "terminalStatus",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "tcaId",
+              "enum": [],
+              "label": "tcaId",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "pactveraId",
+              "enum": [],
+              "label": "pactveraId",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "audit",
+              "enum": [],
+              "label": "audit",
+              "fields": [],
+              "fieldType": "object",
+              "systemGenerated": true,
+              "allowedOperators": []
+            }
+          ],
+          "includeFieldGroups": []
+        },
+        "conditions": [],
+        "fieldGroups": {}
+      },
+      "retryAttempts": 0,
+      "retryDelayMs": 0,
+      "position": {
+        "x": 1900,
+        "y": 380
+      },
+      "credentialId": null
+    },
+    {
+      "id": "3a0a78dc-c20d-455a-aaf2-00c1e942763e",
+      "name": "Wait for Condition",
+      "description": "Pauses the workflow execution until a specified external condition or event is met, or until the configured timeout expires.",
+      "type": "wait_for_condition",
+      "parentId": null,
+      "config": {
+        "skip": false,
+        "operator": "&&",
+        "waitUntil": {
+          "time": 12,
+          "unit": "days"
+        },
+        "conditions": [
+          {
+            "nodeId": "922972e1-5aa2-4f96-b1cf-60bf7b6e6cc9",
+            "metadata": {},
+            "eventType": "pactvera.form.submitted"
+          }
+        ],
+        "continueOnError": false
+      },
+      "context": {
+        "base": {
+          "fields": [
+            {
+              "key": "status",
+              "enum": [
+                "waiting",
+                "in_progress",
+                "success",
+                "failed"
+              ],
+              "label": "status",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "resumeAt",
+              "enum": [],
+              "label": "resumeAt",
+              "fields": [],
+              "fieldType": "number",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                ">",
+                "<",
+                ">=",
+                "<="
+              ]
+            }
+          ],
+          "includeFieldGroups": []
+        },
+        "conditions": [
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "org_ubo_completed",
+                      "enum": [],
+                      "label": "org_ubo_completed",
+                      "fields": [
+                        {
+                          "key": "orgId",
+                          "enum": [],
+                          "label": "orgId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "org.ubo.completed"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "kyc_verification_status",
+                      "enum": [],
+                      "label": "kyc_verification_status",
+                      "fields": [
+                        {
+                          "key": "status",
+                          "enum": [
+                            "PENDING",
+                            "REJECTED",
+                            "COMPLETED"
+                          ],
+                          "label": "status",
+                          "fields": [],
+                          "fieldType": "enum",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "in",
+                            "notIn"
+                          ]
+                        },
+                        {
+                          "key": "userId",
+                          "enum": [],
+                          "label": "userId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        },
+                        {
+                          "key": "orgId",
+                          "enum": [],
+                          "label": "orgId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "kyc.verification.status"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "kyb_verification_status",
+                      "enum": [],
+                      "label": "kyb_verification_status",
+                      "fields": [
+                        {
+                          "key": "status",
+                          "enum": [
+                            "INVITED",
+                            "ACTIVE",
+                            "REJECTED"
+                          ],
+                          "label": "status",
+                          "fields": [],
+                          "fieldType": "enum",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "in",
+                            "notIn"
+                          ]
+                        },
+                        {
+                          "key": "userId",
+                          "enum": [],
+                          "label": "userId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        },
+                        {
+                          "key": "orgId",
+                          "enum": [],
+                          "label": "orgId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "kyb.verification.status"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "pactvera_status_changed",
+                      "enum": [],
+                      "label": "pactvera_status_changed",
+                      "fields": [
+                        {
+                          "key": "pactveraId",
+                          "enum": [],
+                          "label": "pactveraId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "pactvera.status.changed"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "chainitpay_merchant_created",
+                      "enum": [],
+                      "label": "chainitpay_merchant_created",
+                      "fields": [
+                        {
+                          "key": "merchantId",
+                          "enum": [],
+                          "label": "merchantId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "chainitpay.merchant.created"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "chainitpay_underwriting_status_change",
+                      "enum": [],
+                      "label": "chainitpay_underwriting_status_change",
+                      "fields": [
+                        {
+                          "key": "status",
+                          "enum": [],
+                          "label": "status",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "chainitpay.underwriting.status.changed"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "employee_attestation_completed",
+                      "enum": [],
+                      "label": "employee_attestation_completed",
+                      "fields": [
+                        {
+                          "key": "userId",
+                          "enum": [],
+                          "label": "userId",
+                          "fields": [],
+                          "fieldType": "string",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "===",
+                            "contains"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "employee.attestation.completed"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "pactvera_document_signed",
+                      "enum": [],
+                      "label": "pactvera_document_signed",
+                      "fields": [
+                        {
+                          "key": "documentRequestId",
+                          "enum": [],
+                          "label": "documentRequestId",
+                          "fields": [],
+                          "fieldType": "pactvera_document",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!="
+                          ]
+                        },
+                        {
+                          "key": "status",
+                          "enum": [
+                            "DRAFT",
+                            "PENDING",
+                            "COMPLETED",
+                            "REJECTED",
+                            "CANCELLED",
+                            "PARTIALLY_REJECTED",
+                            "CONFIGURED",
+                            "UNASSIGNED"
+                          ],
+                          "label": "status",
+                          "fields": [],
+                          "fieldType": "enum",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "in",
+                            "notIn"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "pactvera.document.signed"
+            },
+            "remove": {}
+          },
+          {
+            "add": {
+              "fields": [
+                {
+                  "key": "metadata",
+                  "enum": [],
+                  "label": "metadata",
+                  "fields": [
+                    {
+                      "key": "pactvera_form_submitted",
+                      "enum": [],
+                      "label": "pactvera_form_submitted",
+                      "fields": [
+                        {
+                          "key": "formRequestId",
+                          "enum": [],
+                          "label": "formRequestId",
+                          "fields": [],
+                          "fieldType": "pactvera_form",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!="
+                          ]
+                        },
+                        {
+                          "key": "status",
+                          "enum": [
+                            "DRAFT",
+                            "PENDING",
+                            "SUBMITTED",
+                            "REJECTED",
+                            "CANCELLED",
+                            "CONFIGURED",
+                            "UNASSIGNED"
+                          ],
+                          "label": "status",
+                          "fields": [],
+                          "fieldType": "enum",
+                          "systemGenerated": true,
+                          "allowedOperators": [
+                            "==",
+                            "!=",
+                            "in",
+                            "notIn"
+                          ]
+                        }
+                      ],
+                      "fieldType": "object",
+                      "systemGenerated": true,
+                      "allowedOperators": []
+                    }
+                  ],
+                  "fieldType": "object",
+                  "systemGenerated": true,
+                  "allowedOperators": []
+                }
+              ]
+            },
+            "when": {
+              "field": "event",
+              "value": "pactvera.form.submitted"
+            },
+            "remove": {}
+          }
+        ],
+        "fieldGroups": {}
+      },
+      "retryAttempts": 0,
+      "retryDelayMs": 0,
+      "position": {
+        "x": 2200,
+        "y": 240
+      },
+      "credentialId": null
+    },
+    {
+      "id": "f17bda5a-9760-48d0-9c25-b7b5516fdefe",
+      "name": "Manual Confirmation",
+      "description": "Assign selected verification tasks to an existing Business or Customer Invite during workflow execution.",
+      "type": "task",
+      "parentId": null,
+      "config": {
+        "skip": false,
+        "timeout": 15,
+        "assetKey": "{{$.input.value_transfer}}",
+        "taskType": "MANUAL_CONFIRMATION",
+        "pactveraId": "{{$.input.pactveraId}}",
+        "productLine": "pactvera",
+        "timeoutUnit": "days",
+        "continueOnError": false
+      },
+      "context": {
+        "base": {
+          "fields": [
+            {
+              "key": "status",
+              "enum": [
+                "waiting",
+                "in_progress",
+                "success",
+                "failed"
+              ],
+              "label": "status",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "task",
+              "enum": [],
+              "label": "task",
+              "fields": [
+                {
+                  "key": "id",
+                  "enum": [],
+                  "label": "id",
+                  "fields": [],
+                  "fieldType": "string",
+                  "systemGenerated": true,
+                  "allowedOperators": [
+                    "==",
+                    "!=",
+                    "===",
+                    "contains"
+                  ]
+                }
+              ],
+              "fieldType": "object",
+              "systemGenerated": true,
+              "allowedOperators": []
+            }
+          ],
+          "includeFieldGroups": []
+        },
+        "conditions": [],
+        "fieldGroups": {}
+      },
+      "retryAttempts": 0,
+      "retryDelayMs": 0,
+      "position": {
+        "x": 2500,
+        "y": 170
+      },
+      "credentialId": null
+    },
+    {
+      "id": "12818eba-6c6b-4b50-9ba9-69bdc8b89d17",
+      "name": "Reverse Payment / Escrow Transfer",
+      "description": "Reverse FBO-held payment then return escrowed Product VDT on unhappy TCA paths; soft-skips missing legs and hard-fails irreversible settlement",
+      "type": "reverse_payment_escrow_transfer",
+      "parentId": null,
+      "config": {
+        "skip": false,
+        "pactveraId": "{{$.input.pactveraId}}",
+        "continueOnError": false
+      },
+      "context": {
+        "base": {
+          "fields": [
+            {
+              "key": "status",
+              "enum": [
+                "waiting",
+                "in_progress",
+                "success",
+                "failed"
+              ],
+              "label": "status",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "paymentReverseStatus",
+              "enum": [
+                "REVERSED",
+                "SKIPPED_NOT_HELD",
+                "ALREADY_FINAL",
+                "FAILED"
+              ],
+              "label": "paymentReverseStatus",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "vdtReverseStatus",
+              "enum": [
+                "RETURNED",
+                "SKIPPED_NOT_IN_ESCROW",
+                "ALREADY_FINAL",
+                "FAILED"
+              ],
+              "label": "vdtReverseStatus",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "legsFulfilled",
+              "enum": [],
+              "label": "legsFulfilled",
+              "fields": [],
+              "fieldType": "number",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                ">",
+                "<",
+                ">=",
+                "<="
+              ]
+            },
+            {
+              "key": "riskFlag",
+              "enum": [],
+              "label": "riskFlag",
+              "fields": [],
+              "fieldType": "boolean",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!="
+              ]
+            },
+            {
+              "key": "terminalStatus",
+              "enum": [],
+              "label": "terminalStatus",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "tcaId",
+              "enum": [],
+              "label": "tcaId",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "pactveraId",
+              "enum": [],
+              "label": "pactveraId",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "audit",
+              "enum": [],
+              "label": "audit",
+              "fields": [],
+              "fieldType": "object",
+              "systemGenerated": true,
+              "allowedOperators": []
+            }
+          ],
+          "includeFieldGroups": []
+        },
+        "conditions": [],
+        "fieldGroups": {}
+      },
+      "retryAttempts": 0,
+      "retryDelayMs": 0,
+      "position": {
+        "x": 2501,
+        "y": 309
+      },
+      "credentialId": null
+    },
+    {
+      "id": "962f5e68-549c-4ac9-85c0-c475ba7d10b7",
+      "name": "TCA Releaser",
+      "description": "Assign selected verification tasks to an existing Business or Customer Invite during workflow execution.",
+      "type": "task",
+      "parentId": null,
+      "config": {
+        "skip": false,
+        "timeout": 15,
+        "assetKey": "{{$.input.value_transfer}}",
+        "taskType": "TCA_RELEASER",
+        "pactveraId": "{{$.input.pactveraId}}",
+        "productLine": "pactvera",
+        "timeoutUnit": "days",
+        "continueOnError": false
+      },
+      "context": {
+        "base": {
+          "fields": [
+            {
+              "key": "status",
+              "enum": [
+                "waiting",
+                "in_progress",
+                "success",
+                "failed"
+              ],
+              "label": "status",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "task",
+              "enum": [],
+              "label": "task",
+              "fields": [
+                {
+                  "key": "id",
+                  "enum": [],
+                  "label": "id",
+                  "fields": [],
+                  "fieldType": "string",
+                  "systemGenerated": true,
+                  "allowedOperators": [
+                    "==",
+                    "!=",
+                    "===",
+                    "contains"
+                  ]
+                }
+              ],
+              "fieldType": "object",
+              "systemGenerated": true,
+              "allowedOperators": []
+            }
+          ],
+          "includeFieldGroups": []
+        },
+        "conditions": [],
+        "fieldGroups": {}
+      },
+      "retryAttempts": 0,
+      "retryDelayMs": 0,
+      "position": {
+        "x": 2800,
+        "y": 100
+      },
+      "credentialId": null
+    },
+    {
+      "id": "7fcbdbcd-8686-431b-b751-32a9e3dc911d",
+      "name": "Reverse Payment / Escrow Transfer",
+      "description": "Reverse FBO-held payment then return escrowed Product VDT on unhappy TCA paths; soft-skips missing legs and hard-fails irreversible settlement",
+      "type": "reverse_payment_escrow_transfer",
+      "parentId": null,
+      "config": {
+        "skip": false,
+        "pactveraId": "{{$.input.pactveraId}}",
+        "continueOnError": false
+      },
+      "context": {
+        "base": {
+          "fields": [
+            {
+              "key": "status",
+              "enum": [
+                "waiting",
+                "in_progress",
+                "success",
+                "failed"
+              ],
+              "label": "status",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "paymentReverseStatus",
+              "enum": [
+                "REVERSED",
+                "SKIPPED_NOT_HELD",
+                "ALREADY_FINAL",
+                "FAILED"
+              ],
+              "label": "paymentReverseStatus",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "vdtReverseStatus",
+              "enum": [
+                "RETURNED",
+                "SKIPPED_NOT_IN_ESCROW",
+                "ALREADY_FINAL",
+                "FAILED"
+              ],
+              "label": "vdtReverseStatus",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "legsFulfilled",
+              "enum": [],
+              "label": "legsFulfilled",
+              "fields": [],
+              "fieldType": "number",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                ">",
+                "<",
+                ">=",
+                "<="
+              ]
+            },
+            {
+              "key": "riskFlag",
+              "enum": [],
+              "label": "riskFlag",
+              "fields": [],
+              "fieldType": "boolean",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!="
+              ]
+            },
+            {
+              "key": "terminalStatus",
+              "enum": [],
+              "label": "terminalStatus",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "tcaId",
+              "enum": [],
+              "label": "tcaId",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "pactveraId",
+              "enum": [],
+              "label": "pactveraId",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "audit",
+              "enum": [],
+              "label": "audit",
+              "fields": [],
+              "fieldType": "object",
+              "systemGenerated": true,
+              "allowedOperators": []
+            }
+          ],
+          "includeFieldGroups": []
+        },
+        "conditions": [],
+        "fieldGroups": {}
+      },
+      "retryAttempts": 0,
+      "retryDelayMs": 0,
+      "position": {
+        "x": 2800,
+        "y": 240
+      },
+      "credentialId": null
+    },
+    {
+      "id": "afa8036b-bde2-4e2d-8ebb-a2259cac8703",
+      "name": "Reverse Payment / Escrow Transfer",
+      "description": "Reverse FBO-held payment then return escrowed Product VDT on unhappy TCA paths; soft-skips missing legs and hard-fails irreversible settlement",
+      "type": "reverse_payment_escrow_transfer",
+      "parentId": null,
+      "config": {
+        "skip": false,
+        "pactveraId": "{{$.input.pactveraId}}",
+        "continueOnError": false
+      },
+      "context": {
+        "base": {
+          "fields": [
+            {
+              "key": "status",
+              "enum": [
+                "waiting",
+                "in_progress",
+                "success",
+                "failed"
+              ],
+              "label": "status",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "paymentReverseStatus",
+              "enum": [
+                "REVERSED",
+                "SKIPPED_NOT_HELD",
+                "ALREADY_FINAL",
+                "FAILED"
+              ],
+              "label": "paymentReverseStatus",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "vdtReverseStatus",
+              "enum": [
+                "RETURNED",
+                "SKIPPED_NOT_IN_ESCROW",
+                "ALREADY_FINAL",
+                "FAILED"
+              ],
+              "label": "vdtReverseStatus",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "legsFulfilled",
+              "enum": [],
+              "label": "legsFulfilled",
+              "fields": [],
+              "fieldType": "number",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                ">",
+                "<",
+                ">=",
+                "<="
+              ]
+            },
+            {
+              "key": "riskFlag",
+              "enum": [],
+              "label": "riskFlag",
+              "fields": [],
+              "fieldType": "boolean",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!="
+              ]
+            },
+            {
+              "key": "terminalStatus",
+              "enum": [],
+              "label": "terminalStatus",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "tcaId",
+              "enum": [],
+              "label": "tcaId",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "pactveraId",
+              "enum": [],
+              "label": "pactveraId",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "audit",
+              "enum": [],
+              "label": "audit",
+              "fields": [],
+              "fieldType": "object",
+              "systemGenerated": true,
+              "allowedOperators": []
+            }
+          ],
+          "includeFieldGroups": []
+        },
+        "conditions": [],
+        "fieldGroups": {}
+      },
+      "retryAttempts": 0,
+      "retryDelayMs": 0,
+      "position": {
+        "x": 2764.680492089227,
+        "y": 431.2196835690843
+      },
+      "credentialId": null
+    },
+    {
+      "id": "62d933d5-3ebe-41b2-af0f-7680b693559b",
+      "name": "Value Transfer",
+      "description": "Transfer all configured Value VDTs from Escrow to Buyer after TCA release attestation",
+      "type": "value_transfer",
+      "parentId": null,
+      "config": {
+        "skip": false,
+        "assetKey": "{{$.input.value_transfer}}",
+        "pactveraId": "{{$.input.pactveraId}} ",
+        "continueOnError": false
+      },
+      "context": {
+        "base": {
+          "fields": [
+            {
+              "key": "status",
+              "enum": [
+                "waiting",
+                "in_progress",
+                "success",
+                "failed"
+              ],
+              "label": "status",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "xEscrowTxnId",
+              "enum": [],
+              "label": "xEscrowTxnId",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            }
+          ],
+          "includeFieldGroups": []
+        },
+        "conditions": [],
+        "fieldGroups": {}
+      },
+      "retryAttempts": 0,
+      "retryDelayMs": 0,
+      "position": {
+        "x": 3100,
+        "y": 30
+      },
+      "credentialId": null
+    },
+    {
+      "id": "f519385b-1822-456e-8ab3-bfbbc039b8ff",
+      "name": "Reverse Payment / Escrow Transfer",
+      "description": "Reverse FBO-held payment then return escrowed Product VDT on unhappy TCA paths; soft-skips missing legs and hard-fails irreversible settlement",
+      "type": "reverse_payment_escrow_transfer",
+      "parentId": null,
+      "config": {
+        "skip": false,
+        "pactveraId": "{{$.input.pactveraId}}",
+        "continueOnError": false
+      },
+      "context": {
+        "base": {
+          "fields": [
+            {
+              "key": "status",
+              "enum": [
+                "waiting",
+                "in_progress",
+                "success",
+                "failed"
+              ],
+              "label": "status",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "paymentReverseStatus",
+              "enum": [
+                "REVERSED",
+                "SKIPPED_NOT_HELD",
+                "ALREADY_FINAL",
+                "FAILED"
+              ],
+              "label": "paymentReverseStatus",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "vdtReverseStatus",
+              "enum": [
+                "RETURNED",
+                "SKIPPED_NOT_IN_ESCROW",
+                "ALREADY_FINAL",
+                "FAILED"
+              ],
+              "label": "vdtReverseStatus",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "legsFulfilled",
+              "enum": [],
+              "label": "legsFulfilled",
+              "fields": [],
+              "fieldType": "number",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                ">",
+                "<",
+                ">=",
+                "<="
+              ]
+            },
+            {
+              "key": "riskFlag",
+              "enum": [],
+              "label": "riskFlag",
+              "fields": [],
+              "fieldType": "boolean",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!="
+              ]
+            },
+            {
+              "key": "terminalStatus",
+              "enum": [],
+              "label": "terminalStatus",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "tcaId",
+              "enum": [],
+              "label": "tcaId",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "pactveraId",
+              "enum": [],
+              "label": "pactveraId",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "audit",
+              "enum": [],
+              "label": "audit",
+              "fields": [],
+              "fieldType": "object",
+              "systemGenerated": true,
+              "allowedOperators": []
+            }
+          ],
+          "includeFieldGroups": []
+        },
+        "conditions": [],
+        "fieldGroups": {}
+      },
+      "retryAttempts": 0,
+      "retryDelayMs": 0,
+      "position": {
+        "x": 3100,
+        "y": 170
+      },
+      "credentialId": null
+    },
+    {
+      "id": "3589e952-94f4-4104-93b2-48e4eeb3bee2",
+      "name": "Reverse Payment / Escrow Transfer",
+      "description": "Reverse FBO-held payment then return escrowed Product VDT on unhappy TCA paths; soft-skips missing legs and hard-fails irreversible settlement",
+      "type": "reverse_payment_escrow_transfer",
+      "parentId": null,
+      "config": {
+        "skip": false,
+        "pactveraId": "{{$.input.pactveraId}}",
+        "continueOnError": false
+      },
+      "context": {
+        "base": {
+          "fields": [
+            {
+              "key": "status",
+              "enum": [
+                "waiting",
+                "in_progress",
+                "success",
+                "failed"
+              ],
+              "label": "status",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "paymentReverseStatus",
+              "enum": [
+                "REVERSED",
+                "SKIPPED_NOT_HELD",
+                "ALREADY_FINAL",
+                "FAILED"
+              ],
+              "label": "paymentReverseStatus",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "vdtReverseStatus",
+              "enum": [
+                "RETURNED",
+                "SKIPPED_NOT_IN_ESCROW",
+                "ALREADY_FINAL",
+                "FAILED"
+              ],
+              "label": "vdtReverseStatus",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "legsFulfilled",
+              "enum": [],
+              "label": "legsFulfilled",
+              "fields": [],
+              "fieldType": "number",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                ">",
+                "<",
+                ">=",
+                "<="
+              ]
+            },
+            {
+              "key": "riskFlag",
+              "enum": [],
+              "label": "riskFlag",
+              "fields": [],
+              "fieldType": "boolean",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!="
+              ]
+            },
+            {
+              "key": "terminalStatus",
+              "enum": [],
+              "label": "terminalStatus",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "tcaId",
+              "enum": [],
+              "label": "tcaId",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "pactveraId",
+              "enum": [],
+              "label": "pactveraId",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "audit",
+              "enum": [],
+              "label": "audit",
+              "fields": [],
+              "fieldType": "object",
+              "systemGenerated": true,
+              "allowedOperators": []
+            }
+          ],
+          "includeFieldGroups": []
+        },
+        "conditions": [],
+        "fieldGroups": {}
+      },
+      "retryAttempts": 0,
+      "retryDelayMs": 0,
+      "position": {
+        "x": 3066,
+        "y": 368.00000000000006
+      },
+      "credentialId": null
+    },
+    {
+      "id": "b3cea656-599a-443d-9de1-b42919f0ce98",
+      "name": "Update Pactvera to Valitorum",
+      "description": "Transition Pactvera status to Valitorum after successful value transfer",
+      "type": "update_pactvera_to_valitorum",
+      "parentId": null,
+      "config": {
+        "skip": false,
+        "pactveraId": "{{$.input.pactveraId}} ",
+        "continueOnError": false
+      },
+      "context": {
+        "base": {
+          "fields": [
+            {
+              "key": "status",
+              "enum": [
+                "waiting",
+                "in_progress",
+                "success",
+                "failed"
+              ],
+              "label": "status",
+              "fields": [],
+              "fieldType": "enum",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "in",
+                "notIn"
+              ]
+            },
+            {
+              "key": "pactveraId",
+              "enum": [],
+              "label": "pactveraId",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            },
+            {
+              "key": "previousStatus",
+              "enum": [],
+              "label": "previousStatus",
+              "fields": [],
+              "fieldType": "string",
+              "systemGenerated": true,
+              "allowedOperators": [
+                "==",
+                "!=",
+                "===",
+                "contains"
+              ]
+            }
+          ],
+          "includeFieldGroups": []
+        },
+        "conditions": [],
+        "fieldGroups": {}
+      },
+      "retryAttempts": 0,
+      "retryDelayMs": 0,
+      "position": {
+        "x": 3400,
+        "y": 30
+      },
+      "credentialId": null
+    }
+  ],
+  "edges": [
+    {
+      "id": "dc191800-854a-4b10-9390-7fcaf23e9227",
+      "sourceId": "8db90c07-eaff-4fe3-8e88-48e1a3960514",
+      "targetId": "0613c1eb-e726-45f4-a83e-57f5fdd1fa3b",
+      "groupId": null,
+      "condition": "none",
+      "expression": "",
+      "label": null,
+      "description": null,
+      "config": null
+    },
+    {
+      "id": "30644179-d5ca-4bd1-a4f8-5fd8cc3d2914",
+      "sourceId": "0613c1eb-e726-45f4-a83e-57f5fdd1fa3b",
+      "targetId": "b9338565-af83-44c2-8f53-f603d58e2dec",
+      "groupId": null,
+      "condition": "none",
+      "expression": "",
+      "label": null,
+      "description": null,
+      "config": null
+    },
+    {
+      "id": "a3bdaaa9-3448-4b2b-b137-eacdc8b09f55",
+      "sourceId": "b9338565-af83-44c2-8f53-f603d58e2dec",
+      "targetId": "a5b9ba37-e51a-4f78-9ed2-035e53c9d6df",
+      "groupId": null,
+      "condition": "on_true",
+      "expression": "",
+      "label": null,
+      "description": null,
+      "config": null
+    },
+    {
+      "id": "45182ff6-5451-4ab3-9b80-293e0c0132e4",
+      "sourceId": "b9338565-af83-44c2-8f53-f603d58e2dec",
+      "targetId": "f8cea746-5aec-4af0-8614-e8ddb178a6f0",
+      "groupId": null,
+      "condition": "on_false",
+      "expression": "",
+      "label": null,
+      "description": null,
+      "config": null
+    },
+    {
+      "id": "4fd529ce-1dcf-4b2f-9b38-81d323592aca",
+      "sourceId": "a5b9ba37-e51a-4f78-9ed2-035e53c9d6df",
+      "targetId": "fc0fccd8-0d8b-45a0-8297-29cd33985da7",
+      "groupId": null,
+      "condition": "on_true",
+      "expression": "",
+      "label": null,
+      "description": null,
+      "config": null
+    },
+    {
+      "id": "24edeb2f-f934-40db-91e3-3fbe89fcf4b1",
+      "sourceId": "a5b9ba37-e51a-4f78-9ed2-035e53c9d6df",
+      "targetId": "95d12000-1d7a-4d19-b1dc-57d4067967f1",
+      "groupId": null,
+      "condition": "on_false",
+      "expression": "",
+      "label": null,
+      "description": null,
+      "config": null
+    },
+    {
+      "id": "b7196cb3-c04b-4726-ac2f-95095d4bb6e5",
+      "sourceId": "a5b9ba37-e51a-4f78-9ed2-035e53c9d6df",
+      "targetId": "586e771b-e4ce-4e76-98d2-f071e888716a",
+      "groupId": null,
+      "condition": "timeout",
+      "expression": "",
+      "label": null,
+      "description": null,
+      "config": null
+    },
+    {
+      "id": "be5fac46-c6a6-4cab-ba47-f304970b1af0",
+      "sourceId": "fc0fccd8-0d8b-45a0-8297-29cd33985da7",
+      "targetId": "a747e23b-a8e1-4e58-9531-53730736bd83",
+      "groupId": null,
+      "condition": "none",
+      "expression": "",
+      "label": null,
+      "description": null,
+      "config": null
+    },
+    {
+      "id": "5f40bd5c-52a0-4c51-8f2f-cb0814f77edd",
+      "sourceId": "a747e23b-a8e1-4e58-9531-53730736bd83",
+      "targetId": "922972e1-5aa2-4f96-b1cf-60bf7b6e6cc9",
+      "groupId": null,
+      "condition": "on_true",
+      "expression": "",
+      "label": null,
+      "description": null,
+      "config": null
+    },
+    {
+      "id": "3df16dc9-bad0-4f43-9bc3-57a026e727b7",
+      "sourceId": "a747e23b-a8e1-4e58-9531-53730736bd83",
+      "targetId": "55005897-1ba5-40d9-8158-4749458a34ee",
+      "groupId": null,
+      "condition": "on_false",
+      "expression": "",
+      "label": null,
+      "description": null,
+      "config": null
+    },
+    {
+      "id": "98ad5296-8f9e-4310-ab8a-3a5b21239aff",
+      "sourceId": "922972e1-5aa2-4f96-b1cf-60bf7b6e6cc9",
+      "targetId": "3a0a78dc-c20d-455a-aaf2-00c1e942763e",
+      "groupId": null,
+      "condition": "none",
+      "expression": "",
+      "label": null,
+      "description": null,
+      "config": null
+    },
+    {
+      "id": "57afc1df-a1e9-418a-ab40-b9ee89c64fbf",
+      "sourceId": "3a0a78dc-c20d-455a-aaf2-00c1e942763e",
+      "targetId": "f17bda5a-9760-48d0-9c25-b7b5516fdefe",
+      "groupId": null,
+      "condition": "on_true",
+      "expression": "",
+      "label": null,
+      "description": null,
+      "config": null
+    },
+    {
+      "id": "be05f2cd-24ff-4417-96c7-74fb2855ae0e",
+      "sourceId": "3a0a78dc-c20d-455a-aaf2-00c1e942763e",
+      "targetId": "12818eba-6c6b-4b50-9ba9-69bdc8b89d17",
+      "groupId": null,
+      "condition": "on_false",
+      "expression": "",
+      "label": null,
+      "description": null,
+      "config": null
+    },
+    {
+      "id": "6ef189cd-27e1-4341-a31f-f8681fc6ce17",
+      "sourceId": "f17bda5a-9760-48d0-9c25-b7b5516fdefe",
+      "targetId": "962f5e68-549c-4ac9-85c0-c475ba7d10b7",
+      "groupId": null,
+      "condition": "on_true",
+      "expression": "",
+      "label": null,
+      "description": null,
+      "config": null
+    },
+    {
+      "id": "5c240c67-1e00-4d2a-a2cc-715bedf5cea0",
+      "sourceId": "f17bda5a-9760-48d0-9c25-b7b5516fdefe",
+      "targetId": "7fcbdbcd-8686-431b-b751-32a9e3dc911d",
+      "groupId": null,
+      "condition": "on_false",
+      "expression": "",
+      "label": null,
+      "description": null,
+      "config": null
+    },
+    {
+      "id": "5a5035ec-bbdd-484f-a128-42e0a2705b6a",
+      "sourceId": "f17bda5a-9760-48d0-9c25-b7b5516fdefe",
+      "targetId": "afa8036b-bde2-4e2d-8ebb-a2259cac8703",
+      "groupId": null,
+      "condition": "timeout",
+      "expression": "",
+      "label": null,
+      "description": null,
+      "config": null
+    },
+    {
+      "id": "7ab8be57-245d-4b7d-a87d-b23e5546f893",
+      "sourceId": "962f5e68-549c-4ac9-85c0-c475ba7d10b7",
+      "targetId": "62d933d5-3ebe-41b2-af0f-7680b693559b",
+      "groupId": null,
+      "condition": "on_true",
+      "expression": "",
+      "label": null,
+      "description": null,
+      "config": null
+    },
+    {
+      "id": "e9d884f2-0a73-417b-b6a9-318c1f7135a0",
+      "sourceId": "962f5e68-549c-4ac9-85c0-c475ba7d10b7",
+      "targetId": "f519385b-1822-456e-8ab3-bfbbc039b8ff",
+      "groupId": null,
+      "condition": "on_false",
+      "expression": "",
+      "label": null,
+      "description": null,
+      "config": null
+    },
+    {
+      "id": "fdeda808-9b5e-4160-893b-4d54f1ca4b20",
+      "sourceId": "962f5e68-549c-4ac9-85c0-c475ba7d10b7",
+      "targetId": "3589e952-94f4-4104-93b2-48e4eeb3bee2",
+      "groupId": null,
+      "condition": "timeout",
+      "expression": "",
+      "label": null,
+      "description": null,
+      "config": null
+    },
+    {
+      "id": "1741094a-e469-4b6d-a7ae-6b8a834ab90c",
+      "sourceId": "62d933d5-3ebe-41b2-af0f-7680b693559b",
+      "targetId": "b3cea656-599a-443d-9de1-b42919f0ce98",
+      "groupId": null,
+      "condition": "none",
+      "expression": "",
+      "label": null,
+      "description": null,
+      "config": null
+    }
+  ]
+}

@@ -127,7 +127,7 @@ describe('Configuration - Document Templates', () => {
         cy.log('Action: Get first folder name');
         DocumentTemplatePage.getFirstFolderName();
         cy.get('@firstFolderName').then((folderName) => {
-          cy.log(`First folder selected: ${folderName}`);
+        cy.log(`First folder selected: ${folderName}`);
 
           cy.log(`Action: Open Actions menu for folder: ${folderName}`);
           DocumentTemplatePage.clickFirstRecordActions();
