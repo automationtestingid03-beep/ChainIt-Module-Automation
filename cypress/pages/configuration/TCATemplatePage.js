@@ -38,17 +38,18 @@ class TCATemplatePage extends BasePage {
     return cy.contains('button', 'Continue To WorkFlow Builder').filter(':visible').first();
   }
 
+  getPartyConfigurationSection() {
+  return cy.contains('h3', 'Select 2 -Party Configuration').closest('section');
+  }
+
   getRoleNameInput(index = 0) {
-  return cy.get('input').filter(':visible')
-    .filter((i, el) => {
-      const placeholder = el.getAttribute('placeholder') || '';
-      return placeholder === 'Buyer' || placeholder === 'e.g Manufacture';
-    })
-    .eq(index);
+  return this.getPartyConfigurationSection().find('label').contains(`Role ${index + 1} Name`).parent()
+    .find('input').should('exist');
   }
 
   getRoleDescriptionInput(index = 0) {
-    return cy.get('input').filter('[placeholder*="Role Purpose"]').eq(index);
+  return this.getPartyConfigurationSection().find('label').contains(`Role ${index + 1} Name`)
+    .closest('div.grid').find('input').eq(1);
   }
 
     verifyPageLoaded() {
@@ -163,8 +164,8 @@ class TCATemplatePage extends BasePage {
    addBuyerAndSellerRoles() {
     const timestamp = Date.now();
     const buyerRole = `Buyer ${timestamp}`;
-    const buyerDescription = `Buyer role ${timestamp}`;
-    const sellerRole = `Seller ${timestamp}`;
+    const buyerDescription = `Buy description ${timestamp}`;
+    const sellerRole = `Selles description ${timestamp}`;
     const sellerDescription = `Seller role ${timestamp}`;
 
     cy.log('Action: Add unique Buyer and Seller roles');
@@ -201,17 +202,12 @@ class TCATemplatePage extends BasePage {
 }
 
 uploadWorkflowJson(filePath = 'tca_workflow_test.json') {
-  cy.log(`Action: Upload workflow JSON file: ${filePath}`);
-  cy.get('input[type="file"]').should('exist').selectFile(`cypress/fixtures/${filePath}`, { force: true });
+ const normalizedPath = filePath.startsWith('cypress/fixtures/')
+    ? filePath
+    : `cypress/fixtures/${filePath}`;
+  cy.log(`Action: Upload workflow JSON file: ${normalizedPath}`);
+  cy.get('input[type="file"]').should('exist').selectFile(normalizedPath, { force: true });
   cy.log('Workflow JSON file uploaded successfully');
-
-  return this;
-}
-
-clickContinue() {
-  cy.log('Action: Click Continue on Workflow Builder');
-  cy.contains('button', 'Continue').filter(':visible').should('be.visible').and('not.be.disabled').click({ force: true });
-  cy.log('Workflow Builder Continue button clicked');
 
   return this;
 }
@@ -226,7 +222,7 @@ clickContinue() {
 
 clickPublishWorkFlow() {
   cy.log('Action: Click on Publish WorkFlow');
-  cy.contains('button', 'Continue').filter(':visible').should('be.visible').and('not.be.disabled').click({ force: true });
+  cy.contains('button', 'Publish WorkFlow').filter(':visible').should('be.visible').and('not.be.disabled').click({ force: true });
   cy.log('Publish WorkFlow button clicked');
 
   return this;

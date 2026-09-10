@@ -1,32 +1,23 @@
-import SwitchAccountModal from '../../pages/SwitchAccountModal';
-import ConfigurationPage from '../../pages/ConfigurationPage';
-import AdministrationPage from '../../pages/AdministrationPage';
-import OrgIdVdtPage from '../../pages/administration/myOrgId/OrgIdVdtPage';
-import ProductPage from '../../pages/administration/myOrgId/ProductPage';
-import TCATemplatePage from '../../pages/configuration/TCATemplatePage';
-import SidebarPage from '../../pages/SidebarPage';
+import SwitchAccountModal from '../pages/SwitchAccountModal';
+import SidebarPage from '../pages/SidebarPage';
 
 const ADMIN_URL = 'https://develop-admin.chainit.online';
-const workFlowTest = 'cypress/fixtures/tca_workflow_test.json';
 
 function generateUniqueTitle(prefix) {
   const timestamp = Date.now();
   const randomSuffix = Math.random().toString(36).substring(2, 8);
-
   return `${prefix}_${timestamp}_${randomSuffix}`;
 }
 
 describe('Configuration - TCA Templates', () => {
 
   beforeEach(() => {
-
     // Step 1: Open QR Scan page
     cy.log('Step 1: Opening QR Scan page');
     cy.visit(`${ADMIN_URL}/scan-qr`);
     cy.contains('Scan or Tap the QR Code Login')
       .should('be.visible');
     cy.log('QR Scan page is displayed successfully');
-
 
     // Step 2: Manual QR scan
     cy.log('Step 2: Please scan the QR code using the mobile app');
@@ -52,8 +43,8 @@ describe('Configuration - TCA Templates', () => {
 
     
   });
-  it('TC01: should validate My Org ID tabs and navigate to Products page', () => {
-   cy.log('Action: Verify main sidebar'); 
+  it('TC01: Verify complete sidebar navigation', () => {
+  cy.log('Action: Verify main sidebar'); 
   SidebarPage.verifyMainSidebar();
 
   cy.log('Action: Verify KYC submenu');
@@ -79,6 +70,7 @@ describe('Configuration - TCA Templates', () => {
   cy.log('Action: Verify Configuration submenu');
   SidebarPage.clickConfiguration().verifyConfigurationSubmenu();
   SidebarPage.clickConfiguration();
+  
   cy.log('VERIFIED: Complete sidebar navigation successfully');
     
   });
