@@ -1,12 +1,12 @@
 import SwitchAccountModal from '../../pages/SwitchAccountModal';
-import ConfigurationPage from '../../pages/ConfigurationPage';
 import AdministrationPage from '../../pages/AdministrationPage';
 import OrgIdVdtPage from '../../pages/administration/myOrgId/OrgIdVdtPage';
 import ProductPage from '../../pages/administration/myOrgId/ProductPage';
 import TCATemplatePage from '../../pages/configuration/TCATemplatePage';
+import SidebarPage from '../../pages/SidebarPage';
 
 const ADMIN_URL = 'https://develop-admin.chainit.online';
-
+const workFlowTest = 'cypress/fixtures/tca_workflow_test.json';
 function generateUniqueTitle(prefix) {
   const timestamp = Date.now();
   const randomSuffix = Math.random().toString(36).substring(2, 8);
@@ -94,59 +94,67 @@ it('TC01: should validate My Org ID tabs and navigate to Products page', () => {
   ProductPage.findNewProductAfterCreation();
 
   cy.log('Action: Opening Administration');
-  AdministrationPage.clickAdministrationButton();
-
+  SidebarPage.clickAdministration();
+  
   cy.log('Action: Opening Configuration'); 
-  ConfigurationPage.clickConfigurationsButton();
-
+  SidebarPage.clickConfiguration();
+   
   cy.log('Action: Opening TCA Templates');
-  ConfigurationPage.clickTCAButton();
+  SidebarPage.clickTCATemplates();
   TCATemplatePage.verifyPageLoaded();
   cy.log('TCA Templates page opened successfully');
-
+   
   cy.log('Action: Verify Pactvera transaction workflows table columns');
   TCATemplatePage.verifyPactveratransactionColumns();
-
+   
   cy.log('Action: Click Create Workflow');
   TCATemplatePage.clickCreateWorkflow();
-
+   
   cy.log('Action: Verify TCA workflow page is loaded');
   TCATemplatePage.verifyTCALoaded();
-
+   
   cy.log('Action: Verify Cancel button');
   TCATemplatePage.verifyCancelButtonDisplayed();
 
-  cy.log('Action: Verify Continue button is disabled initially');
-  TCATemplatePage.verifyContinueButtonDisplayedAndDisabled();
+  cy.log('Action: Continue to Workflow Builder with mandatory fields empty');
+  TCATemplatePage.clickContinueToWorkflowBuilder();
+
+  cy.log('Action: Verify Workflow Template Name required validation');
+  TCATemplatePage.verifyWorkflowTemplateNameRequiredError();
 
   cy.log('Action: Enter Workflow Template Name and Description');
   TCATemplatePage.createUniqueWorkflowTemplate();
+
+  cy.log('Action: Continue to Workflow Builder with Role fields empty');
+  TCATemplatePage.clickContinueToWorkflowBuilder();
+
+  cy.log('Action: Verify Role 1 Name required validation');
+  TCATemplatePage.verifyRoleNameRequiredError();
 
   cy.log('Action: Add Buyer and Seller roles');
   TCATemplatePage.addBuyerAndSellerRoles();
 
   cy.log('Action: Verify Continue button is enabled');
   TCATemplatePage.verifyContinueButtonEnabled();
-
+   
   cy.log('Action: Continue to Workflow Builder');
   TCATemplatePage.clickContinueToWorkflowBuilder();
-  cy.wait(7000);
-
+  cy.wait(10000);
+   
   cy.log('Action: Import workflow JSON');
-  TCATemplatePage.clickImportJson().uploadWorkflowJson('tca_workflow_test.json');
-
+  TCATemplatePage.clickImportJson();
+  TCATemplatePage.uploadWorkflowJson(workFlowTest);
+   
   cy.log('Action: Continue from Workflow Builder');
   TCATemplatePage.clickContinue();
   cy.log('Workflow Builder completed successfully');
-
+   
   cy.log('Action: Click on Publish WorkFlow');
   TCATemplatePage.clickPublishWorkFlow();
   cy.log('Publish WorkFlow button clicked successfully');
+   
+  cy.log('Action: Verify template publish success message');
+  TCATemplatePage.verifyPublishSuccessMessage();  
 
-  cy.log('Step: Verify template publish success message');
-  TCATemplatePage.verifyPublishSuccessMessage();
-
-
-  
    });
 });

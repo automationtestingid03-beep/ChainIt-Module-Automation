@@ -233,5 +233,29 @@ verifyPublishSuccessMessage() {
   cy.contains('TCA template published successfully.').should('be.visible');
 }
 
+verifyWorkflowTemplateNameRequiredError() {
+  cy.log('Action: Verify Workflow Template Name validation');
+  cy.contains('Workflow template name is required.').filter(':visible').should('be.visible');
+  cy.log('VERIFIED: Workflow template name required validation displayed');
+
+  return this;
+}
+
+verifyRoleNameRequiredError() {
+  cy.log('Action: Verify Role Name validation');
+  cy.contains('Role name is required.').filter(':visible').should('be.visible');
+  cy.log('VERIFIED: Role name required validation displayed');
+
+  return this;
+}
+
+verifyRole1NameRequiredError() {
+  cy.log('Action: Verify Role 1 Name validation');
+  cy.get('input[placeholder="e.g Buyer"]').should('be.visible').parents('.flex.flex-col').first()
+    .contains('Role name is required.').should('be.visible');
+
+  return this;
+}
+
 }
 export default new TCATemplatePage();

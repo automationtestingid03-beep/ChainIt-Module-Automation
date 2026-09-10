@@ -255,6 +255,24 @@ class SidebarPage extends BasePage {
     return this;
   }
 
+   clickTCATemplates() {
+    cy.log('Action: clcik TCA templates submenu');
+    this.tcaTemplates.should('be.visible').click({ force: true });
+    return this;
+  }
+
+   clickPactveraMain() {
+    cy.log('Action: Click Pactvera main submenu');
+    this.pactveraMain.should('be.visible').click({ force: true });
+    return this;
+  }
+
+   clickPactveraSent() {
+    cy.log('Action: Click Pactvera sent submenu');
+    this.pactveraSent.should('be.visible').click({ force: true });
+    return this;
+  }
+
   verifyKYCSubmenu() {
     cy.log('Action: Verify KYC submenu');
 

@@ -5,6 +5,7 @@ import OrgIdVdtPage from '../../pages/administration/myOrgId/OrgIdVdtPage';
 import ProductPage from '../../pages/administration/myOrgId/ProductPage';
 import TCATemplatePage from '../../pages/configuration/TCATemplatePage';
 import SidebarPage from '../../pages/SidebarPage';
+import PactveraMainPage from '../../pages/pactvera/PactveraMainPage';
 
 const ADMIN_URL = 'https://develop-admin.chainit.online';
 const workFlowTest = 'cypress/fixtures/tca_workflow_test.json';
@@ -53,33 +54,94 @@ describe('Configuration - TCA Templates', () => {
     
   });
   it('TC01: should validate My Org ID tabs and navigate to Products page', () => {
-   cy.log('Action: Verify main sidebar'); 
-  SidebarPage.verifyMainSidebar();
 
-  cy.log('Action: Verify KYC submenu');
-  SidebarPage.clickKYC().verifyKYCSubmenu();
-  SidebarPage.clickKYC();
-
-  cy.log('Action: Verify KYB submenu');
-  SidebarPage.clickKYB().verifyKYBSubmenu();
-  SidebarPage.clickKYB();
-
-  cy.log('Action: Verify Pactvera submenu');
-  SidebarPage.clickPactvera().verifyPactveraSubmenu();
+  cy.log('Step 1: Open Pactvera menu');
   SidebarPage.clickPactvera();
+  cy.log('Pactvera menu opened successfully');
 
-  cy.log('Action: Verify Data Room submenu');
-  SidebarPage.clickDataRoom().verifyDataRoomSubmenu();
-  SidebarPage.clickDataRoom();
+  cy.log('Step 2: Navigate to Pactvera Main page');
+  SidebarPage.clickPactveraMain();
+  PactveraMainPage.verifyMainPageDisplayed();
+  cy.log('Pactvera Main page displayed successfully');
 
-  cy.log('Action: Verify Administration submenu');
-  SidebarPage.clickAdministration().verifyAdministrationSubmenu();
-  SidebarPage.clickAdministration();
+  cy.log('Step 3: Verify Send a Pactvera card');
+  PactveraMainPage.verifySendPactveraCard();
+  cy.log('Send a Pactvera card verified successfully');
 
-  cy.log('Action: Verify Configuration submenu');
-  SidebarPage.clickConfiguration().verifyConfigurationSubmenu();
-  SidebarPage.clickConfiguration();
-  cy.log('VERIFIED: Complete sidebar navigation successfully');
-    
-  });
+  cy.log('Step 4: Click Create & Send');
+  PactveraMainPage.clickCreateAndSend();
+  PactveraMainPage.clickCreateAndSend();
+  cy.log('Create a Pactvera popup opened successfully');
+
+  cy.log('Step 5: Close Create a Pactvera popup');
+  PactveraMainPage.closeCreatePactveraPopup();
+  cy.log('Create a Pactvera popup closed successfully');
+
+  cy.log('Step 6: Verify View Received Pactveras card');
+  PactveraMainPage.verifyReceivedPactveraCard();
+  cy.log('View Received Pactveras card verified successfully');
+
+  cy.log('Step 7: Click Open Received');
+  PactveraMainPage.clickOpenReceived();
+  cy.log('Received Pactveras page opened successfully');
+
+  cy.log('Step 8: Navigate back to Pactvera Main page');
+  PactveraMainPage.clickMainBreadcrumb();
+  PactveraMainPage.verifyMainPageDisplayed();
+  cy.log('Returned to Pactvera Main page successfully');
+
+  cy.log('Step 9: Verify View Sent Pactveras card');
+  PactveraMainPage.verifySentPactveraCard();
+  cy.log('View Sent Pactveras card verified successfully');
+
+  cy.log('Step 10: Click View Sent');
+  PactveraMainPage.clickViewSent();
+  cy.log('Sent Pactveras page opened successfully');
+
+  cy.log('Step 11: Navigate back to Pactvera Main page');
+  PactveraMainPage.clickMainBreadcrumb();
+  PactveraMainPage.verifyMainPageDisplayed();
+  cy.log('Returned to Pactvera Main page successfully');
+
+  cy.log('Step 12: Verify Manage Templates card');
+  PactveraMainPage.verifyManageTemplatesCard();
+  cy.log('Manage Templates card verified successfully');
+
+  cy.log('Step 13: Click Open Templates');
+  PactveraMainPage.clickOpenTemplates();
+  cy.log('Templates page opened successfully');
+
+  cy.log('Step 14: Navigate back to Pactvera Main page');
+  SidebarPage.clickPactveraMain();
+  PactveraMainPage.verifyMainPageDisplayed();
+  cy.log('Returned to Pactvera Main page successfully');
+
+  cy.log('Step 15: Verify Manage Connections card');
+  PactveraMainPage.verifyManageConnectionsCard();
+  cy.log('Manage Connections card verified successfully');
+
+  cy.log('Step 16: Click Go to Connections');
+  PactveraMainPage.clickGoToConnections();
+  cy.log('Connections page opened successfully');
+
+  cy.log('Step 17: Navigate back to Pactvera Main page');
+  PactveraMainPage.clickMainBreadcrumb();
+  PactveraMainPage.verifyMainPageDisplayed();
+  cy.log('Returned to Pactvera Main page successfully');
+
+  cy.log('Step 18: Verify View & Manage Sent Folders card');
+  PactveraMainPage.verifySentFoldersCard();
+  cy.log('View & Manage Sent Folders card verified successfully');
+
+  cy.log('Step 19: Click View Folders');
+  PactveraMainPage.clickViewFolders();
+  cy.log('Sent Folders page opened successfully');
+
+  cy.log('Step 20: Navigate back to Pactvera Main page');
+  PactveraMainPage.clickMainBreadcrumb();
+  PactveraMainPage.verifyMainPageDisplayed();
+  cy.log('Returned to Pactvera Main page successfully');
+
+  cy.log('VERIFIED: All Pactvera Main page cards and navigation actions are working successfully');
+});
 });
