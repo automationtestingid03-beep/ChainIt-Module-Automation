@@ -30,7 +30,6 @@ describe('Organization Onboarding Flow', () => {
 
     OrgOnboardingPage.verifyAttestationPage();
     OrgOnboardingPage.clickContinueButton();
-
     cy.log('⏸  Email has been sent. Please open the email on your mobile device and accept it, then resume the test');
     cy.pause();
   });
