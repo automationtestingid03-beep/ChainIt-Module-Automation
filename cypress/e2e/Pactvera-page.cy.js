@@ -1,6 +1,6 @@
 import SwitchAccountModal from '../pages/SwitchAccountModal';
 import ConfigurationPage from '../pages/ConfigurationPage';
-import PactveraPage from '../pages/PactveraPage';
+import PactveraPage from '../pages/pactvera/PactveraMainPage';
 
 const ADMIN_URL = 'https://develop-admin.chainit.online';
 const INDIVIDUAL_ACCOUNT = 'DEEPENDRA RAO';

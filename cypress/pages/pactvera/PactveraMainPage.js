@@ -95,8 +95,14 @@ class PactveraMainPage extends BasePage {
 
   clickCreateAndSend() {
   cy.log('Action: Click Create & Send');
-  cy.contains('button', 'Create & Send').should('be.visible').click({ force: true });
+
+  cy.contains('button', /^Create & Send$/)
+    .should('be.visible')
+    .should('not.be.disabled')
+    .click();
+
   cy.log('Create a Pactvera popup displayed successfully');
+
   return this;
   }
 

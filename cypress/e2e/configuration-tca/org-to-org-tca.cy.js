@@ -70,7 +70,6 @@ describe('Configuration - TCA Templates', () => {
 
   cy.log('Step 4: Click Create & Send');
   PactveraMainPage.clickCreateAndSend();
-  PactveraMainPage.clickCreateAndSend();
   cy.log('Create a Pactvera popup opened successfully');
 
   cy.log('Step 5: Close Create a Pactvera popup');
