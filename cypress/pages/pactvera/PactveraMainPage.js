@@ -950,9 +950,8 @@ verifySignerDetailsDisplayed() {
 
 selectAuthorizedSigner() {
   cy.log('Action: Get and select first authorized signer');
-  cy.get('[role="dialog"]:visible').find('[role="checkbox"]').filter(':visible')
-    .first().closest('div.flex.items-center.justify-between')
-    .then(($signerRow) => {
+  cy.get('[role="dialog"]:visible').find('.overflow-y-auto > div.flex.items-center.justify-between').filter(':visible')
+    .first().then(($signerRow) => {
       const signerName = $signerRow.find('span.text-\\[\\#25282A\\]').first()
         .text().replace(/\s+/g, ' ').trim();
       expect(signerName, 'First authorized signer name').not.to.be.empty;
@@ -962,7 +961,9 @@ selectAuthorizedSigner() {
       // Select first signer
       cy.wrap($signerRow).click({ force: true });
       // Verify right tick / selected state
-      cy.wrap($signerRow).find('[role="checkbox"]').should('have.attr', 'aria-checked', 'true');
+      cy.wrap($signerRow).should('have.class', 'border-secondgreen').and('have.class', 'bg-primary-50');
+      cy.get('[role="dialog"]:visible').find('[data-test="select-from-template-confirm-button"]').should('be.visible')
+        .and('not.be.disabled');
       cy.log(`VERIFIED: Authorized signer "${signerName}" selected`);
     });
 
