@@ -152,6 +152,7 @@ it('TC01: should validate My Org ID tabs and navigate to Products page', () => {
   cy.log('Action: Click on Publish WorkFlow');
   TCATemplatePage.clickPublishWorkFlow();
   cy.log('Publish WorkFlow button clicked successfully');
+  
    
   cy.log('Action: Verify template publish success message');
   TCATemplatePage.verifyPublishSuccessMessage();  

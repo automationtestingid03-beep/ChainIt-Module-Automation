@@ -366,8 +366,7 @@ class FormTemplatePage extends BasePage {
   // ADD BASIC FORM FIELD
   dragBasicFieldToForm(fieldKey = 'textfield') {
     cy.log(`Action: Drag ${fieldKey} field to Form Builder`);
-
-  cy.get('iframe[title="Form Builder"]', { timeout: 30000 })
+    cy.get('iframe[title="Form Builder"]', { timeout: 30000 })
     .should('exist')
     .then(($iframe) => {
       const iframe = $iframe[0];

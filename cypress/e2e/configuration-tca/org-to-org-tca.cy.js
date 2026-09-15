@@ -60,7 +60,7 @@ describe('Configuration - TCA Templates', () => {
 
 it.only('TC01: should validate All Pactvera Main page cards and navigation actions', () => {
 
-cy.log('Step 1: Open Pactvera menu');
+  cy.log('Step 1: Open Pactvera menu');
   SidebarPage.clickPactvera();
   cy.log('Pactvera menu opened successfully');
 
@@ -139,7 +139,6 @@ cy.log('Step 1: Open Pactvera menu');
   PactveraMainPage.verifyParticipatingPartiesSection();
   PactveraMainPage.verifyParticipatingPartiesColumns();
   PactveraMainPage.verifyParticipatingPartiesEditDeleteIcons();
-
   PactveraMainPage.verifyCCRecipientsSection();
   PactveraMainPage.verifyCCRecipientsColumns();
   PactveraMainPage.verifyCCRecipientsEditDeleteIcons();
@@ -147,7 +146,6 @@ cy.log('Step 1: Open Pactvera menu');
   PactveraMainPage.clickContinueButton();
   PactveraMainPage.verifyStep3Completed();
   PactveraMainPage.verifyActionButtonsDisabled();
-
   PactveraMainPage.verifyDocumentsSection();
   PactveraMainPage.verifyDocumentItems();
   PactveraMainPage.verifyDocumentButtons();
@@ -155,6 +153,7 @@ cy.log('Step 1: Open Pactvera menu');
   PactveraMainPage.verifyQCForm();
   PactveraMainPage.verifyFormButtons();
   cy.log('Action: Uploading PDF');
+  cy.wait(2000);
   PactveraMainPage.clickUploadNew(1);
   PactveraTemplatePage.uploadPdfFile(TCAFlowDocument_PDF);
   cy.log('Action: Confirming PDF upload');
@@ -180,7 +179,6 @@ cy.log('Step 1: Open Pactvera menu');
   PactveraMainPage.verifySelectSignerPopup();
   cy.get('@organizationAdministratorName').then((signerName) => {
   PactveraMainPage.selectAuthorizedSigner(signerName);});
-  cy.pause();
   PactveraMainPage.clickConfirmSigner();
   PactveraTemplatePage.clickContinue();
   cy.log('Action: Dragging Signature field onto document');
@@ -188,12 +186,28 @@ cy.log('Step 1: Open Pactvera menu');
   PactveraMainPage.clickAddToRequest();
   PactveraMainPage.verifyConfiguredDocumentActions(2);
   PactveraMainPage.clickCreateForm();
-  FormTemplatePage.dragBasicFieldToForm('textfield');
-   PactveraTemplatePage.clickContinue();
-   PactveraMainPage.selectFirstParty();
-   PactveraMainPage.clickAddToRequest();
-   PactveraMainPage.verifyConfiguredFormActions();
-   PactveraTemplatePage.clickContinue();
+  PactveraMainPage.dragBasicFieldToForm('textfield');
+  cy.wait(2000);
+  PactveraMainPage.clickContinueButton();
+  PactveraMainPage.selectFirstParty();
+  PactveraMainPage.clickAuthorizedSignerButton();
+  cy.get('@organizationAdministratorName').then((signerName) => {
+  PactveraMainPage.selectAuthorizedSigner(signerName);});
+  PactveraMainPage.clickConfirmSigner();
+  PactveraMainPage.clickAddToRequest();
+  PactveraMainPage.verifyConfiguredFormActions();
+  PactveraMainPage.clickContinueButton();
+  PactveraMainPage.verifyActionButtonsDisabled();
+  PactveraMainPage.verifyConfigureButtonDisplayed();
+  PactveraMainPage.clickConfigureButton();
+  PactveraMainPage.verifyValueTransferPopupDisplayed();
+  PactveraMainPage.verifyConsiderationFieldDisplayed();
+  PactveraMainPage.verifyConsiderationFieldValue();
+  PactveraMainPage.selectFirstVDTProduct();
+  PactveraMainPage.verifyConsiderationTypeDropdown();
+  PactveraMainPage.verifyCurrencyDisplayed();
+  cy.log('Action: Select newly created product');
+  PactveraMainPage.clickContinueButton();
   cy.log('Test completed successfully');
 
 

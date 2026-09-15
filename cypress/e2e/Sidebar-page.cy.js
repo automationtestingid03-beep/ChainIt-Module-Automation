@@ -40,8 +40,7 @@ describe('Configuration - TCA Templates', () => {
     cy.log(`Available organizations: ${orgs.join(', ')}`); 
     });
     SwitchAccountModal.selectSecondOrganization();
-
-    
+   
   });
   it('TC01: Verify complete sidebar navigation', () => {
   cy.log('Action: Verify main sidebar'); 

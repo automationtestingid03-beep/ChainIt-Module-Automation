@@ -164,6 +164,38 @@ class PactveraMainPage extends BasePage {
     return this;
   }
 
+  get configureButton() {
+  return cy.contains('button', 'Configure');
+  }
+
+  get valueTransferPopup() {
+    return cy.get('[data-test="add-value-transfer-modal"]');
+  }
+
+  get valueTransferPopupTitle() {
+  return cy.get('[role="dialog"]').find('h3').contains('Add a value transfer');
+  }
+
+  get considerationField() {
+    return cy.get('[data-test="label-input"]');
+  }
+
+  get considerationType() {
+    return cy.contains('label', 'Consideration type').parent();
+  }
+
+  get currency() {
+    return cy.contains('label', 'Currency').parent();
+  }
+
+  get productTransfer() {
+    return cy.get('[data-test="product-transfer-party-selector"]');
+  }
+
+  get selectVDTField() {
+  return cy.contains('label', 'Select VDT for value transfer').parent().find('[role="combobox"]');
+  }
+
 
 
   verifyMainPageDisplayed() {
@@ -305,11 +337,12 @@ class PactveraMainPage extends BasePage {
 
   clickContinueButton() {
   cy.log('Action: Click Continue button');
-  this.continueButton.should('be.visible').should('not.be.disabled').click({ force: true });
+  this.continueButton.should('exist').scrollIntoView();
+  this.continueButton.should('be.visible').and('not.be.disabled').click({ force: true });
   cy.log('Continue button clicked successfully');
 
   return this;
-}
+ }
 
   clickPactveraTransaction() {
   cy.log('Action: Select Pactvera Transaction');
@@ -446,7 +479,7 @@ searchAndSelectTransactionType(transactionType) {
     cy.log(`Action: Search and select transaction type: ${transactionType}`);
     this.transactionTypeSearchInput.should('be.visible').clear().type(transactionType);
     cy.log(`Action: Select transaction type: ${transactionType}`);
-    this.transactionTypeOptions.filter(':visible').contains(transactionType).should('be.visible').click({ force: true });
+    this.transactionTypeOptions.filter(':visible').contains(transactionType, { timeout: 20000 }).should('be.visible').click({ force: true });
     cy.log(`VERIFIED: Transaction type "${transactionType}" selected`);
 
     return this;
@@ -1003,16 +1036,175 @@ selectFirstParty() {
   return this;
 }
 
-clickUploadConfirm() {
+ clickUploadConfirm() {
     cy.log('**Action: Click "Upload" button to confirm file upload**');
     cy.contains('button', /^Upload\s*$/i, { timeout: 30000 }).filter(':visible').first().should('be.visible').should('not.be.disabled')
-      .click({ force: true });
+    .click({ force: true });
     cy.contains('Add Participants', { timeout: 30000 }).should('be.visible');
     cy.log('✔ Upload confirmed and Add Participants screen is visible');
     return this;
+   }
+
+  dragBasicFieldToForm(fieldKey = 'textfield') {
+  cy.log(`Action: Drag Basic field: ${fieldKey}`);
+
+  const fieldSelector =
+    `#group-basic [data-group="basic"][data-key="${fieldKey}"]:not(.gu-mirror)`;
+
+  cy.get('iframe[title="Form Builder"]', { timeout: 30000 })
+    .should('be.visible')
+    .its('0.contentDocument.body')
+    .should('not.be.empty')
+    .find(fieldSelector)
+    .should('be.visible')
+    .then(($field) => {
+      const fieldEl = $field[0];
+      const dropEl = $field[0].ownerDocument.querySelector(
+        '.builder-components.drag-container.formio-builder-form'
+      );
+
+      expect(dropEl, 'Form Builder drop zone').to.exist;
+
+      const fieldRect = fieldEl.getBoundingClientRect();
+      const dropRect = dropEl.getBoundingClientRect();
+      const startX = fieldRect.left + fieldRect.width / 2;
+      const startY = fieldRect.top + fieldRect.height / 2;
+      const endX = dropRect.left + dropRect.width / 2;
+      const endY = dropRect.top + 100;
+
+      cy.wrap(fieldEl).trigger('mousedown', {
+        button: 0,
+        buttons: 1,
+        clientX: startX,
+        clientY: startY,
+        force: true
+      });
+
+      const steps = 10;
+      for (let step = 1; step <= steps; step += 1) {
+        cy.wrap(fieldEl.ownerDocument).trigger('mousemove', {
+          button: 0,
+          buttons: 1,
+          clientX: startX + ((endX - startX) * step) / steps,
+          clientY: startY + ((endY - startY) * step) / steps,
+          force: true
+        });
+      }
+
+      cy.wrap(dropEl).trigger('mousemove', {
+        button: 0,
+        buttons: 1,
+        clientX: endX,
+        clientY: endY,
+        force: true
+      });
+
+      cy.wrap(fieldEl.ownerDocument).trigger('mouseup', {
+        button: 0,
+        buttons: 0,
+        clientX: endX,
+        clientY: endY,
+        force: true
+      });
+    });
+
+  cy.get('iframe[title="Form Builder"]', { timeout: 30000 })
+    .its('0.contentDocument.body')
+    .should('not.be.empty')
+    .find(`.formio-component-${fieldKey}`, { timeout: 15000 })
+    .should('be.visible');
+  cy.log(`VERIFIED: "${fieldKey}" added to Form Builder`);
+  return this;
   }
 
 
+  verifyConfigureButtonDisplayed() {
+  cy.log('Action: Verify Configure button is displayed');
+  this.configureButton.should('be.visible').and('contain.text', 'Configure');
+  cy.log('VERIFIED: Configure button is displayed');
+
+  return this;
+  }
+
+  clickConfigureButton() {
+  cy.log('Action: Click Configure button');
+  this.configureButton.scrollIntoView().should('be.visible').and('not.be.disabled').click();
+  cy.log('Configure button clicked successfully');
+  
+  return this;
+  }
+
+  verifyValueTransferPopupDisplayed() {
+  cy.log('Action: Verify Add a value transfer popup is displayed');
+  this.valueTransferPopup.should('be.visible');
+  this.valueTransferPopupTitle.should('be.visible').and('contain.text', 'Add a value transfer');
+  cy.log('VERIFIED: Add a value transfer popup is displayed');
+
+  return this;
+  }
+
+  verifyConsiderationFieldDisplayed() {
+  cy.log('Action: Verify Consideration field is displayed');
+  this.considerationField.should('be.visible');
+  cy.log('VERIFIED: Consideration field is displayed');
+
+  return this;
+  }
+
+  verifyConsiderationFieldValue() {
+  cy.log('Action: Verify Consideration field value');
+  this.considerationField.should('have.value', 'Value Transfer').and('be.disabled');
+  cy.log('VERIFIED: Consideration field is auto-populated with Value Transfer');
+
+  return this;
+  }
+
+  verifyConsiderationTypeDisplayed() {
+  cy.log('Action: Verify Consideration type is displayed');
+  this.considerationType.should('be.visible').and('contain.text', 'Product');
+  cy.log('VERIFIED: Consideration type is displayed with Product value');
+
+  return this;
+  }
+
+  verifyCurrencyDisplayed() {
+  cy.log('Action: Verify Currency is displayed');
+  this.currency.should('be.visible').and('contain.text', 'USD');
+  cy.log('VERIFIED: Currency is displayed with USD value');
+  
+  return this;
+  }
+
+  verifyConsiderationTypeDropdown() {
+  cy.log('Action: Verify Consideration type dropdown');
+  this.considerationType.scrollIntoView().should('be.visible').and('contain.text', 'Product');
+  cy.log('VERIFIED: Consideration type dropdown contains Product');
+  return this;
+  }
+
+  selectNewlyCreatedProduct() {
+  cy.log('Action: Select newly created product from Select VDT dropdown');
+  cy.get('@newProductName').then((newProductName) => {
+  cy.log(`Newly created product: ${newProductName}`);
+  this.selectVDTField.scrollIntoView().should('be.visible').click();
+  cy.contains(newProductName).should('be.visible').click();
+  cy.log(`VERIFIED: Newly created product "${newProductName}" selected successfully`);
+  });
+  return this;
+ }
+
+ selectFirstVDTProduct() {
+  cy.log('Action: Select first product from Select VDT dropdown');
+  this.selectVDTField.scrollIntoView().should('be.visible').click();
+  // Select first available VDT option
+  this.selectVDTField.should('have.attr', 'aria-expanded', 'true');
+  cy.get('[role="option"]', { timeout: 20000 }).should('exist').filter(':visible').first().should('be.visible').click({ force: true });
+  cy.log('VERIFIED: First product VDT option selected successfully');
+  
+
+  return this;
+ }
+      
 
 }
 
