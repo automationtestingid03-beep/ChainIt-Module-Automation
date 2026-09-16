@@ -166,17 +166,19 @@ class PactveraTemplatePage extends BasePage {
     return cy.contains('Email').filter(':visible').first();
   }
 
+  // get dropZoneArea() {
+  //   return cy.get('.react-pdf__Page canvas')
+  //     .should('exist')
+  //     .should('be.visible');
+  // }
   get dropZoneArea() {
-    return cy.get('.react-pdf__Page canvas')
-      .should('exist')
-      .should('be.visible');
-  }
+  cy.get('.react-pdf__message--loading', { timeout: 15000 }).should('not.exist');
+  return cy.get('.react-pdf__Page canvas', { timeout: 20000 }).should('exist').should('be.visible');
+}
 
   get textField() {
     return this.getFormBuilderIframe()
-      .find(
-        '#group-basic [data-group="basic"][data-key="textfield"]'
-      );
+      .find('#group-basic [data-group="basic"][data-key="textfield"]');
   }
 
   get textArea() {

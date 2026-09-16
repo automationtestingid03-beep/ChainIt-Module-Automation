@@ -207,9 +207,47 @@ it.only('TC01: should validate All Pactvera Main page cards and navigation actio
   PactveraMainPage.verifyConsiderationTypeDropdown();
   PactveraMainPage.verifyCurrencyDisplayed();
   cy.log('Action: Select newly created product');
-  PactveraMainPage.clickContinueButton();
+  PactveraMainPage.clickValueTransferContinueButton();
   cy.log('Test completed successfully');
+  PactveraMainPage.verifyStep4Completed();
+  PactveraMainPage.validateValueTransferDetails();
+  PactveraMainPage.clickContinueButton();
+  PactveraMainPage.verifyActionButtonsDisabled();
+  PactveraMainPage.enterValueTransferAmount(3);
+  PactveraMainPage.validateValueTransferAllocation(3);
+  PactveraMainPage.clickContinueButton();
+  cy.log('Action: Verify Send Payment section - all fields not empty');
+  PactveraMainPage.verifySendPaymentFieldsFilled();
+  cy.log('Action: Verify Who Receives Payment section - all fields not empty');
+  PactveraMainPage.verifyReceivePaymentFieldsFilled();
+  cy.log('Verify: Allocation shows Fully allocated');
+  PactveraMainPage.verifyFullyAllocated();
+  cy.log('Action: Open Payout method dropdown');
+  PactveraMainPage.openPayoutMethodDropdown();
+  cy.log('Verify: ACH, RTP, Wire options are visible');
+  PactveraMainPage.verifyPayoutMethodOptionsVisible();
+  cy.log('Action: Select RTP payment method');
+  PactveraMainPage.selectPayoutMethod('RTP');
+  cy.log('Verify: RTP is selected in Payout method field');
+  PactveraMainPage.verifyPayoutMethodSelected('RTP');
+  PactveraMainPage.clickContinueButton();
+  PactveraMainPage.verifyActionButtonsDisabled();
+  cy.log('Action: Verify Select billing address section is displayed');
+  PactveraMainPage.verifyBillingAddressSectionDisplayed();
+  cy.log('Action: Verify Refresh button is visible');
+  PactveraMainPage.verifyBillingAddressRefreshButtonVisible();
+  PactveraMainPage.selectFirstBillingAddress();
+  PactveraMainPage.clickContinueButton();
+  cy.log('Verify: Always required platform-enforced conditions displayed');
+  PactveraMainPage.verifyAlwaysRequiredSectionDisplayed();
+  cy.log('Verify: Manual confirmation section displayed');
+  PactveraMainPage.verifyManualConfirmationSectionDisplayed();
+  cy.log('Action: Select confirmation party');
+  PactveraMainPage.selectConfirmationParty('Eco25');
+  cy.log('Verify: Confirmation party selected');
+  PactveraMainPage.verifyConfirmationPartySelected('Eco25');
 
+ 
 
 cy.log('VERIFIED: All Pactvera Main page cards and navigation actions are working successfully');
 });

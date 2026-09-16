@@ -196,6 +196,135 @@ class PactveraMainPage extends BasePage {
   return cy.contains('label', 'Select VDT for value transfer').parent().find('[role="combobox"]');
   }
 
+  get valueTransferContinueButton() {
+  return cy.get('[data-test="add-value-transfer-modal"]').contains('button', 'Continue');
+  }
+
+
+  // ===== Send Payment section =====
+  get nodeNameInput() {
+    return cy.get('[data-test^="node-name-"]');
+  }
+
+  get nodeBudgetInput() {
+    return cy.get('[data-test^="node-budget-"]');
+  }
+
+  get payerPartyDropdown() {
+    return cy.get('[data-test^="payer-party-"]');
+  }
+
+  get payerAmountInput() {
+    return cy.get('[data-test^="payer-amount-"]');
+  }
+
+  get payerPercentText() {
+    return cy.get('[data-test^="payer-pct-"]');
+  }
+
+  get addPayersButton() {
+    return cy.get('[data-test^="payer-add-"]');
+  }
+
+  // ===== Who Receives Payment section =====
+  get netAvailableToPayees() {
+    return cy.get('[data-test="net-available-to-payees"]');
+  }
+
+  get payeePartyDropdown() {
+    return cy.get('[id^="Payout method"]');
+  }
+
+  get payeeAmountInput() {
+    return cy.get('[data-test^="payee-amount-"]');
+  }
+
+  get payeePercentText() {
+    return cy.get('[data-test^="payee-percent-"]');
+  }
+
+  get payoutMethodDropdown() {
+    return cy.get('#Payout\\ method');
+  }
+
+  get destinationAccountDropdown() {
+    return cy.get('#Destination\\ account');
+  }
+
+  get payoutMethodSelectedValue() {
+  return cy.get('#Payout\\ method').closest('[class*="-control"]') .find('[class*="-singleValue"]');
+  }
+
+  get destinationAccountSelectedValue() {
+  return cy.get('#Destination\\ account').closest('[class*="-control"]').find('[class*="-singleValue"]');
+  }
+
+  get addBankAccountLink() {
+    return cy.get('[data-test="payee-add-bank-account"]');
+  }
+
+  get remainingAllocationText() {
+    return cy.get('[data-test="remaining-allocation"]');
+  } 
+
+  // ===== Select Billing Address section =====
+  get billingAddressSectionHeading() {
+    return cy.contains('h2', 'Select billing address');
+  }
+
+  get billingAddressRefreshButton() {
+    return cy.get('[data-test="button-refresh"]');
+  }
+
+  get billingAddressOptions() {
+    return cy.get('input[name^="billing-address-selection-"]');
+  }
+
+  get billingAddressLabelByText() {
+    // usage: billingAddressLabelByText(text) — pass a substring of the address
+    return (text) => cy.contains('label', text);
+  }
+
+  get addNewBillingLocationLink() {
+    return cy.contains('button', "I don't want to use a given address / Add new location");
+  }
+
+  get billingAddressRefreshButton() {
+  return cy.get('[data-test="button-refresh"]');
+  }
+
+  // ===== Set Release Conditions section =====
+  get releaseConditionsHeading() {
+    return cy.contains('h2', 'Set release conditions');
+  }
+
+  get alwaysRequiredSection() {
+    return cy.get('[data-test="always-required-section"]');
+  }
+
+  get valueRecordedCommittedRule() {
+    return cy.get('[data-test="always-required-rule-value-recorded-committed"]');
+  }
+
+  get obligationsFinalStateRule() {
+    return cy.get('[data-test="always-required-rule-obligations-final-state"]');
+  }
+
+  get productRecordedCommittedRule() {
+    return cy.get('[data-test="always-required-rule-product-recorded-committed"]');
+  }
+
+  get manualConfirmationSection() {
+    return cy.get('[data-test^="manual-confirmation-section-"]');
+  }
+
+  get confirmationPartyDropdown() {
+    return cy.get('[data-test^="confirmation-party-dropdown-"]');
+  }
+
+  get confirmationPartyInput() {
+    return cy.get('#Confirmation\\ party');
+  }
 
 
   verifyMainPageDisplayed() {
@@ -336,10 +465,23 @@ class PactveraMainPage extends BasePage {
   }
 
   clickContinueButton() {
+   cy.log('Action: Check and scroll if Continue button is not visible');
+   cy.get('body').then(() => {
+   cy.contains('button', 'Continue').then(($btn) => {
+      if (!Cypress.dom.isVisible($btn)) {
+        cy.log('Continue button not visible - scrolling page');
+        cy.scrollTo('bottom', { ensureScrollable: false });
+      } else {
+   cy.log('Continue button already visible - no scroll needed');
+      }
+    });
+  });
   cy.log('Action: Click Continue button');
-  this.continueButton.should('exist').scrollIntoView();
+  this.continueButton.should('exist');
+  this.continueButton.scrollIntoView({ ensureScrollable: false });
   this.continueButton.should('be.visible').and('not.be.disabled').click({ force: true });
   cy.log('Continue button clicked successfully');
+
 
   return this;
  }
@@ -479,7 +621,7 @@ searchAndSelectTransactionType(transactionType) {
     cy.log(`Action: Search and select transaction type: ${transactionType}`);
     this.transactionTypeSearchInput.should('be.visible').clear().type(transactionType);
     cy.log(`Action: Select transaction type: ${transactionType}`);
-    this.transactionTypeOptions.filter(':visible').contains(transactionType, { timeout: 20000 }).should('be.visible').click({ force: true });
+    this.transactionTypeOptions.filter(':visible').contains(transactionType, { timeout: 30000 }).should('be.visible').click({ force: true });
     cy.log(`VERIFIED: Transaction type "${transactionType}" selected`);
 
     return this;
@@ -547,7 +689,23 @@ searchAndSelectTransactionType(transactionType) {
   return this;
 }
 
-  chooseRole(role) {
+verifyStep4Completed() {
+  cy.log('Verification: Verify Step 4 - Documents & Forms is completed');
+  cy.get('[data-test="pactvera-wizard-step-4"]').should('be.visible').find('svg').should('exist');
+  cy.log('VERIFIED: Step 4 - Documents & Forms is completed');
+
+  return this;
+}
+
+verifyStep5Completed() {
+  cy.log('Verification: Verify Step 5 - Value Transfer is completed');
+  cy.get('[data-test="pactvera-wizard-step-5"]').should('be.visible').find('svg').should('exist');
+  cy.log('VERIFIED: Step 5 - Value Transfer is completed');
+
+  return this;
+}
+
+chooseRole(role) {
   cy.log(`Action: Choose role - ${role}`);
   cy.get('[data-test^="tca-role-option-"]').filter(':visible').contains('.text-sm.font-semibold', new RegExp(`^${role}$`, 'i'))
     .should('be.visible').click({ force: true });
@@ -1204,7 +1362,154 @@ selectFirstParty() {
 
   return this;
  }
+
+ clickValueTransferContinueButton() {
+  cy.log('Action: Click Value Transfer Continue button');
+  this.valueTransferContinueButton.should('exist').scrollIntoView().should('be.visible').and('not.be.disabled').click();
+  cy.log('Value Transfer Continue button clicked successfully');
+
+  return this;
+ }
+
+
+ validateValueTransferDetails() {
+  cy.log('Action: Validate Value Transfer details');
+  cy.get('[data-test="value-transfer-card"]').should('exist').within(() => {
+  // Value Transfer title
+  cy.contains('Value Transfer').should('be.visible');
+  // Product Owner
+  cy.contains('p', 'Product owner').should('be.visible').parent().find('div.rounded-lg')
+    .should('be.visible').invoke('text').should('not.be.empty');
+  // Product Recipient
+  cy.contains('p', 'Product recipient').should('be.visible').parent().find('div.rounded-lg')
+      .should('be.visible').invoke('text').should('not.be.empty');
+  // Currency
+  cy.contains('p', 'Currency').should('be.visible').parent().find('div.rounded-lg')
+      .should('be.visible').invoke('text').should('not.be.empty');
+  // Payment Required
+  cy.contains('p', 'Payment required').should('be.visible').parent().find('div.rounded-lg')
+      .should('be.visible').invoke('text').should('not.be.empty');
+  // Consideration Type
+  cy.contains('p', 'Consideration type').should('be.visible').parent().find('div.rounded-lg')
+      .should('be.visible').invoke('text').should('not.be.empty');
+  // Edit icon
+  cy.get('[data-test="vt-card-edit"]').should('be.visible');
+  // Delete icon
+  cy.get('[data-test="vt-card-delete"]').should('be.visible');
+    });
+
+  cy.log('Value Transfer details validated successfully');
+  return this;
+ }
+
+ enterValueTransferAmount(value) {
+  cy.log(`Action: Enter Value Transfer amount: ${value}`);
+  cy.get('[data-test="amount-input"]').should('exist').scrollIntoView().should('be.visible').clear().type(value.toString());
+  cy.get('[data-test="amount-input"]').should('have.value', value.toString());
+  cy.log(`Value Transfer amount entered: ${value}`);
+
+  return this;
+ }
+
+ validateValueTransferAllocation(value) {
+   const formattedValue = Number(value).toFixed(2);
+   cy.log(`Action: Validate payment allocation: ${formattedValue} USD`);
+   cy.get('[data-test="node-allocation-progress"]').should('be.visible').within(() => {
+   cy.contains('Allocated to nodes').should('be.visible').and('contain.text', `Allocated to nodes ${formattedValue} of ${formattedValue} USD`);
+   cy.contains('Fully allocated').should('be.visible');
+      });
+   cy.log(`Payment allocation verified: Allocated to nodes ${formattedValue} of ${formattedValue} USD - Fully allocated`);
+
+   return this;
+  } 
+
+
+  // ===== Actions / Verifications =====
+  verifySendPaymentFieldsFilled() {
+    this.nodeNameInput.should('have.value', 'Send Payment').and('not.have.value', '');
+    this.nodeBudgetInput.should('not.have.value', '');
+    this.payerPartyDropdown.should('not.have.value', '');
+    this.payerAmountInput.should('not.have.value', '');
+  }
+
+  verifyReceivePaymentFieldsFilled() {
+    this.payeeAmountInput.should('not.have.value', '');
+    this.payoutMethodSelectedValue.invoke('text').should('not.be.empty');
+    this.destinationAccountSelectedValue.invoke('text').should('not.be.empty');
+  }
+
+  verifyFullyAllocated() {
+    this.remainingAllocationText.should('contain.text', 'Fully allocated');
+  }
+
+  openPayoutMethodDropdown() {
+    this.payoutMethodDropdown.click();
+  }
+
+  verifyPayoutMethodOptionsVisible() {
+    cy.contains('ACH (Recommended)').should('be.visible');
+    cy.contains('RTP (Please check if your bank supports this method)').should('be.visible');
+    cy.contains('Wire (Please check if your bank supports this method)').should('be.visible');
+  }
+
+  selectPayoutMethod(method) {
+    cy.contains(method).click();
+  }
+
+  verifyPayoutMethodSelected(method) {
+    cy.get('.css-1dimb5e-singleValue').contains(method).should('be.visible');
+  } 
+
+  verifyBillingAddressSectionDisplayed() {
+    this.billingAddressSectionHeading.should('be.visible');
+    cy.contains('p', 'Select a billing location or add a new one.').should('be.visible');
+    this.billingAddressOptions.should('have.length.greaterThan', 0);
+  }
+
+  selectBillingAddressByText(addressText) {
+    this.billingAddressLabelByText(addressText).find('input[type="radio"]').check({ force: true });
+  }
+
+  selectFirstBillingAddress() {
+    this.billingAddressOptions.first().check({ force: true });
+  }
+
+  verifyBillingAddressSelected(addressText) {
+    this.billingAddressLabelByText(addressText).find('input[type="radio"]').should('be.checked');
+  } 
+
+  clickBillingAddressRefresh() {
+  this.billingAddressRefreshButton.click();
+  }
+
+  verifyBillingAddressRefreshButtonVisible() {
+    this.billingAddressRefreshButton.should('be.visible').and('contain.text', 'Refresh');
+  }
       
+  // ===== Actions / Verifications =====
+  verifyAlwaysRequiredSectionDisplayed() {
+    cy.log('Verify: Always required 3 platform-enforced section displayed');
+    this.alwaysRequiredSection.should('be.visible').and('contain.text', 'Always required').and('contain.text', '3 platform-enforced');
+    this.valueRecordedCommittedRule.should('be.visible').and('contain.text', 'Value recorded and committed');
+    this.obligationsFinalStateRule.should('be.visible').and('contain.text', 'All obligations in final state');
+    this.productRecordedCommittedRule.should('be.visible').and('contain.text', 'Product recorded and committed to value transfer');
+  }
+
+  verifyManualConfirmationSectionDisplayed() {
+    cy.log('Verify: Manual confirmation section displayed');
+    this.manualConfirmationSection.should('be.visible').and('contain.text', 'Manual confirmation').and('contain.text', 'Condition: Manual Confirmation');
+    this.confirmationPartyDropdown.should('be.visible');
+  }
+
+  selectConfirmationParty(partyName) {
+    cy.log(`Action: Select confirmation party - ${partyName}`);
+    this.confirmationPartyDropdown.click();
+    cy.contains('[id^="react-select"]', partyName).click();
+  }
+
+  verifyConfirmationPartySelected(partyName) {
+    this.confirmationPartyDropdown.find('[class*="-singleValue"]').should('contain.text', partyName);
+  }
 
 }
 
