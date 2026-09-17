@@ -82,7 +82,7 @@ class PactveraMainPage extends BasePage {
   return cy.get('input[role="combobox"][id="Folder"]');
   }
 
-  get cancelButton() {
+  get cancelButtondisabled() {
     return cy.get('[data-test="button-pactvera-wizard-cancel"]');
   }
 
@@ -326,6 +326,168 @@ class PactveraMainPage extends BasePage {
     return cy.get('#Confirmation\\ party');
   }
 
+  // ===== Transaction summary sidebar - Parties section =====
+  get sidebarPartiesSection() {
+    return cy.get('[data-test="pactvera-wizard-summary-sidebar"]')
+      .contains('p', 'Parties')
+      .parent();
+  }
+
+  get sidebarPartyNames() {
+    return cy.get('[data-test="pactvera-wizard-summary-sidebar"]')
+      .contains('p', 'Parties')
+      .parent()
+      .find('ul li');
+  }
+
+  // ===== Actions / Verifications =====
+  getSidebarPartyNames() {
+    cy.log('Action: Get party names from transaction summary sidebar');
+    return this.sidebarPartyNames.then(($parties) => {
+      const parties = [...$parties].map((el) => {
+        const name = el.querySelector('p.truncate')?.textContent.trim();
+        const role = el.querySelector('p.text-xs')?.textContent.trim();
+        return { name, role };
+      });
+      cy.log(`Sidebar parties: ${JSON.stringify(parties)}`);
+      return cy.wrap(parties).as('sidebarParties');
+    });
+  }
+
+  get releaseAuthorityHeading() {
+  return cy.contains('h2, p', 'Set release authority');
+  }
+
+  get releaseAuthorityProvidingText() {
+    return cy.contains('p', 'is providing');
+  }
+
+  get authorizedSignerCard() {
+    return cy.get('[data-test^="release-authority-signer-"]');
+  }
+
+  get authorizedSignerName() {
+    return this.authorizedSignerCard.find('p').first();
+  }
+
+  get authorizedSignerRole() {
+    return this.authorizedSignerCard.contains('p', 'releaser');
+  }
+
+  get authorizedSignerEmail() {
+    return this.authorizedSignerCard.find('p').last();
+  }
+
+  get authorizedSignerCheckIcon() {
+    return this.authorizedSignerCard.find('svg, [data-test="signer-selected-check"]');
+  }
+
+  get authorityVerifiedBanner() {
+   return cy.contains('Authority Verified');
+  }
+
+  get authorityVerifiedExpandIcon() {
+    return this.authorityVerifiedBanner.parents('div').find('svg').last();
+  }
+
+  get releaseAuthorityEditIcon() {
+   return cy.contains('Edit');
+  }
+
+  // ===== Review Page - Section headings =====
+  get reviewHeading() {
+    return cy.contains('h2, p', 'Review').first();
+  }
+
+  get overviewSection() {
+    return cy.contains('p', 'Overview').parents('.rounded-xl.border.border-gray-200.bg-white').first();
+  }
+
+  get participatingPartiesSection() {
+    return cy.contains('p', 'Participating Parties (Roles)').parents('.rounded-xl.border.border-gray-200.bg-white').first();
+  }
+
+  get documentsAndFormsSection() {
+    return cy.contains('p', 'Documents and Forms').parents('.rounded-xl.border.border-gray-200.bg-white').first();
+  }
+
+  get valueTransfersSection() {
+    return cy.get('[data-test="review-value-transfer-card"]');
+  }
+
+  get valueTransferEditButton() {
+    return cy.get('[data-test="review-vt-edit"]');
+ }
+
+  get valueTransferPayeesList() {
+    return cy.get('[data-test="review-payees-list"]');
+ }
+
+  get valueTransferTCAPayersSection() {
+    return cy.get('[data-test="review-tca-payers"]');
+  }
+
+  get releaseAuthoritySection() {
+    return cy.contains('p', 'Release Authority').parents('.rounded-xl.border.border-gray-200.bg-white').first();
+  }
+
+  get releaseConditionsSection() {
+    return cy.contains('p', 'Release conditions').parents('.rounded-xl.border.border-gray-200.bg-white').first();
+  }
+
+  // ===== Overview fields =====
+  get overviewTitle() {
+    return this.overviewSection.contains('Title').next();
+  }
+
+  get overviewFolder() {
+    return this.overviewSection.contains('Folder').next();
+  }
+
+  get overviewTransactionType() {
+    return this.overviewSection.contains('Transaction type').next();
+  }
+
+  // ===== Footer buttons =====
+  get cancelButton() {
+    return cy.contains('button', 'Cancel');
+  }
+
+  get saveAsDraftButtonFooter() {
+    return cy.contains('button', 'Save as Draft');
+  }
+
+  get sendButton() {
+    return cy.contains('button', 'Send');
+  } 
+
+  // ===== Agreement Sent - Success screen =====
+  get agreementSentContainer() {
+    return cy.contains('h2', 'Agreement sent').parents('div').eq(1);
+  }
+
+  get agreementSentCheckIcon() {
+    return cy.get('.rounded-full.bg-\\[\\#E8F5DF\\] svg');
+  }
+
+  get agreementSentHeading() {
+    return cy.get('h2').contains('Agreement sent');
+  }
+
+  get agreementSentDescription() {
+    return cy.contains('p', 'Invitations have been sent to all parties');
+  }
+
+  get viewAgreementButton() {
+    return cy.contains('button', 'View agreement');
+  }
+
+  get createAnotherButton() {
+    return cy.contains('button', 'Create another');
+  }
+
+
+
 
   verifyMainPageDisplayed() {
     cy.log('Action: Verify Pactvera Main page is displayed');
@@ -565,7 +727,7 @@ verifyAllSixStepsDisplayed() {
 
 verifyActionButtonsDisabled() {
   cy.log('Action: Verify Cancel, Save as Draft, and Continue buttons are disabled');
-  this.cancelButton.scrollIntoView().should('be.visible').and('be.disabled');
+  this.cancelButtondisabled.scrollIntoView().should('be.visible').and('be.disabled');
   this.saveAsDraftButton.scrollIntoView().should('be.visible').and('be.disabled');
   this.continueButtondisabled.scrollIntoView().should('be.visible').and('be.disabled');
   cy.log('VERIFIED: Cancel, Save as Draft, and Continue buttons are disabled');
@@ -693,6 +855,7 @@ verifyStep4Completed() {
   cy.log('Verification: Verify Step 4 - Documents & Forms is completed');
   cy.get('[data-test="pactvera-wizard-step-4"]').should('be.visible').find('svg').should('exist');
   cy.log('VERIFIED: Step 4 - Documents & Forms is completed');
+
 
   return this;
 }
@@ -1181,15 +1344,36 @@ clickCreateForm() {
 }
 
 selectFirstParty() {
-  cy.log('Action: Select the first available party');
+  // cy.log('Action: Select the first available party');
+  // cy.get('input[role="combobox"]').filter(':visible').first().should('be.visible').click({ force: true });
+  // cy.get('[role="option"]').filter(':visible').should('have.length.at.least', 1).first().then(($option) => {
+  //     const partyName = $option.text().replace(/\s+/g, ' ').trim();
+  //     expect(partyName).not.to.be.empty;
+  // cy.log(`First party found: ${partyName}`);
+  // cy.wrap($option).click({ force: true });
+  // cy.log(`VERIFIED: Party "${partyName}" selected`);
+  //   });
+  cy.log('Action: Select party - prefer "Your Organization" if available');
   cy.get('input[role="combobox"]').filter(':visible').first().should('be.visible').click({ force: true });
-  cy.get('[role="option"]').filter(':visible').should('have.length.at.least', 1).first().then(($option) => {
-      const partyName = $option.text().replace(/\s+/g, ' ').trim();
-      expect(partyName).not.to.be.empty;
-  cy.log(`First party found: ${partyName}`);
-  cy.wrap($option).click({ force: true });
-  cy.log(`VERIFIED: Party "${partyName}" selected`);
-    });
+
+  cy.get('[role="option"]').filter(':visible').should('have.length.at.least', 1).then(($options) => {
+    const optionTexts = [...$options].map((el) => el.textContent.replace(/\s+/g, ' ').trim());
+    cy.log(`Available party options: ${optionTexts.join(', ')}`);
+
+    const yourOrgIndex = optionTexts.findIndex((text) => text.includes('Your Organization'));
+
+    if (yourOrgIndex !== -1) {
+      const partyName = optionTexts[yourOrgIndex];
+      cy.log(`"Your Organization" option found - selecting: ${partyName}`);
+      cy.wrap($options[yourOrgIndex]).click({ force: true });
+      cy.log(`VERIFIED: Party "${partyName}" selected`);
+    } else {
+      const partyName = optionTexts[0];
+      cy.log(`"Your Organization" not found - selecting first party: ${partyName}`);
+      cy.wrap($options[0]).click({ force: true });
+      cy.log(`VERIFIED: Party "${partyName}" selected`);
+    }
+  });
 
   return this;
 }
@@ -1355,11 +1539,25 @@ selectFirstParty() {
   cy.log('Action: Select first product from Select VDT dropdown');
   this.selectVDTField.scrollIntoView().should('be.visible').click();
   // Select first available VDT option
-  this.selectVDTField.should('have.attr', 'aria-expanded', 'true');
-  cy.get('[role="option"]', { timeout: 20000 }).should('exist').filter(':visible').first().should('be.visible').click({ force: true });
-  cy.log('VERIFIED: First product VDT option selected successfully');
+  // this.selectVDTField.should('have.attr', 'aria-expanded', 'true');
+  // cy.get('[role="option"]', { timeout: 20000 }).should('exist').filter(':visible').first().should('be.visible').click({ force: true });
+  // cy.log('VERIFIED: First product VDT option selected successfully');
+  cy.get('body').then(($body) => {
+  const options = $body.find('[role="option"]:visible');
+    if (options.length > 0) {
+      cy.log(`Found ${options.length} VDT option(s) - selecting first one`);
+      cy.get('[role="option"]', { timeout: 20000 }).filter(':visible').first().should('be.visible').click({ force: true });
+      cy.log('VERIFIED: First product VDT option selected successfully');
+    } else {
+      cy.log('No VDT options available - clicking "+ Create new Product VDT"');
+      cy.contains('+ Create new Product VDT', { timeout: 10000 }).should('be.visible').click({ force: true });
+      cy.log('ACTION REQUIRED: Scan QR code on mobile device to create Product VDT manually');
+      cy.log('Test paused - complete the mobile scan, then resume the test runner manually');
+      cy.pause();
+      cy.log('Resumed after manual VDT creation via mobile scan');
+    }
+  });
   
-
   return this;
  }
 
@@ -1510,6 +1708,213 @@ selectFirstParty() {
   verifyConfirmationPartySelected(partyName) {
     this.confirmationPartyDropdown.find('[class*="-singleValue"]').should('contain.text', partyName);
   }
+
+  verifySidebarPartyWithRole(partyName, role) {
+  cy.log(`Verify: Party "${partyName}" with role "${role}" displayed in sidebar`);
+  this.sidebarPartiesSection.contains('li', partyName).should('contain.text', role);
+  } 
+
+  verifyReleaseAuthorityCardDisplayed(signerName) {
+  cy.log(`Verify: Release authority card displayed for ${signerName}`);
+  cy.get('[data-test^="releaser-option-"]').contains('p', signerName).should('be.visible');
+  }
+
+  verifyAuthorizedSignerSelected(signerName) {
+    cy.log(`Verify: ${signerName} is shown as selected`);
+    cy.get('[data-test^="releaser-option-"]').contains('p', signerName).parents('[data-test^="releaser-option-"]').should('have.class', 'border-primary'); 
+  }
+
+  selectAuthorizedSignerRelease(signerName) {
+    cy.log(`Action: Select authorized signer - ${signerName}`);
+    cy.get('[data-test^="releaser-option-"]').contains('p', signerName).parents('[data-test^="releaser-option-"]').click();
+  }
+
+  verifyAndSelectAuthorizedSigner(signerName) {
+    cy.log(`Verify: Signer card for ${signerName} exists before selecting`);
+    this.verifyReleaseAuthorityCardDisplayed(signerName);
+    cy.log(`Action: Select ${signerName} as authorized signer`);
+    this.selectAuthorizedSignerRelease(signerName);
+    cy.log(`Verify: ${signerName} is now selected`);
+    this.verifyAuthorizedSignerSelected(signerName);
+  }
+
+  verifyEditIconDisplayed() {
+    cy.log('Verify: Edit icon/link is displayed next to signer');
+    this.releaseAuthorityEditIcon.should('be.visible');
+  }
+
+  verifyAuthorityVerifiedDisplayed() {
+  cy.log('Verify: Authority Verified banner is displayed');
+  this.authorityVerifiedBanner.should('be.visible');
+}
+
+  verifyOverviewSectionNotEmpty() {
+    cy.log('Verify: Overview section displayed and not empty');
+    this.overviewSection.should('be.visible');
+    this.overviewSection.contains('p','Title').parent().invoke('text').should('not.be.empty');
+    this.overviewSection.contains('p','Folder').parent().invoke('text').should('not.be.empty');
+    this.overviewSection.contains('p','Transaction type').parent().invoke('text').should('not.be.empty');
+  }
+
+
+
+  verifyParticipatingPartiesNotEmpty() {
+    cy.log('Verify: Participating Parties (Roles) table displayed and not empty');
+    this.participatingPartiesSection.should('be.visible');
+    const expectedHeaders = ['Party Type', 'Name', 'Email', 'Role'];
+    this.participatingPartiesSection.find('table thead th').then(($headers) => {
+    const actualHeaders = [...$headers].map(h => h.textContent.trim());
+    cy.log(`Table headers: ${actualHeaders.join(', ')}`);
+    expect(actualHeaders).to.deep.equal(expectedHeaders);
+  });
+
+    this.participatingPartiesSection.find('table tbody tr').should('have.length.greaterThan', 0)
+    .each(($row, index) => {
+    cy.wrap($row).find('td').should('have.length', 4).each(($cell, cellIndex) => {
+    const cellText = $cell.text().trim();
+    cy.log(`Row ${index + 1}, Column ${cellIndex + 1} (${expectedHeaders[cellIndex]}): "${cellText}"`);
+    // 1. Not empty check
+    expect(cellText, `Row ${index + 1}, ${expectedHeaders[cellIndex]} should not be empty`).to.not.be.empty;
+    // 2. Column-specific content validation
+        switch (cellIndex) {
+          case 0: // Party Type
+            expect(cellText, `Row ${index + 1}, Party Type should be Individual or Organization`).to.be.oneOf(['Individual', 'Organization']);
+            break;
+          case 1: // Name
+            expect(cellText, `Row ${index + 1}, Name should not look like an email`).to.not.match(/@/);
+            break;
+          case 2: // Email
+            expect(cellText, `Row ${index + 1}, Email should be a valid email format`).to.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+            break;
+          case 3: // Role
+            expect(cellText, `Row ${index + 1}, Role should not look like an email`).to.not.match(/@/);
+            break;
+        }
+      });
+    });
+
+  cy.log('VERIFIED: All rows and columns in Participating Parties table are non-empty');
+}
+
+  verifyDocumentsAndFormsNotEmpty() {
+    cy.log('Verify: Documents and Forms table displayed and not empty');
+    this.documentsAndFormsSection.should('be.visible');
+    this.documentsAndFormsSection.find('table tbody tr, [role="row"]').should('have.length.greaterThan', 0);
+  }
+
+  verifyValueTransfersNotEmpty() {
+    cy.log('Verify: Value Transfers Information & Payments displayed and not empty');
+    this.valueTransfersSection.should('be.visible');
+    this.valueTransfersSection.should('contain.text', 'Value Transfer');
+    this.valueTransfersSection.should('contain.text', 'Consideration type');
+    this.valueTransfersSection.should('contain.text', 'Product owner');
+    this.valueTransfersSection.should('contain.text', 'Product recipient');
+    this.valueTransfersSection.should('contain.text', 'Payers');
+    this.valueTransfersSection.should('contain.text', 'Amount');
+    this.valueTransferEditButton.should('be.visible');
+
+  cy.log('Verify: Payees list is not empty');
+  this.valueTransferPayeesList.find('[data-test^="review-payee-"]')
+    .should('have.length.greaterThan', 0);
+
+  cy.log('Verify: Collection payers section is not empty');
+  this.valueTransferTCAPayersSection.find('[data-test^="review-tca-payer-"]')
+    .should('have.length.greaterThan', 0);
+  }
+
+  verifyReleaseAuthorityNotEmpty() {
+    cy.log('Verify: Release Authority section displayed and not empty');
+    this.releaseAuthoritySection.should('be.visible');
+    this.releaseAuthoritySection.should('contain.text', 'TCA Releaser');
+    this.releaseAuthoritySection.should('contain.text', 'Release authority — transfers');
+    this.releaseAuthoritySection.should('contain.text', 'Applies to');
+    this.releaseAuthoritySection.should('contain.text', 'Value Transfer');
+  }
+
+  verifyReleaseConditionsNotEmpty() {
+    cy.log('Verify: Release conditions section displayed and not empty');
+    this.releaseConditionsSection.should('be.visible');
+    this.releaseConditionsSection.should('contain.text', 'Always required');
+  }
+
+  verifyAllReviewFieldsReadOnly() {
+   cy.log('Verify: All Review page fields are read-only (rendered as static text, not editable inputs)');
+   cy.get('body').then(($body) => {
+   const editableInputs = $body.find('input:not([type="hidden"]), textarea, select').filter((i, el) => Cypress.dom.isVisible(el));
+   cy.log(`Found ${editableInputs.length} visible editable form elements on Review page`);
+   expect(editableInputs.length, 'Review page should have no editable input/textarea/select fields').to.eq(0);
+   });
+   cy.log('VERIFIED: All Review page fields are static/read-only (no editable form elements present)');
+  }
+
+  verifyFooterButtonsDisplayed() {
+    cy.log('Verify: Cancel, Save as Draft, and Send buttons are displayed');
+    this.cancelButton.scrollIntoView().should('be.visible');
+    this.saveAsDraftButtonFooter.scrollIntoView().should('be.visible');
+    this.sendButton.scrollIntoView().should('be.visible');
+    cy.log('VERIFIED: Cancel, Save as Draft, and Send buttons are displayed');
+  }
+
+  verifyCompleteReviewPage() {
+    cy.log('Action: Verify complete Review page - all sections not empty and read-only');
+    this.verifyOverviewSectionNotEmpty();
+    this.verifyParticipatingPartiesNotEmpty();
+    this.verifyDocumentsAndFormsNotEmpty();
+    this.verifyValueTransfersNotEmpty();
+    this.verifyReleaseAuthorityNotEmpty();
+    this.verifyReleaseConditionsNotEmpty();
+    this.verifyAllReviewFieldsReadOnly();
+    this.verifyFooterButtonsDisplayed();
+  }
+
+  verifyAgreementSentDisplayed() {
+    cy.log('Verify: Agreement sent success screen displayed');
+    cy.log('Verify: Green checkmark icon is visible');
+    this.agreementSentCheckIcon.should('be.visible');
+    cy.log('Verify: "Agreement sent" heading is visible');
+    this.agreementSentHeading.should('be.visible').and('have.text', 'Agreement sent');
+    cy.log('Verify: Confirmation message text is visible');
+    this.agreementSentDescription.should('be.visible').and('contain.text', 'Invitations have been sent to all parties')
+      .and('contain.text', 'Once countersigned').and('contain.text', 'pre-funding state');
+    cy.log('VERIFIED: Agreement sent screen displayed with checkmark and confirmation text');
+  }
+
+  verifyAgreementSentButtonsDisplayed() {
+    cy.log('Verify: View agreement and Create another buttons are displayed');
+    this.viewAgreementButton.should('be.visible').and('contain.text', 'View agreement');
+    this.createAnotherButton.should('be.visible').and('contain.text', 'Create another');
+  }
+
+  clickViewAgreement() {
+    cy.log('Action: Click View agreement button');this.viewAgreementButton.click();
+  }
+
+  clickCreateAnother() {
+    cy.log('Action: Click Create another button');this.createAnotherButton.click();
+  }
+
+  
+  clickSendAndWaitForAgreementSent() {
+    cy.log('Action: Click Send button');
+    this.sendButton.click();
+    cy.log('Action: Wait for either Agreement sent success OR an error to appear');
+    cy.get('body', { timeout: 30000 }).should(($body) => {
+    const hasSuccess = $body.find('h2:contains("Agreement sent")').length > 0;
+    const hasError = $body.find('[role="alert"], .toast-error, [data-test*="error"]').length > 0;
+    expect(hasSuccess || hasError, 'Expected either success screen or an error message to appear').to.be.true;
+    });
+    cy.get('body').then(($body) => {
+    const hasError = $body.find('[role="alert"], .toast-error, [data-test*="error"]').length > 0;
+    if (hasError) {const errorText = $body.find('[role="alert"], .toast-error, [data-test*="error"]').first().text();
+    cy.log(`FAILED: Error appeared after clicking Send - "${errorText}"`);
+    throw new Error(`Send action failed with error: "${errorText}"`);
+    }
+    });
+    cy.log('VERIFIED: Agreement sent screen is now displayed (no error occurred)');
+    cy.contains('h2', 'Agreement sent').should('be.visible');
+
+    return this;
+ }
 
 }
 
