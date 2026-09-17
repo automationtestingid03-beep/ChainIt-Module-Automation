@@ -26,5 +26,8 @@
     "cypress": "^15.21.1",
     "cypress-iframe": "^1.0.1",
     "cypress-real-events": "^1.15.0"
+  },
+  "allowScripts": {
+    "cypress@15.21.1": true
   }
 }
