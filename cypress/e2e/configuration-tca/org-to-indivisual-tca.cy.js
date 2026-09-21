@@ -24,7 +24,7 @@ describe('Configuration - TCA Templates', () => {
   beforeEach(() => {
 
     // Step 1: Open QR Scan page
-    cy.log('Step 1: Opening QR Scan page');
+    cy.log('Action: Opening QR Scan page');
     cy.visit(`${ADMIN_URL}/scan-qr`);
     cy.contains('Scan or Tap the QR Code Login')
       .should('be.visible');
@@ -32,7 +32,7 @@ describe('Configuration - TCA Templates', () => {
 
 
     // Step 2: Manual QR scan
-    cy.log('Step 2: Please scan the QR code using the mobile app');
+    cy.log('Action: Please scan the QR code using the mobile app');
 
     if (Cypress.config('isInteractive')) {
       cy.pause();
@@ -40,13 +40,13 @@ describe('Configuration - TCA Templates', () => {
     cy.log('QR scan process resumed');
 
     // Step 3: Wait for login
-    cy.log('Step 3: Waiting for QR login to complete');
+    cy.log('Action: Waiting for QR login to complete');
 
     cy.url({ timeout: 120000 }).should('not.include', '/scan-qr');
     cy.log('QR login completed successfully');
 
     // Step 4: Switch account
-    cy.log('Step 4: Verifying Switch Account modal');
+    cy.log('Action: Verifying Switch Account modal');
     SwitchAccountModal.verifyVisible();
     SwitchAccountModal.getAllOrganizations().then((orgs) => {
     cy.log(`Available organizations: ${orgs.join(', ')}`); 

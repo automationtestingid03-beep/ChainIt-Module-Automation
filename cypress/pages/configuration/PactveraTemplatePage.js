@@ -1888,6 +1888,25 @@ class PactveraTemplatePage extends BasePage {
     cy.log('✔ VERIFIED: Redirected to Pactvera Templates page');
     return this;
   }
+
+clickAddDocumentForAgreement() {
+    cy.log('Action: Click "Add Document" button');
+
+  cy.get('button')
+    .filter(':visible')
+    .filter((index, element) => {
+      return element.innerText.trim() === 'Document' &&
+             !element.disabled;
+    })
+    .first()
+    .scrollIntoView()
+    .should('be.visible')
+    .click({ force: true });
+
+  cy.log('Add Document button clicked successfully');
+
+  return this;
+}
 }
 
 export default new PactveraTemplatePage();

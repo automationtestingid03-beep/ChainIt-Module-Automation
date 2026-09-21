@@ -10,6 +10,14 @@ class PactveraMainPage extends BasePage {
     return cy.contains('h1', 'Get Started with Pactvera');
   }
 
+  get createPactveraFromScratchOption() {
+    return cy.get('[data-test="pactvera-entry-create-from-scratch"]');
+  }
+
+  get selectTemplateOption() {
+    return cy.get('[data-test="pactvera-entry-select-template"]');
+  }
+
   get sendPactveraCard() {
     return cy.contains('h3', 'Send a Pactvera').closest('div.bg-white');
   }
@@ -74,6 +82,10 @@ class PactveraMainPage extends BasePage {
     return cy.get('[data-test="title-input"]');
   } 
 
+  get agreementNameInput() {
+    return cy.get('[data-test="title-input"]');
+  } 
+
    get pactveraDetailsHeading() {
     return cy.contains('h2', 'Pactvera Details');
   }
@@ -124,12 +136,110 @@ class PactveraMainPage extends BasePage {
     Cypress.$(element).find('span').first().text().trim() === 'Includes');
   }
 
+  get partiesPageHeading() {
+    return cy.contains('h1, h2, h3', 'Parties');
+  }
+
+  get defineParticipatingPartiesHeading() {
+    return cy.contains('Define Participating Parties');
+  }
+
+  get pactveraWizardSidebar() {
+    return cy.get('[data-test="pactvera-wizard-summary-sidebar"]');
+  }
+
+  get agreementSection() {
+    return this.pactveraWizardSidebar.find('div.rounded-lg.border.border-dashed');
+  }
+
+  get agreementTitleValue() {
+    return this.agreementSection.contains('p', 'Title').next('p');
+  }
+
+  get agreementFolderValue() {
+    return this.agreementSection.contains('p', 'Folder').next('p');
+  }
+
+  get selectPartiesLabel() {
+    return cy.contains('Select Parties');
+  }
+
+  get selectPartiesRequiredAsterisk() {
+    return this.selectPartiesLabel.find('span.text-red-500, span[class*="red"]');
+  }
+
+  get selectFromConnectionsButton() {
+    return cy.get('[data-test="button-select-from-connections"]');
+  }
+
+  get inviteButton() {
+    return cy.get('[data-test="button-invite"]');
+  }
+
+  get participatingPartiesLabel() {
+    return cy.contains('Participating Parties');
+  }
+
+  get participatingPartiesTable() {
+    return cy.get('table');
+  }
+
+  get participatingPartiesTableHeaders() {
+    return this.participatingPartiesTable.find('th');
+  }
+
+ get myOrganizationCheckbox() {
+    return cy.get('label[for="isCreateDefaultParty"]').closest('.flex.gap-3').find('span[role="checkbox"]');
+  }
+
+  get corporateDocumentCheckbox() {
+    return cy.get('label[for="isCorporateDocument"]').closest('.flex.gap-3').find('span[role="checkbox"]');
+  }
+
+  get recipientPaysCheckbox() {
+    return cy.get('label[for="isRecipientPaidPactvera"]').closest('.flex.gap-3').find('span[role="checkbox"]');
+  }
+
+
+  get addCCRecipientsHeading() {
+    return cy.contains('Add CC recipients');
+  }
+
+  get ccSelectFromDirectoryButton() {
+    return cy.contains('button', 'Select from Directory');
+  }
+
+  get nextButton() {
+    return cy.get('[data-test="button-pactvera-wizard-next"]');
+  }
+
+  get ccInviteButton() {
+    return cy.contains('button', 'Invite').last();
+  }
+
+
   get roleOptions() {
   return cy.get('[data-test^="tca-role-option-"]');
   }
 
   get addPartiesStep() {
-  return cy.get('[data-test="tca-add-parties-step"]');
+    return cy.contains('Define Participating Parties').closest('div[class*="rounded"]').parent();
+  }
+
+  get selectPartiesSection() {
+    return this.addPartiesStep.contains('span', 'Select Parties').closest('.flex.flex-col.gap-2');
+  }
+
+  get participatingPartiesSectionAgreement() {
+    return this.addPartiesStep.contains('span', 'Participating Parties').closest('.flex.flex-col.gap-2');
+  }
+
+  get checkboxOptionsSection() {
+    return cy.get('label[for="isCreateDefaultParty"]').closest('.flex.flex-col.gap-1').parent();
+  }
+
+  get addCcRecipientsSection() {
+    return this.addPartiesStep.contains('div', 'Add CC recipients').closest('.rounded-xl');
   }
 
   get organizationSection() {
@@ -142,10 +252,6 @@ class PactveraMainPage extends BasePage {
 
   get addSalerSection() {
     return this.addPartiesStep.contains('div', 'Add saler').closest('.rounded-xl');
-  }
-
-  get addCcRecipientsSection() {
-    return this.addPartiesStep.contains('div', 'Add CC recipients').closest('.rounded-xl');
   }
 
   get organizationAdministratorName() {
@@ -486,6 +592,28 @@ class PactveraMainPage extends BasePage {
     return cy.contains('button', 'Create another');
   }
 
+  // LOCATORS - Validation Error Toast
+
+  get attachDocumentsErrorToast() {
+    return cy.contains('Please attach documents or forms').parents('div').eq(1);
+  }
+
+  get attachDocumentsErrorHeading() {
+    return cy.contains('Please attach documents or forms');
+  }
+
+  get attachDocumentsErrorMessage() {
+    return cy.contains('Please configure at least one document or form before sending the request.');
+  }
+
+  get attachDocumentsErrorCloseIcon() {
+    return this.attachDocumentsErrorToast.find('svg, button').last();
+  }
+
+  get documentsStepLink() {
+    return cy.contains('Documents');
+  }
+
 
 
 
@@ -675,6 +803,17 @@ verifyAllSixStepsDisplayed() {
     return this;
   }
 
+  verifyAllFourStepsDisplayed() {
+    cy.log('Action: Verify all 4 Pactvera workflow steps are displayed');
+    this.step1.should('be.visible').and('contain.text', 'Pactvera Details');
+    this.step2.should('be.visible').and('contain.text', 'Parties');
+    this.step3.should('be.visible').and('contain.text', 'Documents');
+    this.step4.should('be.visible').and('contain.text', 'Review');
+    cy.log('VERIFIED: All 4 workflow steps are displayed');
+
+    return this;
+  }
+
   verifyStep1Active() {
     cy.log('Action: Verify Step 1 is active');
     this.step1.should('be.visible').find('div').first().should('have.class', 'bg-primary')
@@ -697,6 +836,16 @@ verifyAllSixStepsDisplayed() {
     return this;
   }
 
+  enterUniqueAgreementName() {
+    const agreementName = `Automation PT-${Math.random().toString(36).substring(2, 5)}`;
+    cy.log(`Action: Enter agreement name: ${agreementName}`);
+    this.agreementNameInput.should('be.visible').clear().type(agreementName);
+    cy.wrap(agreementName).as('agreementName');
+    cy.log('VERIFIED: Unique agreement name entered');
+
+    return this;
+  }
+
   verifyStep2Displayed() {
     cy.log('Action: Verify Step 2 - Transaction type is displayed');
     this.step2.should('be.visible').and('contain.text', 'Transaction type');
@@ -714,7 +863,7 @@ verifyAllSixStepsDisplayed() {
     return this;
   }
 
-  verifyTransactionTypeStep() {
+ verifyTransactionTypeStep() {
   cy.log('Action: Verify Pactvera Details page is displayed');
   this.pactveraDetailsHeading.should('be.visible');
   cy.contains("You're creating a Pactvera Transaction").should('be.visible');
@@ -723,7 +872,18 @@ verifyAllSixStepsDisplayed() {
   cy.log('VERIFIED: Pactvera Details page is displayed');
 
   return this;
-}
+ }
+
+verifyAgreementTypeStep() {
+  cy.log('Action: Verify Pactvera Details page is displayed');
+  this.pactveraDetailsHeading.should('be.visible');
+  cy.contains("You're creating a Pactvera Agreement").should('be.visible');
+  cy.contains('Name your agreement').should('be.visible');
+
+  cy.log('VERIFIED: Pactvera Details page is displayed');
+
+  return this;
+ } 
 
 verifyActionButtonsDisabled() {
   cy.log('Action: Verify Cancel, Save as Draft, and Continue buttons are disabled');
@@ -926,6 +1086,85 @@ chooseRole(role) {
   cy.log('VERIFIED: Add CC recipients section and both buttons are displayed');
 
   return this;
+  }
+
+  verifyPartiesPageHeading() {
+    cy.log('Verification: Verify Parties page header');
+    cy.contains('h1, h2, h3', 'Parties').should('be.visible');
+    cy.log('VERIFIED: Parties page header is displayed');
+
+    return this;
+  }
+
+  verifyAgreementSection() {
+    cy.log('Verification: Verify Agreement section');
+    this.pactveraWizardSidebar.should('be.visible');
+    this.pactveraWizardSidebar.should('contain.text', 'Agreement');
+    this.agreementSection.should('be.visible');
+    this.agreementSection.should('contain.text', 'Title');
+    this.agreementSection.should('contain.text', 'Folder');
+    cy.log('VERIFIED: Agreement section with Title and Folder is displayed');
+
+    return this;
+  }
+
+  verifySelectPartiesSection() {
+    cy.log('Verification: Verify Select Parties section');
+    this.selectPartiesSection.should('be.visible');
+    this.selectPartiesSection.should('contain.text', 'Select Parties');
+    this.selectPartiesSection.contains('button', 'Select from Connections').should('be.visible');
+    this.selectPartiesSection.contains('button', 'Invite').should('be.visible');
+    cy.log('VERIFIED: Select Parties section and both buttons are displayed');
+
+    return this;
+  }
+
+  verifyParticipatingPartiesAgreementSection() {
+    cy.log('Verification: Verify Participating Parties table section');
+    this.participatingPartiesSectionAgreement.should('be.visible');
+    this.participatingPartiesSectionAgreement.should('contain.text', 'Participating Parties');
+    this.participatingPartiesSectionAgreement.should('contain.text', 'Party Type');
+    this.participatingPartiesSectionAgreement.should('contain.text', 'Name');
+    this.participatingPartiesSectionAgreement.should('contain.text', 'Role');
+    cy.log('VERIFIED: Participating Parties table with columns and empty state are displayed');
+
+    return this;
+  }
+
+  verifyAddCcRecipientsAgreementSection() {
+    cy.log('Verification: Verify Add CC recipients section');
+    this.addCcRecipientsSection.should('be.visible');
+    this.addCcRecipientsSection.should('contain.text', 'Add CC recipients');
+    this.addCcRecipientsSection.should('contain.text', 'Should anyone else be kept in the loop?');
+    this.addCcRecipientsSection.contains('button', 'Select from Directory').should('be.visible');
+    this.addCcRecipientsSection.contains('button', 'Invite').should('be.visible');
+    cy.log('VERIFIED: Add CC recipients section and both buttons are displayed');
+
+    return this;
+  }
+
+  verifyAllPartiesPageElements() {
+    cy.log('Verification: Verify all elements on Define Participating Parties page');
+    this.verifyPartiesPageHeading();
+    this.verifyAgreementSection();
+    this.verifySelectPartiesSection();
+    this.verifyParticipatingPartiesAgreementSection();
+    this.verifyCheckboxOptionsSection();
+    this.verifyAddCcRecipientsAgreementSection();
+    cy.log('VERIFIED: All elements on Define Participating Parties page are displayed');
+
+    return this;
+  }
+
+  verifyCheckboxOptionsSection() {
+    cy.log('Verification: Verify checkbox options section');
+    this.checkboxOptionsSection.should('be.visible');
+    this.checkboxOptionsSection.should('contain.text', 'My organization is a party in this agreement');
+    this.checkboxOptionsSection.should('contain.text', 'Mark as a corporate document');
+    this.checkboxOptionsSection.should('contain.text', 'Recipient pays for non-ChainIT costs');
+    cy.log('VERIFIED: All three checkbox options are displayed');
+
+    return this;
   }
 
   clickBuyerSelectFromDirectory() {
@@ -1915,6 +2154,168 @@ selectFirstParty() {
 
     return this;
  }
+
+   //normal flow 
+  verifyContinueDropdownOptionsDisplayed() {
+    cy.log('Action: Verify "Create a Pactvera" and "Select a Template" options are displayed');
+    this.createPactveraFromScratchOption.should('be.visible').and('contain.text', 'Create a Pactvera');
+    this.selectTemplateOption.should('be.visible').and('contain.text', 'Select a Template');
+    cy.log('Action: "Create a Pactvera" and "Select a Template" options verified as displayed');
+    return this;
+  }
+
+  clickCreatePactveraFromScratch() {
+    cy.log('Action: Click "Create a Pactvera" option from dropdown');
+    this.createPactveraFromScratchOption.should('be.visible').click();
+    cy.log('Action: "Create a Pactvera" option clicked successfully');
+    return this;
+  }
+
+  clickSelectATemplate() {
+    cy.log('Action: Click "Select a Template" option from dropdown');
+    this.selectTemplateOption.should('be.visible').click();
+    cy.log('Action: "Select a Template" option clicked successfully');
+    return this;
+  }
+
+
+  clickSelectFromConnections() {
+    cy.log('Action: Click "Select from Connections" button');
+    this.selectFromConnectionsButton.should('be.visible').click();
+    cy.log('Action: "Select from Connections" button clicked successfully');
+    return this;
+  }
+
+  // =====================================================
+  // ACTIONS - Individual Checkbox Toggle
+  // =====================================================
+
+  checkMyOrganizationCheckbox() {
+    cy.log('Action: Check "My organization is a party in this agreement" checkbox');
+    this.myOrganizationCheckbox.then(($el) => {
+      if ($el.attr('aria-checked') === 'false') {
+        cy.wrap($el).click({ force: true });
+      }
+    });
+    this.myOrganizationCheckbox.should('have.attr', 'aria-checked', 'true');
+    cy.log('Action: "My organization is a party in this agreement" checkbox checked successfully');
+    return this;
+  }
+
+    uncheckMyOrganizationCheckbox() {
+    cy.log('Action: Uncheck "My organization is a party in this agreement" checkbox');
+    this.myOrganizationCheckbox.then(($el) => {
+      if ($el.attr('aria-checked') === 'true') {
+        cy.wrap($el).click({ force: true });
+      }
+    });
+    this.myOrganizationCheckbox.should('have.attr', 'aria-checked', 'false');
+    cy.log('Action: "My organization is a party in this agreement" checkbox unchecked successfully');
+    return this;
+  }
+
+  checkCorporateDocumentCheckbox() {
+    cy.log('Action: Check "Mark as a corporate document" checkbox');
+    this.corporateDocumentCheckbox.then(($el) => {
+      if ($el.attr('aria-checked') === 'false') {
+        cy.wrap($el).click({ force: true });
+      }
+    });
+    this.corporateDocumentCheckbox.should('have.attr', 'aria-checked', 'true');
+    cy.log('Action: "Mark as a corporate document" checkbox checked successfully');
+    return this;
+  }
+
+    uncheckCorporateDocumentCheckbox() {
+    cy.log('Action: Uncheck "Mark as a corporate document" checkbox');
+    this.corporateDocumentCheckbox.then(($el) => {
+      if ($el.attr('aria-checked') === 'true') {
+        cy.wrap($el).click({ force: true });
+      }
+    });
+    this.corporateDocumentCheckbox.should('have.attr', 'aria-checked', 'false');
+    cy.log('Action: "Mark as a corporate document" checkbox unchecked successfully');
+    return this;
+  }
+
+  checkRecipientPaysCheckbox() {
+    cy.log('Action: Check "Recipient pays for non-ChainIT costs" checkbox');
+    this.recipientPaysCheckbox.then(($el) => {
+      if ($el.attr('aria-checked') === 'false') {
+        cy.wrap($el).click({ force: true });
+      }
+    });
+    this.recipientPaysCheckbox.should('have.attr', 'aria-checked', 'true');
+    cy.log('Action: "Recipient pays for non-ChainIT costs" checkbox checked successfully');
+    return this;
+  } 
+
+  uncheckRecipientPaysCheckbox() {
+    cy.log('Action: Uncheck "Recipient pays for non-ChainIT costs" checkbox');
+    this.recipientPaysCheckbox.then(($el) => {
+      if ($el.attr('aria-checked') === 'true') {
+        cy.wrap($el).click({ force: true });
+      }
+    });
+    this.recipientPaysCheckbox.should('have.attr', 'aria-checked', 'false');
+    cy.log('Action: "Recipient pays for non-ChainIT costs" checkbox unchecked successfully');
+    return this;
+  }
+
+  // =====================================================
+  // ACTIONS - Check/Uncheck All Checkboxes Together
+  // =====================================================
+
+  checkAllCheckboxes() {
+    cy.log('Action: Check all three checkboxes (My organization, Corporate document, Recipient pays)');
+    this.checkMyOrganizationCheckbox();
+    this.checkCorporateDocumentCheckbox();
+    this.checkRecipientPaysCheckbox();
+    cy.log('Action: All three checkboxes checked successfully');
+    return this;
+  }
+
+
+  uncheckAllCheckboxes() {
+    cy.log('Action: Uncheck all three checkboxes (My organization, Corporate document, Recipient pays)');
+    this.uncheckMyOrganizationCheckbox();
+    this.uncheckCorporateDocumentCheckbox();
+    this.uncheckRecipientPaysCheckbox();
+    cy.log('Action: All three checkboxes unchecked successfully');
+    return this;
+  } 
+
+  clickNextButton() {
+    cy.log('Action: Click "Next" button');
+    this.nextButton.should('be.visible').should('not.be.disabled').click();
+    cy.log('Action: "Next" button clicked successfully');
+    return this;
+  }
+
+  verifyAttachDocumentsErrorDisplayed() {
+    cy.log('Verification: Verify "Please attach documents or forms" error is displayed');
+    this.attachDocumentsErrorHeading.should('be.visible');
+    this.attachDocumentsErrorMessage.should('be.visible');
+   cy.log('VERIFIED: "Please attach documents or forms" error is displayed');
+  return this;
+  }
+
+  // ACTIONS - Navigate Back to Documents Step
+  
+  navigateToDocumentsStep() {
+    cy.log('Action: Navigate to Documents step');
+    this.documentsStepLink.should('be.visible').click();
+    cy.log('Action: Navigated to Documents step successfully');
+    return this;
+  }
+
+
+    clickSend() {
+    cy.log('Action: Click Send button');
+    this.sendButton.click();
+    cy.log('Action: click send button successfully');
+    return this;
+  }
 
 }
 
