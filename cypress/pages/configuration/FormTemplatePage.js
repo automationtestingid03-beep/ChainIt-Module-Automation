@@ -366,91 +366,135 @@ class FormTemplatePage extends BasePage {
   // ADD BASIC FORM FIELD
   dragBasicFieldToForm(fieldKey = 'textfield') {
     cy.log(`Action: Drag ${fieldKey} field to Form Builder`);
+
     cy.get('iframe[title="Form Builder"]', { timeout: 30000 })
-    .should('exist')
-    .then(($iframe) => {
-      const iframe = $iframe[0];
-      const doc = iframe.contentDocument;
+      .should('exist')
+      .then(($iframe) => {
+        const iframe = $iframe[0];
+        const doc = iframe.contentDocument;
 
-      const fieldEl = doc.querySelector(
-        `#group-basic [data-group="basic"][data-key="${fieldKey}"]:not(.gu-mirror)`
-      );
+        const fieldEl = doc.querySelector(
+          `#group-basic [data-group="basic"][data-key="${fieldKey}"]:not(.gu-mirror)`
+        );
 
-      const dropEl = doc.querySelector(
-        '.builder-components.drag-container.formio-builder-form'
-      );
+        const dropEl = doc.querySelector(
+          '.builder-components.drag-container.formio-builder-form'
+        );
 
-      expect(fieldEl, `Source field: ${fieldKey}`).to.exist;
-      expect(dropEl, 'Form Builder drop zone').to.exist;
+        expect(fieldEl, `Source field: ${fieldKey}`).to.exist;
+        expect(dropEl, 'Form Builder drop zone').to.exist;
 
-      const fieldRect = fieldEl.getBoundingClientRect();
-      const dropRect = dropEl.getBoundingClientRect();
+        const fieldRect = fieldEl.getBoundingClientRect();
+        const dropRect = dropEl.getBoundingClientRect();
 
-      const startX = fieldRect.left + fieldRect.width / 2;
-      const startY = fieldRect.top + fieldRect.height / 2;
+        const startX = fieldRect.left + fieldRect.width / 2;
+        const startY = fieldRect.top + fieldRect.height / 2;
 
-      const endX = dropRect.left + dropRect.width / 2;
-      const endY = dropRect.top + 100;
+        const endX = dropRect.left + dropRect.width / 2;
+        const endY = dropRect.top + 100;
 
-      cy.log(`Start: ${startX}, ${startY}`);
-      cy.log(`End: ${endX}, ${endY}`);
+        cy.log(`Start: ${startX}, ${startY}`);
+        cy.log(`End: ${endX}, ${endY}`);
 
-      // Mouse down on source
-      cy.wrap(fieldEl).trigger('mousedown', {
-        button: 0,
-        buttons: 1,
-        clientX: startX,
-        clientY: startY,
-        force: true
-      });
-
-      // IMPORTANT:
-      // Move the mouse on the iframe document,
-      // not on the source element.
-      const steps = 10;
-
-      for (let i = 1; i <= steps; i++) {
-        const x = startX + ((endX - startX) * i) / steps;
-        const y = startY + ((endY - startY) * i) / steps;
-
-        cy.wrap(doc).trigger('mousemove', {
+        // Mouse down on source
+        cy.wrap(fieldEl).trigger('mousedown', {
           button: 0,
           buttons: 1,
-          clientX: x,
-          clientY: y,
+          clientX: startX,
+          clientY: startY,
           force: true
         });
-      }
 
-      // Move directly over drop zone
-      cy.wrap(dropEl).trigger('mousemove', {
-        button: 0,
-        buttons: 1,
-        clientX: endX,
-        clientY: endY,
-        force: true
+        // Move gradually toward drop zone
+        const steps = 10;
+
+        for (let i = 1; i <= steps; i++) {
+          const x = startX + ((endX - startX) * i) / steps;
+          const y = startY + ((endY - startY) * i) / steps;
+
+          cy.wrap(doc).trigger('mousemove', {
+            button: 0,
+            buttons: 1,
+            clientX: x,
+            clientY: y,
+            force: true
+          });
+        }
+
+        // Move directly over drop zone
+        cy.wrap(dropEl).trigger('mousemove', {
+          button: 0,
+          buttons: 1,
+          clientX: endX,
+          clientY: endY,
+          force: true
+        });
+
+        // Drop
+        cy.wrap(doc).trigger('mouseup', {
+          button: 0,
+          buttons: 0,
+          clientX: endX,
+          clientY: endY,
+          force: true
+        });
       });
 
-      // Drop
-      cy.wrap(doc).trigger('mouseup', {
-        button: 0,
-        buttons: 0,
-        clientX: endX,
-        clientY: endY,
-        force: true
+    // ---------------------------------------------------------
+    // Trigger blur / outside click
+    // ---------------------------------------------------------
+    cy.get('iframe[title="Form Builder"]', { timeout: 30000 })
+      .its('0.contentDocument')
+      .then((doc) => {
+        // Blur active element
+        if (
+          doc.activeElement &&
+          typeof doc.activeElement.blur === 'function'
+        ) {
+          doc.activeElement.blur();
+        }
+
+        // Simulate outside click using native DOM events
+        const body = doc.body;
+
+        body.dispatchEvent(
+          new MouseEvent('mousedown', {
+            bubbles: true,
+            cancelable: true,
+            view: doc.defaultView
+          })
+        );
+
+        body.dispatchEvent(
+          new MouseEvent('mouseup', {
+            bubbles: true,
+            cancelable: true,
+            view: doc.defaultView
+          })
+        );
+
+        body.dispatchEvent(
+          new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            view: doc.defaultView
+          })
+        );
       });
-    });
 
-  // Give Form.io time to update the builder
-  cy.get('iframe[title="Form Builder"]', { timeout: 30000 })
-    .its('0.contentDocument.body')
-    .should('not.be.empty')
-    .find(`.formio-component-${fieldKey}`, { timeout: 15000 })
-    .should('exist')
-    .and('be.visible');
+    // ---------------------------------------------------------
+    // Verify component
+    // ---------------------------------------------------------
+    cy.get('iframe[title="Form Builder"]', { timeout: 30000 })
+      .its('0.contentDocument.body')
+      .should('not.be.empty')
+      .find(`.formio-component-${fieldKey}`, { timeout: 15000 })
+      .should('exist')
+      .and('be.visible');
 
-  cy.log(`VERIFIED: ${fieldKey} field added to Form Builder`);
-  return this;
+    cy.log(`VERIFIED: ${fieldKey} field added to Form Builder`);
+
+    return this;
   }
 
   // PUBLISH TEMPLATE
@@ -502,23 +546,37 @@ class FormTemplatePage extends BasePage {
     return this;
   }
   verifyActionsMenuOptions() {
-    cy.log('Action: Verify Form Template Actions');
-    this.clickFirstTemplateActions();
-    ['View','Edit','Duplicate','Move','Delete'].forEach((option) => {
-    cy.get('body').contains('button, [role="menuitem"]',option).filter(':visible').should('exist');
+  cy.log('Action: Verify Form Template Actions');
+
+  this.clickFirstTemplateActions();
+
+  ['View', 'Edit', 'Duplicate', 'Move', 'Delete'].forEach((option) => {
+    cy.contains(option)
+      .filter(':visible')
+      .should('exist');
+
     cy.log(`Verified template action: ${option}`);
-    });
-    cy.log('VERIFIED: All Form Template Actions');
-    return this;
-  }
-  // VIEW TEMPLATE
-  clickViewTemplate() {
-    cy.log('Action: Click View');
-    cy.get('body').contains('button, [role="menuitem"]','View').filter(':visible').should('exist').click({ force: true });
-    cy.wait(500);
-    cy.log('View clicked');
-    return this;
-  }
+  });
+
+  cy.log('VERIFIED: All Form Template Actions');
+
+  return this;
+}
+
+clickViewTemplate() {
+  cy.log('Action: Click View');
+
+  cy.contains('View')
+    .filter(':visible')
+    .should('be.visible')
+    .click();
+
+  cy.wait(500);
+
+  cy.log('View clicked');
+
+  return this;
+}
   verifyTemplateViewPage() {
     cy.log('Action: Verify Form Template View page');
     cy.contains(/Form Template|Template Details|Details/i).filter(':visible').should('be.visible');
