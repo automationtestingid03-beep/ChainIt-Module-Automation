@@ -521,11 +521,22 @@ class FormTemplatePage extends BasePage {
   }
   // TEMPLATE SEARCH
   searchTemplate(templateName) {
-    cy.log(`Action: Search Form Template: ${templateName}`);
-    this.searchInput.should('be.visible').clear().type(templateName);
-    cy.wait(500);
-    return this;
-  }
+  cy.log(`Action: Search Form Template: ${templateName}`);
+
+  cy.intercept(
+    'GET',
+    '**/documents/v1/form-builder/template*'
+  ).as('getFormTemplates');
+
+  this.searchInput
+    .should('be.visible')
+    .clear()
+    .type(templateName);
+
+  cy.wait('@getFormTemplates');
+
+  return this;
+}
   verifyTemplateInList(templateName) {
     cy.log(`Action: Verify template in list: ${templateName}`);
     this.tableRows.contains(templateName).should('be.visible');
@@ -538,45 +549,130 @@ class FormTemplatePage extends BasePage {
     return this;
   }
   // TEMPLATE ACTIONS
+    // TEMPLATE ACTIONS
+
   clickFirstTemplateActions() {
     cy.log('Action: Click Actions for first Form Template');
-    cy.get('tbody tr').filter(':visible').first().find('[data-test="actions-template-actions"]').filter(':visible').first().should('exist').scrollIntoView().click({ force: true });
-    cy.wait(500);
+
+    const actionsButton = () => {
+      return cy.get('tbody tr')
+        .filter(':visible')
+        .first()
+        .find('[data-test="actions-template-actions"]')
+        .filter(':visible')
+        .first();
+    };
+
+    // Make sure the correct Actions button exists
+    actionsButton()
+      .scrollIntoView()
+      .should('be.visible')
+      .should('have.attr', 'aria-haspopup', 'menu')
+      .should('have.attr', 'aria-expanded', 'false');
+
+    /*
+     * Use keyboard Enter instead of force-click.
+     *
+     * This is intentional because the application is using
+     * Headless UI Menu. Enter is a native supported way of
+     * opening the Headless UI menu and avoids the race condition
+     * we were seeing after force-click.
+     */
+    actionsButton()
+      .focus()
+      .type('{enter}');
+
+    // Verify that the menu button changed to OPEN state
+    actionsButton()
+      .should('have.attr', 'aria-expanded', 'true');
+
     cy.log('Form Template Actions menu opened');
+
     return this;
   }
+
+  // Get the currently opened Form Template Actions menu
+  getOpenTemplateActionsMenu() {
+    return cy.get(
+      '[role="menu"]:visible, ' +
+      '[id^="headlessui-menu-items-"]:visible, ' +
+      '[data-open]:visible'
+    )
+      .filter(':not(button)')
+      .last()
+      .should('be.visible');
+  }
+
+  // VERIFY ACTIONS MENU OPTIONS
   verifyActionsMenuOptions() {
-  cy.log('Action: Verify Form Template Actions');
+    cy.log('Action: Verify Form Template Actions');
 
-  this.clickFirstTemplateActions();
+    // Open the Actions menu
+    this.clickFirstTemplateActions();
 
-  ['View', 'Edit', 'Duplicate', 'Move', 'Delete'].forEach((option) => {
-    cy.contains(option)
+    const actions = [
+      'View',
+      'Edit',
+      'Duplicate',
+      'Move',
+      'Delete'
+    ];
+
+    /*
+     * IMPORTANT:
+     * Do NOT use:
+     *
+     * cy.contains('View')
+     *
+     * because that searches the whole page.
+     *
+     * Instead, first locate the opened menu and then search
+     * only inside that menu.
+     */
+    this.getOpenTemplateActionsMenu().within(() => {
+
+      actions.forEach((option) => {
+
+        cy.contains(
+          '[role="menuitem"], button, a',
+          new RegExp(`^${option}$`, 'i')
+        )
+          .filter(':visible')
+          .should('exist');
+
+        cy.log(`Verified template action: ${option}`);
+      });
+    });
+
+    cy.log('VERIFIED: All Form Template Actions');
+
+    return this;
+  }
+
+
+  // VIEW TEMPLATE
+  clickViewTemplate() {
+    cy.log('Action: Click View');
+
+    /*
+     * The menu should already be open when this method is called.
+     * Locate View only inside the currently opened menu.
+     */
+    this.getOpenTemplateActionsMenu()
+      .contains(
+        '[role="menuitem"], button, a',
+        /^View$/i
+      )
       .filter(':visible')
-      .should('exist');
+      .should('be.visible')
+      .click({ force: true });
 
-    cy.log(`Verified template action: ${option}`);
-  });
+    cy.wait(500);
 
-  cy.log('VERIFIED: All Form Template Actions');
+    cy.log('View clicked');
 
-  return this;
-}
-
-clickViewTemplate() {
-  cy.log('Action: Click View');
-
-  cy.contains('View')
-    .filter(':visible')
-    .should('be.visible')
-    .click();
-
-  cy.wait(500);
-
-  cy.log('View clicked');
-
-  return this;
-}
+    return this;
+  }
   verifyTemplateViewPage() {
     cy.log('Action: Verify Form Template View page');
     cy.contains(/Form Template|Template Details|Details/i).filter(':visible').should('be.visible');
@@ -599,9 +695,20 @@ clickViewTemplate() {
   // EDIT TEMPLATE
   clickEditTemplate() {
     cy.log('Action: Click Edit');
-    cy.get('body').contains('button, [role="menuitem"]','Edit').filter(':visible').should('exist').click({ force: true });
+
+    this.getOpenTemplateActionsMenu()
+      .contains(
+        '[role="menuitem"], button, a',
+        /^Edit$/i
+      )
+      .filter(':visible')
+      .should('be.visible')
+      .click({ force: true });
+
     cy.wait(500);
+
     cy.log('Edit page opened');
+
     return this;
   }
   verifyTemplateNameInEditPage(expectedTitle) {
@@ -613,15 +720,42 @@ clickViewTemplate() {
   // DUPLICATE TEMPLATE
   duplicateFirstTemplate() {
     cy.log('Action: Duplicate first Form Template');
-    cy.get('tbody tr').filter(':visible').first().then(($row) => {
-        const templateName = $row.find('td').eq(1).text().replace(/\s+/g, ' ').trim();
-        expect(templateName,'Template name before duplicate').to.not.be.empty;
+
+    cy.get('tbody tr')
+      .filter(':visible')
+      .first()
+      .then(($row) => {
+
+        const templateName = $row
+          .find('td')
+          .eq(1)
+          .text()
+          .replace(/\s+/g, ' ')
+          .trim();
+
+        expect(
+          templateName,
+          'Template name before duplicate'
+        ).to.not.be.empty;
+
         cy.wrap(templateName).as('originalFormTemplateName');
-        cy.get('tbody tr').filter(':visible').first().find('[data-test="actions-user-management"]').filter(':visible').first().click({ force: true });
       });
-    cy.wait(500);
-    cy.get('body').contains('button, [role="menuitem"]','Duplicate').filter(':visible').should('exist').click({ force: true });
+
+    // Open actions menu
+    this.clickFirstTemplateActions();
+
+    // Click Duplicate only inside the opened menu
+    this.getOpenTemplateActionsMenu()
+      .contains(
+        '[role="menuitem"], button, a',
+        /^Duplicate$/i
+      )
+      .filter(':visible')
+      .should('be.visible')
+      .click({ force: true });
+
     cy.log('Duplicate clicked');
+
     return this;
   }
   verifyDuplicatedTemplate() {
@@ -648,7 +782,12 @@ clickViewTemplate() {
   // DELETE TEMPLATE
   deleteFirstTemplate() {
     cy.log('Action: Delete first Form Template');
-    cy.get('tbody tr').filter(':visible').first().then(($row) => {
+
+    cy.get('tbody tr')
+      .filter(':visible')
+      .first()
+      .then(($row) => {
+
         /*
          * Table structure:
          * td[0] = checkbox
@@ -659,13 +798,37 @@ clickViewTemplate() {
          * td[5] = Use Template
          * td[6] = Actions
          */
-        const templateName =$row.find('td').eq(1).text().replace(/\s+/g, ' ').trim();
-        expect(templateName,'Template name before delete').to.not.be.empty;
+
+        const templateName = $row
+          .find('td')
+          .eq(1)
+          .text()
+          .replace(/\s+/g, ' ')
+          .trim();
+
+        expect(
+          templateName,
+          'Template name before delete'
+        ).to.not.be.empty;
+
         cy.wrap(templateName).as('deletedFormTemplateName');
       });
+
+    // Open actions menu
     this.clickFirstTemplateActions();
-    cy.get('body').contains('button, [role="menuitem"]','Delete').filter(':visible').should('exist').click({ force: true });
+
+    // Click Delete only inside the opened menu
+    this.getOpenTemplateActionsMenu()
+      .contains(
+        '[role="menuitem"], button, a',
+        /^Delete$/i
+      )
+      .filter(':visible')
+      .should('be.visible')
+      .click({ force: true });
+
     cy.log('Delete option clicked');
+
     return this;
   }
   verifyDeleteConfirmationPopup() {
