@@ -37,6 +37,10 @@ class SwitchAccountModal extends BasePage {
       .find('button');
   }
 
+  get accountSwitcherTrigger() {
+    return cy.contains('span', 'Organization').closest('div.cursor-pointer');
+  }
+
   // Verification
 
   verifyVisible() {
@@ -155,6 +159,30 @@ class SwitchAccountModal extends BasePage {
     this.selectOrganizationByIndex(2);
     return this;
   }
+
+  selectPersonalOrganization() {
+    cy.log('Action: Click account switcher to open Switch Account modal');
+    this.accountSwitcherTrigger.click();
+    cy.log('Action: Wait for Switch Account modal to open');
+   this.personalAccountName
+      .should('be.visible')
+      .invoke('text')
+      .then((accountName) => {
+
+        const name = accountName.trim();
+
+        cy.log(`Personal Account found: "${name}"`);
+        cy.log(`Selecting Personal Account: "${name}"`);
+
+        this.personalAccountName
+          .click({ force: true });
+
+        cy.log(`Personal Account "${name}" selected successfully`);
+      });
+
+    return this;
+  }
+
 }
 
 export default new SwitchAccountModal();

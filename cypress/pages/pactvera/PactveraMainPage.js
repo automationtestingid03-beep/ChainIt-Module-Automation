@@ -196,6 +196,14 @@ class PactveraMainPage extends BasePage {
     return cy.get('label[for="isCorporateDocument"]').closest('.flex.gap-3').find('span[role="checkbox"]');
   }
 
+  get OrganizationCheckbox() {
+  return cy.contains('label', 'My organization is a party in this agreement');
+  }
+
+  get corporateDocumentCheckboxCheck() {
+    return cy.contains('label', 'Mark as a corporate document');
+  }
+
   get recipientPaysCheckbox() {
     return cy.get('label[for="isRecipientPaidPactvera"]').closest('.flex.gap-3').find('span[role="checkbox"]');
   }
@@ -517,6 +525,27 @@ class PactveraMainPage extends BasePage {
     return cy.contains('p', 'Documents and Forms').parents('.rounded-xl.border.border-gray-200.bg-white').first();
   }
 
+  get defineParticipatingPartiesSection() {
+  return cy.contains('div', 'Define Participating Parties').parents('.border.border-primary-100.rounded-md').first();
+  }
+
+  get requiredDocumentsAndFormsSection() {
+    return cy.contains('div', 'Required Documents and Forms').parents('.border.border-primary-100.rounded-md').first();
+  }
+
+  get participatingPartiesTable() {
+    return this.defineParticipatingPartiesSection.find('table');
+  }
+
+  get documentsTable() {
+    return this.requiredDocumentsAndFormsSection.contains('span', 'Documents').next('div').find('table');
+  }
+
+  get formsTable() {
+    return this.requiredDocumentsAndFormsSection.contains('span', 'Forms').next('div').find('table');
+  }
+
+
   get valueTransfersSection() {
     return cy.get('[data-test="review-value-transfer-card"]');
   }
@@ -614,7 +643,17 @@ class PactveraMainPage extends BasePage {
     return cy.contains('Documents');
   }
 
+  get selectPartyDropdown() {
+    return cy.get('[id^="react-select"][class*="-placeholder"]').contains('Select a party');
+  }
 
+  get titleFormInput() {
+  return cy.get('[data-test="title-input"]');
+  } 
+
+  get sentSearchInput() {
+    return cy.get('input[placeholder="Search"], input[type="search"]').filter(':visible');
+  }
 
 
   verifyMainPageDisplayed() {
@@ -1617,6 +1656,29 @@ selectFirstParty() {
   return this;
 }
 
+selectPartyWithConditionalFlow() {
+  cy.log('Action: Open Select a party dropdown');
+  this.selectPartyDropdown.click({ force: true });
+
+  return cy.get('[role="option"]').filter(':visible').then(($options) => {
+    const optionTexts = [...$options].map((el) => el.textContent.replace(/\s+/g, ' ').trim());
+    cy.log(`Available party options: ${optionTexts.join(', ')}`);
+
+    const hasYourOrg = optionTexts.some((text) => text.includes('Your Organization'));
+
+    if (hasYourOrg) {
+      cy.log('"Your Organization" option found - selecting it');
+      cy.wrap($options).contains('Your Organization').click({ force: true });
+      return cy.wrap(true); // signal: full authorized signer flow needed
+    } else {
+      const firstPartyName = optionTexts[0];
+      cy.log(`"Your Organization" not found - selecting first party: ${firstPartyName}`);
+      cy.wrap($options[0]).click({ force: true });
+      return cy.wrap(false); // signal: skip signer flow, go straight to Continue
+    }
+  });
+}
+
  clickUploadConfirm() {
     cy.log('**Action: Click "Upload" button to confirm file upload**');
     cy.contains('button', /^Upload\s*$/i, { timeout: 30000 }).filter(':visible').first().should('be.visible').should('not.be.disabled')
@@ -2286,11 +2348,20 @@ selectFirstParty() {
   } 
 
   clickNextButton() {
-    cy.log('Action: Click "Next" button');
-    this.nextButton.should('be.visible').should('not.be.disabled').click();
-    cy.log('Action: "Next" button clicked successfully');
-    return this;
-  }
+  cy.log('Action: Click "Next" button');
+  this.nextButton.then(($btn) => {
+    if (!Cypress.dom.isVisible($btn)) {
+      cy.log('"Next" button not visible - scrolling into view');
+      cy.wrap($btn).scrollIntoView();
+    } else {
+      cy.log('"Next" button already visible - no scroll needed');
+    }
+  });
+
+  this.nextButton.should('be.visible').should('not.be.disabled').click();
+  cy.log('Action: "Next" button clicked successfully');
+  return this;
+}
 
   verifyAttachDocumentsErrorDisplayed() {
     cy.log('Verification: Verify "Please attach documents or forms" error is displayed');
@@ -2315,6 +2386,121 @@ selectFirstParty() {
     this.sendButton.click();
     cy.log('Action: click send button successfully');
     return this;
+  }
+
+  enterFormTitle() {
+  const randomTitle = `Form PT-${Math.random().toString(36).substring(2, 5)}`;
+  cy.log(`Action: Enter generated random title - "${randomTitle}"`);
+  this.titleFormInput.clear().type(randomTitle);
+  cy.wrap(randomTitle).as('formTitleName');
+  return this;
+}
+
+ // ===== Verifications =====
+  verifyParticipatingPartiesSectionNotEmpty() {
+    cy.log('Verify: Define Participating Parties section displayed and not empty');
+    this.defineParticipatingPartiesSection.should('be.visible');
+    this.participatingPartiesTable.find('tbody tr:not(.expanded-content)').should('have.length.greaterThan', 0).each(($row, index) => {
+          cy.wrap($row).find('td').each(($cell, cellIndex) => {
+          const cellText = $cell.text().trim();
+          cy.log(`Party Row ${index + 1}, Column ${cellIndex + 1}: "${cellText}"`);
+          expect(cellText, `Party Row ${index + 1}, Column ${cellIndex + 1} should not be empty`).to.not.be.empty;
+        });
+      });
+  }
+
+  verifyDocumentsTableNotEmpty() {
+    cy.log('Verify: Documents table displayed and not empty');
+    this.documentsTable.find('tbody tr:not(.expanded-content)').should('have.length.greaterThan', 0).each(($row, index) => {
+          cy.wrap($row).find('td').each(($cell, cellIndex) => {
+          const cellText = $cell.text().trim();
+          cy.log(`Document Row ${index + 1}, Column ${cellIndex + 1}: "${cellText}"`);
+          expect(cellText, `Document Row ${index + 1}, Column ${cellIndex + 1} should not be empty`).to.not.be.empty;
+        });
+      });
+  }
+
+  verifyFormsTableNotEmpty() {
+    cy.log('Verify: Forms table displayed and not empty');
+    this.formsTable.find('tbody tr:not(.expanded-content)').should('have.length.greaterThan', 0).each(($row, index) => {
+          cy.wrap($row).find('td').each(($cell, cellIndex) => {
+          const cellText = $cell.text().trim();
+          cy.log(`Form Row ${index + 1}, Column ${cellIndex + 1}: "${cellText}"`);
+          expect(cellText, `Form Row ${index + 1}, Column ${cellIndex + 1} should not be empty`).to.not.be.empty;
+        });
+      });
+  }
+
+  verifyReviewSectionsNotEditable() {
+    cy.log('Verify: Review page sections are not editable (no active input/select/textarea inside)');
+    this.defineParticipatingPartiesSection.then(($section) => {
+      const editableFields = $section.find('input:not([disabled]):not([readonly]), select, textarea')
+        .filter((i, el) => Cypress.dom.isVisible(el));
+      expect(editableFields.length, 'Participating Parties section should have no editable fields').to.eq(0);
+    });
+    this.requiredDocumentsAndFormsSection.then(($section) => {
+      const editableFields = $section.find('input:not([disabled]):not([readonly]), select, textarea')
+        .filter((i, el) => Cypress.dom.isVisible(el));
+      expect(editableFields.length, 'Documents and Forms section should have no editable fields').to.eq(0);
+    });
+    cy.log('VERIFIED: Both sections contain no editable fields');
+  }
+
+  verifyCheckboxOptionsDisplayed() {
+    cy.log('Verify: Organization/corporate/recipient checkbox options are displayed');
+    this.OrganizationCheckbox.should('be.visible');
+    this.corporateDocumentCheckboxCheck.should('be.visible');
+  }
+
+  verifyCompleteReviewSections() {
+    cy.log('Action: Verify complete Review page - Participating Parties and Documents/Forms sections');
+    this.verifyParticipatingPartiesSectionNotEmpty();
+    this.verifyDocumentsTableNotEmpty();
+    this.verifyFormsTableNotEmpty();
+    this.verifyCheckboxOptionsDisplayed();
+    this.verifyFooterButtonsDisplayed();
+    this.verifyReviewSectionsNotEditable();
+  }
+
+  selectOtherPartyNotYourOrganization() {
+    cy.log('Action: Open Select a party dropdown');
+    cy.contains('Select a party').click({ force: true });
+    cy.get('[role="option"]').filter(':visible').then(($options) => {
+      const optionTexts = [...$options].map((el) => el.textContent.replace(/\s+/g, ' ').trim());
+      cy.log(`Available party options: ${optionTexts.join(', ')}`);
+      const otherPartyIndex = optionTexts.findIndex((text) => !text.includes('Your Organization'));
+      if (otherPartyIndex !== -1) {
+        const otherPartyName = optionTexts[otherPartyIndex];
+        cy.log(`Action: Select party other than Your Organization - "${otherPartyName}"`);
+        cy.wrap($options[otherPartyIndex]).click({ force: true });
+        cy.log(`VERIFIED: "${otherPartyName}" selected`);
+      } else {
+        cy.log('No party other than "Your Organization" found in options');
+        throw new Error('Expected a party option other than "Your Organization", but none was found');
+      }
+    });
+
+    return this;
+  }
+
+  searchInSentByTitle(titleText) {
+    cy.log(`Action: Search in Sent list for title - "${titleText}"`);
+    this.sentSearchInput.clear().type(titleText);
+    cy.wait(1000);
+    return this;
+  }
+
+  verifyRecordExistsInSent(titleText) {
+    cy.log(`Verify: Record with title "${titleText}" exists in Sent list`);
+    cy.contains('td, span, p', titleText, { timeout: 15000 }).should('be.visible');
+    cy.log(`VERIFIED: Record "${titleText}" found in Sent list`);
+  }
+
+  searchAndVerifyRecordCreated(titleText) {
+    cy.log(`Action: Search and verify record was created - "${titleText}"`);
+    this.searchInSentByTitle(titleText);
+    this.verifyRecordExistsInSent(titleText);
+    cy.log(`VERIFIED: "${titleText}" successfully created and found in Sent list`);
   }
 
 }
