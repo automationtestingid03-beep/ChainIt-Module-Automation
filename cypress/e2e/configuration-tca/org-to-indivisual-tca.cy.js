@@ -9,10 +9,10 @@ import PactveraTemplatePage from '../../pages/configuration/PactveraTemplatePage
 import DocumentTemplatePage from '../../pages/configuration/DocumentTemplatePage';
 import FormTemplatePage from '../../pages/configuration/FormTemplatePage';
 
-const ADMIN_URL = 'https://develop-admin.chainit.online';
-const workFlowTest = 'cypress/fixtures/tca_workflow_test.json';
-const TCAFlowDocument_PDF = 'cypress/fixtures/Age.pdf';
-function generateUniqueTitle(prefix) {
+
+  const workFlowTest = 'cypress/fixtures/tca_workflow_test.json';
+  const TCAFlowDocument_PDF = 'cypress/fixtures/Age.pdf';
+  function generateUniqueTitle(prefix) {
   const timestamp = Date.now();
   const randomSuffix = Math.random().toString(36).substring(2, 8);
 
@@ -25,7 +25,7 @@ describe('Configuration - TCA Templates', () => {
 
     // Step 1: Open QR Scan page
     cy.log('Action: Opening QR Scan page');
-    cy.visit(`${ADMIN_URL}/scan-qr`);
+    cy.visit(`${Cypress.env('urls').admin}/scan-qr`);
     cy.contains('Scan or Tap the QR Code Login')
       .should('be.visible');
     cy.log('QR Scan page is displayed successfully');

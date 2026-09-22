@@ -129,6 +129,31 @@ class HomePage extends BasePage {
     return cy.get('[data-test="complete-sign"]');
     }
 
+  get confirmSignButton(){
+    return cy.get('[data-test="button-confirm"]');
+  }
+
+  // ===== Signing Complete (success screen) =====
+  get signingCompleteIcon() {
+    return cy.get('img[alt="Success"]');
+  }
+
+  get signingCompleteHeading() {
+    return cy.contains('span', 'Signing Complete!');
+  }
+
+  get signingCompleteMessage() {
+    return cy.contains('You have successfully submitted the document.');
+  }
+
+  get backToTasksButton() {
+    return cy.get('[data-test="button-back-to-tasks"]');
+  }
+
+  get viewPactveraDetailsButton() {
+    return cy.get('[data-test="button-view-pactvera-details"]');
+  }
+
   // ===== Actions =====
   clickTodoTab() {
     cy.log('Action: Click To-Do tab');
@@ -383,32 +408,70 @@ class HomePage extends BasePage {
         this.fillFieldButton.click({ force: true });
         cy.log('Action: Fill Field clicked - Signature popup should open');
         return this;
+    } 
+
+    clickConfirm(){
+      cy.log('Action: Click confirm button');
+      this.confirmSignButton.click();
+       cy.log('Action: confirm button clicked successfully');
+      return this;
     }
 
     drawSignatureOnCanvas() {
-       cy.log('Action: Draw signature on canvas');
+        cy.log('Action: Draw signature on canvas (trusted native mouse events via cypress-real-events)');
 
-  this.signaturePadCanvas.then(($canvas) => {
-    const canvas = $canvas[0];
-    const rect = canvas.getBoundingClientRect();
+        // Resolve the real <canvas> element, whether the data-testid sits on the
+        // canvas itself or on a wrapper rendered by the signature component.
+        this.signaturePadCanvas
+            .should('be.visible')
+            .then(($el) => {
+                const el = $el[0];
+                const canvas = el.tagName === 'CANVAS' ? el : el.querySelector('canvas');
+                expect(canvas, 'signature <canvas> element exists').to.exist;
 
-    const startX = rect.left + rect.width * 0.2;
-    const startY = rect.top + rect.height * 0.5;
-    const endX = rect.left + rect.width * 0.8;
-    const endY = rect.top + rect.height * 0.5;
+                const rect = canvas.getBoundingClientRect();
 
-    cy.wrap($canvas)
-      .trigger('mousedown', { clientX: startX, clientY: startY, force: true })
-      .trigger('mousemove', { clientX: (startX + endX) / 2, clientY: startY - 20, force: true })
-      .trigger('mousemove', { clientX: endX, clientY: endY, force: true })
-      .trigger('mouseup', { clientX: endX, clientY: endY, force: true });
-  });
+                // Map a fraction of the canvas to an offset (px) from its top-left corner.
+                // cypress-real-events treats x/y as element-relative offsets and applies
+                // any iframe/frame scaling internally, so these stay accurate.
+                const at = (fx, fy) => ({
+                    x: Math.round(rect.width * fx),
+                    y: Math.round(rect.height * fy),
+                });
 
-  cy.log('Verify: Continue button is enabled - confirms signature was actually drawn');
-  this.verifyCompleteSignButtonEnabled();
+                // A zig-zag "signature" - multiple points are required for a real stroke
+                const path = [
+                    at(0.15, 0.65),
+                    at(0.28, 0.30),
+                    at(0.40, 0.70),
+                    at(0.52, 0.30),
+                    at(0.64, 0.65),
+                    at(0.78, 0.40),
+                    at(0.88, 0.55),
+                ];
 
-  cy.log('VERIFIED: Signature drawn on canvas');
-  return this;
+                // Press the left mouse button at the first point (fires native pointerdown)
+                const dragging = cy.wrap(canvas).realMouseDown({ x: path[0].x, y: path[0].y });
+
+                // Drag through every remaining point while the button is held down
+                // (fires native pointermove with the button still pressed)
+                path.slice(1).forEach((pt) => {
+                    dragging.realMouseMove(pt.x, pt.y);
+                });
+
+                // Release the button at the last point (fires native pointerup)
+                const last = path[path.length - 1];
+
+                // Return the final command so Cypress waits for the whole stroke to finish
+                // before the Continue-button assertion runs.
+                return dragging.realMouseUp({ x: last.x, y: last.y });
+            });
+
+        cy.log('Verify: Continue button is enabled - confirms signature was actually drawn');
+        this.verifyCompleteSignButtonEnabled();
+
+        cy.log('VERIFIED: Signature drawn on canvas');
+        return this;
     }
 
     clickClearSignature() {
@@ -433,9 +496,14 @@ class HomePage extends BasePage {
     // ===== Verifications =====
     verifySignDocumentPageDisplayed() {
         cy.log('Verify: Sign Document page displayed with Reject and Start Signing buttons');
-        this.reviewDocumentText.should('be.visible');
-        this.rejectButton.should('be.visible').and('contain.text', 'Reject');
-        this.startSigningButton.should('be.visible').and('contain.text', 'Start Signing');
+        cy.log('Action: Wait for "Loading document..." spinner to disappear');
+        cy.contains('Loading document...', { timeout: 30000 }).should('not.exist');
+        cy.log('Action: Document finished loading');
+        this.reviewDocumentText.should('be.visible', { timeout: 15000 });
+        cy.wait(5000);
+        this.rejectButton.should('be.visible', { timeout: 15000 }).and('contain.text', 'Reject');
+        this.startSigningButton.should('be.visible', { timeout: 15000 }).and('contain.text', 'Start Signing');
+        cy.log('VERIFIED: Sign Document page displayed correctly');
     }
 
     verifySignatureFieldDisplayed() {
@@ -463,6 +531,17 @@ class HomePage extends BasePage {
         this.completeSignButton.should('not.be.disabled');
     }
 
+    verifySigningCompleteScreenDisplayed() {
+        cy.log('Verify: "Signing Complete!" success screen is displayed after submitting the document');
+        cy.contains('Loading document...', { timeout: 30000 }).should('not.exist');
+        this.signingCompleteIcon.should('be.visible');
+        this.signingCompleteHeading.should('be.visible').and('contain.text', 'Signing Complete!');
+        this.signingCompleteMessage.should('be.visible').and('contain.text', 'You have successfully submitted the document.');
+        this.backToTasksButton.should('be.visible').and('contain.text', 'Back to Tasks');
+        this.viewPactveraDetailsButton.should('be.visible').and('contain.text', 'View Pactvera Details');
+        cy.log('VERIFIED: "Signing Complete!" success screen displayed with Back to Tasks and View Pactvera Details buttons');
+    }
+
     // ===== Full flow =====
     completeDocumentSigningFlow() {
         cy.log('Action: Full sign document flow - Start Signing to Complete');
@@ -480,8 +559,10 @@ class HomePage extends BasePage {
         this.verifyCompleteSignButtonDisabled();
         cy.log('Action: Draw signature');
         this.drawSignatureOnCanvas();
-        cy.pause();
         this.clickCompleteSign();
+        this.clickConfirm();
+        cy.log('Action: Verify "Signing Complete!" success screen after submitting the document');
+        this.verifySigningCompleteScreenDisplayed();
         cy.log('VERIFIED: Document signing flow completed successfully');
     }
 

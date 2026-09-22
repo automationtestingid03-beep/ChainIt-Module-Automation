@@ -3,13 +3,12 @@ import ConfigurationPage from '../../pages/ConfigurationPage';
 import DocumentTemplatePage from '../../pages/configuration/DocumentTemplatePage';
 import PactveraTemplatePage from '../../pages/configuration/PactveraTemplatePage';
 
-const ADMIN_URL = 'https://develop-admin.chainit.online';
 const DUMMY_PDF = 'cypress/fixtures/gaurav.pdf';
 
 describe('Configuration - Document Templates', () => {
   beforeEach(() => {
     cy.log('Step 1: Opening QR Scan page');
-    cy.visit(`${ADMIN_URL}/scan-qr`);
+    cy.visit(`${Cypress.env('urls').admin}/scan-qr`);
     cy.contains('Scan or Tap the QR Code Login')
       .should('be.visible');
     cy.log('QR Scan page is displayed successfully');

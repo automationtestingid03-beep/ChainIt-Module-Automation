@@ -3,7 +3,6 @@ import ConfigurationPage from '../../pages/ConfigurationPage';
 import PactveraTemplatePage from '../../pages/configuration/PactveraTemplatePage';
 import FormTemplatePage from '../../pages/configuration/FormTemplatePage';
 
-const ADMIN_URL = 'https://develop-admin.chainit.online';
 const DUMMY_PDF = 'cypress/fixtures/gaurav.pdf';
 
 function generateUniqueTitle(prefix) {
@@ -19,7 +18,7 @@ describe('Configuration - Pactvera Templates', () => {
 
     // Step 1: Open QR Scan page
     cy.log('Step 1: Opening QR Scan page');
-    cy.visit(`${ADMIN_URL}/scan-qr`);
+    cy.visit(`${Cypress.env('urls').admin}/scan-qr`);
     cy.contains('Scan or Tap the QR Code Login')
       .should('be.visible');
     cy.log('QR Scan page is displayed successfully');

@@ -5,12 +5,11 @@ import PactveraTemplatePage from '../../pages/configuration/PactveraTemplatePage
 import DocumentTemplatePage from '../../pages/configuration/DocumentTemplatePage';
 
 
-const ADMIN_URL = 'https://develop-admin.chainit.online';
 
 describe('Configuration - Form Templates', () => {
   beforeEach(() => {
     cy.log('Action: Opening QR Scan page');
-    cy.visit(`${ADMIN_URL}/scan-qr`);
+    cy.visit(`${Cypress.env('urls').admin}/scan-qr`);
     cy.contains('Scan or Tap the QR Code Login').should('be.visible');
     cy.log('Action: Waiting for QR scan');
 
