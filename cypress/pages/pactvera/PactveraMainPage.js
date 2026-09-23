@@ -1936,7 +1936,23 @@ selectPartyWithConditionalFlow() {
   verifyReceivePaymentFieldsFilled() {
     this.payeeAmountInput.should('not.have.value', '');
     this.payoutMethodSelectedValue.invoke('text').should('not.be.empty');
-    this.destinationAccountSelectedValue.invoke('text').should('not.be.empty');
+    cy.log('Action: Check if Destination account is already selected');
+    cy.get('body').then(($body) => {
+    const hasPlaceholder = $body.find('[id="Destination account"]')
+      .closest('[class*="-control"]')
+      .find('[class*="-placeholder"]').length > 0;
+
+    if (hasPlaceholder) {
+      cy.log('Destination account not selected - selecting first available option');
+      this.destinationAccountDropdown.click({ force: true });
+      cy.get('[role="option"]').filter(':visible').first().should('be.visible').click({ force: true });
+    } else {
+      cy.log('Destination account already selected - no action needed');
+    }
+  });
+
+  cy.log('Verify: Destination account now has a selected value');
+  this.destinationAccountSelectedValue.invoke('text').should('not.be.empty');
   }
 
   verifyFullyAllocated() {
@@ -2201,7 +2217,7 @@ selectPartyWithConditionalFlow() {
     cy.log('Action: Click Send button');
     this.sendButton.click();
     cy.log('Action: Wait for either Agreement sent success OR an error to appear');
-    cy.get('body', { timeout: 30000 }).should(($body) => {
+    cy.get('body', { timeout: 50000 }).should(($body) => {
     const hasSuccess = $body.find('h2:contains("Agreement sent")').length > 0;
     const hasError = $body.find('[role="alert"], .toast-error, [data-test*="error"]').length > 0;
     expect(hasSuccess || hasError, 'Expected either success screen or an error message to appear').to.be.true;

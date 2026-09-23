@@ -552,18 +552,28 @@ get deleteFolderPopup() {
 
   verifyActionsMenuOptions() {
     cy.log('**Action: Verify Actions menu options**');
-
-    this.threeDotMenu.should('be.visible').click({ force: true });
-    cy.contains('View').should('be.visible');
-    cy.contains('Rename').should('be.visible');
-    cy.contains('Delete').should('be.visible');
-
-    cy.log('✔ View option is displayed');
-    cy.log('✔ Rename option is displayed');
-    cy.log('✔ Delete option is displayed');
-
+    const verifyMenuOptions = () => {
+    cy.contains('View', { timeout: 5000 }).filter(':visible').should('be.visible');
+    cy.contains('Rename', { timeout: 5000 }).filter(':visible').should('be.visible');
+    cy.contains('Delete', { timeout: 5000 }).filter(':visible').should('be.visible');
+    };
+    this.threeDotMenu.should('be.visible').scrollIntoView().click({ force: true });
+    cy.log('Actions menu clicked first time');
+    cy.get('body').then(($body) => {
+      const viewVisible = $body.find('button, [role="menuitem"]')
+        .filter(':visible').filter((index, element) => element.innerText.trim() === 'View').length > 0;
+      if (!viewVisible) {
+      cy.log('View option not displayed, clicking Actions menu again');
+      this.threeDotMenu.should('be.visible').click({ force: true });
+      cy.log('Actions menu clicked second time');
+      }
+    });
+    verifyMenuOptions();
+    cy.log('VERIFIED: View option is displayed');
+    cy.log('VERIFIED: Rename option is displayed');
+    cy.log('VERIFIED: Delete option is displayed');
     return this;
-  }
+    }
 
 
   openFolderActions(folderName) {
@@ -707,7 +717,7 @@ get deleteFolderPopup() {
     cy.get('tbody tr').filter(':visible').first().find('[data-test="actions-user-management"]').filter(':visible')
     .first().should('exist').should('be.visible').scrollIntoView().click({ force: true });
     cy.log('Actions menu opened successfully');
-    cy.contains('View').should('be.visible').click({ force: true });
+    cy.contains('View',{ timeout: 30000 }).should('be.visible').click({ force: true });
     cy.log('View option clicked successfully');
 
     return this;

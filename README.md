@@ -124,6 +124,24 @@ npm run cypress:run:headed
 npm run cypress:run:chrome
 ```
 
+### Jenkins / Windows PowerShell
+
+Set the console to UTF-8 before running Cypress so the spec reporter output remains readable:
+
+```powershell
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+chcp 65001 > $null
+npx.cmd cypress run --browser chrome --reporter spec
+```
+
+For Jenkins test reporting, generate JUnit XML instead of relying on console box-drawing characters:
+
+```powershell
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+chcp 65001 > $null
+npm run cypress:run:junit
+```
+
 ## QR Authentication Flow
 
 All tests require manual QR code scanning with a mobile device:

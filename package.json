@@ -8,6 +8,7 @@
     "cypress:run": "cypress run",
     "cypress:run:headed": "cypress run --headed",
     "cypress:run:chrome": "cypress run --browser chrome",
+    "cypress:run:junit": "cypress run --browser chrome --reporter mocha-junit-reporter --reporter-options \"mochaFile=results/cypress-[hash].xml,toConsole=false\"",
     "cypress:run:edge": "cypress run --browser edge",
     "cypress:run:chrome:headed": "cypress run --browser chrome --headed",
     "cypress:run:edge:headed": "cypress run --browser edge --headed",
@@ -25,7 +26,8 @@
   "devDependencies": {
     "cypress": "^15.21.1",
     "cypress-iframe": "^1.0.1",
-    "cypress-real-events": "^1.15.0"
+    "cypress-real-events": "^1.15.0",
+    "mocha-junit-reporter": "^2.2.1"
   },
   "allowScripts": {
     "cypress@15.21.1": true

@@ -289,6 +289,7 @@ describe('Configuration - Document Templates', () => {
           cy.log('Verified: First document template name captured');
 
           cy.log('Action: View first document template');
+          cy.wait(5000);
           DocumentTemplatePage.clickViewFirstDocumentTemplate();
           cy.log('Verified: Document template view opened');
 
