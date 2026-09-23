@@ -1,28 +1,21 @@
 # ChainIT Framework
 
-Cypress-based end-to-end test automation framework for the **ChainIT** identity/verification platform.
-
-## Tech Stack
-
-- **Test Runner:** Cypress v15.19.0
-- **Language:** JavaScript (CommonJS)
-- **Plugins:** cypress-iframe
-- **Browser:** Chrome
-
-## Prerequisites
-
-- Node.js >= 18.x
-- npm >= 9.x
-- Chrome browser (for headed runs)
-
-## Installation
-
-```bash
-npm install
-```
-
-## Configuration
-
+├── e2e/                      # Seven retained business-flow specs
+│   ├── Sidebar-page.cy.js
+│   ├── e2e-org-to-individual-normal-pact.cy.js
+│   ├── configuration/
+│   └── configuration-tca/
+├── pages/                    # Page Object Model
+│   ├── BasePage.js
+│   ├── HomePage.js
+│   ├── LoginPage.js
+│   ├── SwitchAccountModal.js
+│   ├── SidebarPage.js
+│   ├── ConfigurationPage.js
+│   ├── AdministrationPage.js
+│   ├── pactvera/
+│   ├── configuration/
+│   └── administration/
 Environment variables are managed in `cypress.config.js` under the `env.urls` block:
 
 | Variable | Default | Description |

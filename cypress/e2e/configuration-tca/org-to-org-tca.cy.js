@@ -1,15 +1,6 @@
-import ConfigurationPage from '../../pages/ConfigurationPage';
 import LoginPage from '../../pages/LoginPage';
-import AdministrationPage from '../../pages/AdministrationPage';
-import OrgIdVdtPage from '../../pages/administration/myOrgId/OrgIdVdtPage';
-import ProductPage from '../../pages/administration/myOrgId/ProductPage';
-import TCATemplatePage from '../../pages/configuration/TCATemplatePage';
 import SidebarPage from '../../pages/SidebarPage';
 import PactveraMainPage from '../../pages/pactvera/PactveraMainPage';
-import PactveraTemplatePage from '../../pages/configuration/PactveraTemplatePage';
-import DocumentTemplatePage from '../../pages/configuration/DocumentTemplatePage';
-import FormTemplatePage from '../../pages/configuration/FormTemplatePage';
-import HomePage from '../../pages/HomePage';
 
 
 const workFlowTest = 'cypress/fixtures/tca_workflow_test.json';

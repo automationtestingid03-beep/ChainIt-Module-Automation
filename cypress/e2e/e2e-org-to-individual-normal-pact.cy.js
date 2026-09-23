@@ -1,6 +1,5 @@
 import SwitchAccountModal from '../pages/SwitchAccountModal';
 import LoginPage from '../pages/LoginPage';
-import ConfigurationPage from '../pages/ConfigurationPage';
 import SidebarPage from '../pages/SidebarPage';
 import PactveraMainPage from '../pages/pactvera/PactveraMainPage';
 import PactveraTemplatePage from '../pages/configuration/PactveraTemplatePage';
@@ -15,7 +14,7 @@ describe('Configuration - end to end normal flow pactvera', () => {
     LoginPage.loginWithQrAndSelectAccount('organization');
   });
 
-  it.only('TC01: Verify complete sidebar navigation', () => {
+  it.only('TC01: Verify complete end to end normal flow pactvera', () => {
     cy.log('Action: Open Pactvera menu');
     SidebarPage.clickPactvera();
     cy.log('Verified: Pactvera menu is visible');
