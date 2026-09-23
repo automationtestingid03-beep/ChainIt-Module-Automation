@@ -1,5 +1,5 @@
-import SwitchAccountModal from '../../pages/SwitchAccountModal';
 import ConfigurationPage from '../../pages/ConfigurationPage';
+import LoginPage from '../../pages/LoginPage';
 import AdministrationPage from '../../pages/AdministrationPage';
 import OrgIdVdtPage from '../../pages/administration/myOrgId/OrgIdVdtPage';
 import ProductPage from '../../pages/administration/myOrgId/ProductPage';
@@ -18,133 +18,116 @@ const TCAFlowDocument_PDF = 'cypress/fixtures/Age.pdf';
 
 
 
-  function generateUniqueTitle(prefix) {
-  const timestamp = Date.now();
-  const randomSuffix = Math.random().toString(36).substring(2, 8);
-
-  return `${prefix}_${timestamp}_${randomSuffix}`;
-}
-
 describe('Configuration - TCA Templates', () => {
  
   beforeEach(() => {
-    // Step 1: Open QR Scan page
-    cy.log('Step 1: Opening QR Scan page');
-    cy.visit(`${Cypress.env('urls').admin}/scan-qr`);
-    cy.contains('Scan or Tap the QR Code Login').should('be.visible');
-    cy.log('QR Scan page is displayed successfully');
- 
-    // Step 2: Manual QR scan
-    cy.log('Step 2: Please scan the QR code using the mobile app');
- 
-    if (Cypress.config('isInteractive')) {
-      cy.pause();
-    }
-    cy.log('QR scan process resumed');
- 
-    // Step 3: Wait for login
-    cy.log('Step 3: Waiting for QR login to complete');
-    cy.url({ timeout: 120000 }).should('not.include', '/scan-qr');
-    cy.log('QR login completed successfully');
- 
-    // Step 4: Switch account
-    cy.log('Step 4: Verifying Switch Account modal');
-    SwitchAccountModal.verifyVisible();
-    SwitchAccountModal.getAllOrganizations().then((orgs) => {
-      cy.log(`Available organizations: ${orgs.join(', ')}`);
-    });
-    SwitchAccountModal.selectSecondOrganization();
+    cy.log('Action: Log in and select organization account');
+    LoginPage.loginWithQrAndSelectAccount('organization');
+    cy.log('Verified: Organization account selected');
   });
 
 
 
  it('TC01: should validate All Pactvera Main page cards and navigation actions', () => {
 
-  cy.log('Step 1: Open Pactvera menu');
+  cy.log('Action: Open Pactvera menu');
   SidebarPage.clickPactvera();
-  cy.log('Pactvera menu opened successfully');
+  cy.log('Verified: Pactvera menu opened');
 
-  cy.log('Step 2: Navigate to Pactvera Main page');
+  cy.log('Action: Navigate to Pactvera Main page');
   SidebarPage.clickPactveraMain();
+  cy.log('Verified: Pactvera Main navigation completed');
+  cy.log('Action: Verify Pactvera Main page');
   PactveraMainPage.verifyMainPageDisplayed();
-  cy.log('Pactvera Main page displayed successfully');
+  cy.log('Verified: Pactvera Main page displayed');
 
-  cy.log('Step 3: Verify Send a Pactvera card');
+  cy.log('Action: Verify Send a Pactvera card');
   PactveraMainPage.verifySendPactveraCard();
-  cy.log('Send a Pactvera card verified successfully');
+  cy.log('Verified: Send a Pactvera card displayed');
 
-  cy.log('Step 4: Click Create & Send');
+  cy.log('Action: Open Create & Send');
   PactveraMainPage.clickCreateAndSend();
-  cy.log('Create a Pactvera popup opened successfully');
+  cy.log('Verified: Create a Pactvera popup opened');
 
-  cy.log('Step 5: Close Create a Pactvera popup');
+  cy.log('Action: Close Create a Pactvera popup');
   PactveraMainPage.closeCreatePactveraPopup();
-  cy.log('Create a Pactvera popup closed successfully');
+  cy.log('Verified: Create a Pactvera popup closed');
 
-  cy.log('Step 6: Verify View Received Pactveras card');
+  cy.log('Action: Verify View Received Pactveras card');
   PactveraMainPage.verifyReceivedPactveraCard();
-  cy.log('View Received Pactveras card verified successfully');
+  cy.log('Verified: View Received Pactveras card displayed');
 
-  cy.log('Step 7: Click Open Received');
+  cy.log('Action: Open received Pactveras');
   PactveraMainPage.clickOpenReceived();
-  cy.log('Received Pactveras page opened successfully');
+  cy.log('Verified: Received Pactveras page opened');
 
-  cy.log('Step 8: Navigate back to Pactvera Main page');
+  cy.log('Action: Navigate back to Pactvera Main page');
   PactveraMainPage.clickMainBreadcrumb();
+  cy.log('Verified: Main breadcrumb clicked');
+  cy.log('Action: Verify Pactvera Main page');
   PactveraMainPage.verifyMainPageDisplayed();
-  cy.log('Returned to Pactvera Main page successfully');
+  cy.log('Verified: Pactvera Main page displayed');
 
-  cy.log('Step 9: Verify View Sent Pactveras card');
+  cy.log('Action: Verify View Sent Pactveras card');
   PactveraMainPage.verifySentPactveraCard();
-  cy.log('View Sent Pactveras card verified successfully');
+  cy.log('Verified: View Sent Pactveras card displayed');
 
-  cy.log('Step 10: Click View Sent');
+  cy.log('Action: Open sent Pactveras');
   PactveraMainPage.clickViewSent();
-  cy.log('Sent Pactveras page opened successfully');
+  cy.log('Verified: Sent Pactveras page opened');
 
-  cy.log('Step 11: Navigate back to Pactvera Main page');
+  cy.log('Action: Navigate back to Pactvera Main page');
   PactveraMainPage.clickMainBreadcrumb();
+  cy.log('Verified: Main breadcrumb clicked');
+  cy.log('Action: Verify Pactvera Main page');
   PactveraMainPage.verifyMainPageDisplayed();
-  cy.log('Returned to Pactvera Main page successfully');
+  cy.log('Verified: Pactvera Main page displayed');
 
-  cy.log('Step 12: Verify Manage Templates card');
+  cy.log('Action: Verify Manage Templates card');
   PactveraMainPage.verifyManageTemplatesCard();
-  cy.log('Manage Templates card verified successfully');
+  cy.log('Verified: Manage Templates card displayed');
 
-  cy.log('Step 13: Click Open Templates');
+  cy.log('Action: Open Pactvera Templates');
   PactveraMainPage.clickOpenTemplates();
-  cy.log('Templates page opened successfully');
+  cy.log('Verified: Pactvera Templates page opened');
 
-  cy.log('Step 14: Navigate back to Pactvera Main page');
+  cy.log('Action: Navigate back to Pactvera Main page');
   SidebarPage.clickPactveraMain();
+  cy.log('Verified: Pactvera Main navigation completed');
+  cy.log('Action: Verify Pactvera Main page');
   PactveraMainPage.verifyMainPageDisplayed();
-  cy.log('Returned to Pactvera Main page successfully');
+  cy.log('Verified: Pactvera Main page displayed');
 
-  cy.log('Step 15: Verify Manage Connections card');
+  cy.log('Action: Verify Manage Connections card');
   PactveraMainPage.verifyManageConnectionsCard();
-  cy.log('Manage Connections card verified successfully');
+  cy.log('Verified: Manage Connections card displayed');
 
-  cy.log('Step 16: Click Go to Connections');
+  cy.log('Action: Open Connections');
   PactveraMainPage.clickGoToConnections();
-  cy.log('Connections page opened successfully');
+  cy.log('Verified: Connections page opened');
 
-  cy.log('Step 17: Navigate back to Pactvera Main page');
+  cy.log('Action: Navigate back to Pactvera Main page');
   PactveraMainPage.clickMainBreadcrumb();
+  cy.log('Verified: Main breadcrumb clicked');
+  cy.log('Action: Verify Pactvera Main page');
   PactveraMainPage.verifyMainPageDisplayed();
-  cy.log('Returned to Pactvera Main page successfully');
+  cy.log('Verified: Pactvera Main page displayed');
 
-  cy.log('Step 18: Verify View & Manage Sent Folders card');
+  cy.log('Action: Verify View and Manage Sent Folders card');
   PactveraMainPage.verifySentFoldersCard();
-  cy.log('View & Manage Sent Folders card verified successfully');
+  cy.log('Verified: View and Manage Sent Folders card displayed');
 
-  cy.log('Step 19: Click View Folders');
+  cy.log('Action: Open Sent Folders');
   PactveraMainPage.clickViewFolders();
-  cy.log('Sent Folders page opened successfully');
+  cy.log('Verified: Sent Folders page opened');
 
-  cy.log('Step 20: Navigate back to Pactvera Main page');
+  cy.log('Action: Navigate back to Pactvera Main page');
   PactveraMainPage.clickMainBreadcrumb();
+  cy.log('Verified: Main breadcrumb clicked');
+  cy.log('Action: Verify Pactvera Main page');
   PactveraMainPage.verifyMainPageDisplayed();
-  cy.log('Returned to Pactvera Main page successfully');
+  cy.log('Verified: Pactvera Main page displayed');
 
-  cy.log('VERIFIED: All Pactvera Main page cards and navigation actions are working successfully');
+  cy.log('Verified: All Pactvera Main page cards and navigation actions are working successfully');
+});
 });

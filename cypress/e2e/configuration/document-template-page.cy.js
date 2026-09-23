@@ -1,5 +1,5 @@
-import SwitchAccountModal from '../../pages/SwitchAccountModal';
 import ConfigurationPage from '../../pages/ConfigurationPage';
+import LoginPage from '../../pages/LoginPage';
 import DocumentTemplatePage from '../../pages/configuration/DocumentTemplatePage';
 import PactveraTemplatePage from '../../pages/configuration/PactveraTemplatePage';
 
@@ -7,59 +7,49 @@ const DUMMY_PDF = 'cypress/fixtures/gaurav.pdf';
 
 describe('Configuration - Document Templates', () => {
   beforeEach(() => {
-    cy.log('Step 1: Opening QR Scan page');
-    cy.visit(`${Cypress.env('urls').admin}/scan-qr`);
-    cy.contains('Scan or Tap the QR Code Login')
-      .should('be.visible');
-    cy.log('QR Scan page is displayed successfully');
-
-    cy.log('Step 2: Please scan the QR code using the mobile app');
-    if (Cypress.config('isInteractive')) {
-      cy.pause();
-    }
-
-    cy.log('QR scan process resumed');
-    cy.log('Step 3: Waiting for QR login to complete');
-    cy.url({ timeout: 120000 })
-      .should('not.include', '/scan-qr');
-    cy.log('QR login completed successfully');
-
-    cy.log('Step 4: Verifying Switch Account modal');
-    SwitchAccountModal.verifyVisible();
-    SwitchAccountModal.clickIndividualAccount();
-
-    cy.log('Step 5: Opening Configuration');
+    cy.log('Action: Log in and select individual account');
+    LoginPage.loginWithQrAndSelectAccount();
+    cy.log('Verified: Individual account selected');
+    cy.log('Action: Open Configuration');
     ConfigurationPage.clickConfigurationButton();
+    cy.log('Verified: Configuration opened');
   });
 
   // Complete document template validation
   it('TC01: should validate Document Templates page, folders, search and create folder', () => {
-    cy.log('TC01: Document Templates Complete Validation');
-    cy.log('Action: Opening Document Templates');
+    cy.log('Action: Open Document Templates');
     ConfigurationPage.clickDocumentButton();
+    cy.log('Verified: Document Templates opened');
     DocumentTemplatePage.verifyPageLoaded();
-    cy.log('Document Templates page opened successfully');
+    cy.log('Verified: Document Templates page loaded');
 
-    cy.log('Action: Verifying Document Templates page elements');
-    DocumentTemplatePage.verifySearchFieldDisplayed().verifyNewFolderButtonDisplayed()
-      .verifyCreateTemplateButtonDisplayed();
-    cy.log('Search, New Folder and Create Template buttons verified');
+    cy.log('Action: Verify search field');
+    DocumentTemplatePage.verifySearchFieldDisplayed();
+    cy.log('Verified: Search field displayed');
+    cy.log('Action: Verify New Folder button');
+    DocumentTemplatePage.verifyNewFolderButtonDisplayed();
+    cy.log('Verified: New Folder button displayed');
+    cy.log('Action: Verify Create Template button');
+    DocumentTemplatePage.verifyCreateTemplateButtonDisplayed();
+    cy.log('Verified: Create Template button displayed');
 
-    cy.log('Action: Verifying Document Templates list view');
+    cy.log('Action: Open list view');
     DocumentTemplatePage.clickListView();
+    cy.log('Verified: List view selected');
+    cy.log('Action: Verify list view');
     DocumentTemplatePage.verifyListViewDisplayed();
-    cy.log('List view displayed successfully');
+    cy.log('Verified: List view displayed');
 
-    cy.log('Action: Verifying table column names');
+    cy.log('Action: Verify table columns');
     DocumentTemplatePage.verifyDocumentTemplateTableColumns();
-    cy.log('Verified columns: Folder Name, Created Date, Actions');
+    cy.log('Verified: Document template table columns displayed');
 
-    cy.log('Action: Verifying folder records');
+    cy.log('Action: Verify folder records');
     DocumentTemplatePage.verifyFoldersDisplayed();
-    cy.log('Folder records displayed successfully');
+    cy.log('Verified: Folder records displayed');
 
     cy.wait(2000); 
-    cy.log('Action: Capturing first folder name');
+    cy.log('Action: Capture first folder name');
     DocumentTemplatePage.tableRows
       .first()
       .find('td')
@@ -70,214 +60,280 @@ describe('Configuration - Document Templates', () => {
         const searchText = folderName.replace(/\s+/g, ' ').trim();
 
         expect(searchText).to.not.be.empty;
-        cy.log(`First folder name captured: ${searchText}`);
+        cy.log(`Verified: First folder captured: ${searchText}`);
 
-        cy.log(`Action: Searching folder: ${searchText}`);
+        cy.log(`Action: Search folder: ${searchText}`);
         DocumentTemplatePage.searchFolder(searchText);
-        cy.log(`Search validation completed successfully: ${searchText}`);
+        cy.log(`Verified: Folder search completed: ${searchText}`);
 
         cy.log('Action: Clearing search');
         DocumentTemplatePage.clearSearch();
-        cy.log('Search cleared successfully');
+        cy.log('Verified: Folder search cleared');
 
-        cy.log('Action: Verifying folder list after clearing search');
+        cy.log('Action: Verify folder list after clearing search');
         DocumentTemplatePage.verifyFoldersDisplayed();
-        cy.log('Folder list restored successfully');
+        cy.log('Verified: Folder list restored');
 
-        cy.log('Action: Verifying existing folders');
+        cy.log('Action: Verify existing folders');
         DocumentTemplatePage.verifyFolderDisplayed('Test Folder');
-        cy.log('Test Folder verified successfully');
+        cy.log('Verified: Test Folder displayed');
 
         const newFolderName = `Automation Folder ${Date.now()}`;
 
-        cy.log(`Action: Creating new folder: ${newFolderName}`);
-        DocumentTemplatePage
-          .clickNewFolder()
-          .verifyNewFolderPopupDisplayed()
-          .enterFolderName(newFolderName)
-          .clickCreateFolder();
-        cy.log(`Folder creation submitted: ${newFolderName}`);
+        cy.log(`Action: Open New Folder dialog: ${newFolderName}`);
+        DocumentTemplatePage.clickNewFolder();
+        cy.log('Verified: New Folder dialog opened');
+        cy.log('Action: Verify New Folder dialog');
+        DocumentTemplatePage.verifyNewFolderPopupDisplayed();
+        cy.log('Verified: New Folder dialog displayed');
+        cy.log(`Action: Enter folder name: ${newFolderName}`);
+        DocumentTemplatePage.enterFolderName(newFolderName);
+        cy.log(`Verified: Folder name entered: ${newFolderName}`);
+        cy.log('Action: Create folder');
+        DocumentTemplatePage.clickCreateFolder();
+        cy.log(`Verified: Folder creation submitted: ${newFolderName}`);
 
         cy.log(`Action: Verifying newly created folder: ${newFolderName}`);
         DocumentTemplatePage.verifyFolderCreated(newFolderName);
-        cy.log(`New folder verified successfully: ${newFolderName}`);
+        cy.log(`Verified: New folder displayed: ${newFolderName}`);
 
         cy.log('Action: Clearing folder search');
         DocumentTemplatePage.clearSearch();
-        cy.log('Folder search cleared successfully');
+        cy.log('Verified: Folder search cleared');
 
-        cy.log('Action: Verifying folder list after creation');
+        cy.log('Action: Verify folder list after creation');
         DocumentTemplatePage.verifyFoldersDisplayed();
-        cy.log('Folder list verified successfully');
+        cy.log('Verified: Folder list displayed after creation');
 
-        cy.log('Action: Verifying Document Template grid folders');
+        cy.log('Action: Open grid view');
         DocumentTemplatePage.clickGridView();
+        cy.log('Verified: Grid view selected');
+        cy.log('Action: Verify grid view');
         DocumentTemplatePage.verifyGridViewDisplayed();
-        cy.log('Grid view displayed successfully');
+        cy.log('Verified: Grid view displayed');
 
-        cy.log('Folder counts verified successfully');
-        cy.log(`Action: Opening folder: ${searchText}`);
+        cy.log('Verified: Folder counts displayed successfully');
+        cy.log(`Action: Open folder: ${searchText}`);
         DocumentTemplatePage.openFolder(searchText);
+        cy.log(`Verified: Folder opened: ${searchText}`);
+        cy.log('Action: Navigate back from folder');
         DocumentTemplatePage.clickBackButton();
-        cy.log(`Back button clicked successfully after opening folder: ${searchText}`);
-        cy.log(`Folder opened successfully: ${searchText}`);
+        cy.log('Verified: Returned from folder');
 
+        cy.log('Action: Open list view');
         DocumentTemplatePage.clickListView();
-        cy.log('Action: Get first folder name');
+        cy.log('Verified: List view selected');
+        cy.log('Action: Capture first folder name');
         DocumentTemplatePage.getFirstFolderName();
+        cy.log('Verified: First folder name captured');
         cy.get('@firstFolderName').then((folderName) => {
-        cy.log(`First folder selected: ${folderName}`);
+        cy.log(`Verified: First folder selected: ${folderName}`);
 
           cy.log(`Action: Open Actions menu for folder: ${folderName}`);
           DocumentTemplatePage.clickFirstRecordActions();
+          cy.log('Verified: Folder actions menu opened');
+          cy.log('Action: Verify folder actions');
           DocumentTemplatePage.verifyActionsMenuOptions();
+          cy.log('Verified: Folder actions displayed');
 
           cy.log('Action: Click Rename');
           DocumentTemplatePage.clickRenameOption();
+          cy.log('Verified: Rename option clicked');
 
           cy.log('Action: Verify Rename Folder popup');
           DocumentTemplatePage.verifyRenamePopup();
+          cy.log('Verified: Rename popup displayed');
 
           cy.log('Action: Cancel Rename operation');
           DocumentTemplatePage.clickRenameCancel();
-          cy.log('Rename operation cancelled successfully');
+          cy.log('Verified: Rename operation cancelled');
 
-          cy.log('Action: Click Delete');
+          cy.log('Action: Open Actions menu for delete');
           DocumentTemplatePage.clickFirstRecordActions();
+          cy.log('Verified: Actions menu opened for delete');
+          cy.log('Action: Click Delete option');
           DocumentTemplatePage.clickDeleteOption();
+          cy.log('Verified: Delete option clicked');
 
           cy.log('Action: Verify Delete confirmation popup');
           DocumentTemplatePage.verifyDeletePopup();
+          cy.log('Verified: Delete confirmation popup displayed');
 
           cy.log('Action: Cancel Delete operation');
           DocumentTemplatePage.clickDeleteCancel();
-          cy.log('Delete operation cancelled successfully');
+          cy.log('Verified: Delete operation cancelled');
 
-          cy.log('Action: click view operation');
+          cy.log('Action: Open Actions menu for view');
           DocumentTemplatePage.clickFirstRecordActions();
+          cy.log('Verified: Actions menu opened for view');
+          cy.log('Action: Click View option');
           DocumentTemplatePage.clickViewOption();
+          cy.log('Verified: View option clicked');
+          cy.log('Action: Navigate back from folder view');
           DocumentTemplatePage.clickBackButton();
+          cy.log('Verified: Returned from folder view');
 
           cy.log('Action: Click Create Template');
           DocumentTemplatePage.clickCreateTemplate();
+          cy.log('Verified: Create Template page opened');
           cy.log('Action: Select first folder');
           DocumentTemplatePage.selectFirstFolder();
-          cy.log('Action: Click Creating Document template');
+          cy.log('Verified: First folder selected');
+          cy.log('Action: Create document template');
           PactveraTemplatePage.clickCreate();
+          cy.log('Verified: Document template creation started');
 
-          cy.log('Action: Uploading PDF');
+          cy.log('Action: Upload PDF');
           PactveraTemplatePage.uploadPdfFile(DUMMY_PDF);
+          cy.log('Verified: PDF uploaded');
 
-          cy.log('Action: Confirming PDF upload');
+          cy.log('Action: Confirm PDF upload');
           DocumentTemplatePage.clickUploadConfirm();
+          cy.log('Verified: PDF upload confirmed');
 
           cy.wait(3000); 
-          cy.log('Action: Verifying Add Placeholders section');
+          cy.log('Action: Verify Add Placeholders section');
           DocumentTemplatePage.verifyAddPlaceholdersSectionDisplayed();
+          cy.log('Verified: Add Placeholders section displayed');
 
-          cy.log('Action: Clicking Continue');
+          cy.log('Action: Continue to Add Fields');
           PactveraTemplatePage.clickContinue();
+          cy.log('Verified: Continued to Add Fields');
 
-          cy.log('Action: Verifying Add Fields page');
+          cy.log('Action: Verify Add Fields page');
           PactveraTemplatePage.verifyAddFieldsPageDisplayed();
+          cy.log('Verified: Add Fields page displayed');
 
-          cy.log('Action: Dragging Signature field onto document');
+          cy.log('Action: Drag Signature field onto document');
           PactveraTemplatePage.dragFieldToCanvas(PactveraTemplatePage.signatureField);
+          cy.log('Verified: Signature field added to document');
 
-          cy.log('Action: Verifying Signature field');
+          cy.log('Action: Verify Signature field');
           PactveraTemplatePage.verifySignatureFieldPlacedOnCanvas();
+          cy.log('Verified: Signature field displayed');
 
-          cy.log('Action: Saving document configuration');
+          cy.log('Action: Save document configuration');
           PactveraTemplatePage.clickSaveTemplate();
+          cy.log('Verified: Document configuration save submitted');
 
-          cy.log('Action: Click Actions menu for first document template');
+          cy.log('Action: Open document template actions');
           DocumentTemplatePage.clickFirstDocumentActions();
+          cy.log('Verified: Document template actions opened');
 
-          cy.log('Action: Verifying Actions menu options for document template');
+          cy.log('Action: Verify document template actions');
           DocumentTemplatePage.verifyDocumentTemplateActions();
+          cy.log('Verified: Document template actions displayed');
 
-          cy.log('Action: get first document template name');
+          cy.log('Action: Capture first document template name');
           DocumentTemplatePage.getFirstDocumentTemplateName();
+          cy.log('Verified: First document template name captured');
 
-          cy.log('Action: Click Actions menu for first document template');
+          cy.log('Action: Open actions for document template delete');
           DocumentTemplatePage.clickFirstDocumentActions();
+          cy.log('Verified: Document template actions opened');
           cy.contains('Delete').should('be.visible').click({ force: true });
+          cy.log('Verified: Delete menu option selected');
           DocumentTemplatePage.clickDeleteFirstDocumentTemplate();
+          cy.log('Verified: Delete confirmation opened');
 
-          cy.log('Action: Verifying Delete confirmation popup for document template');
+          cy.log('Action: Verify document template delete popup');
           DocumentTemplatePage.verifyDocumentTemplateDeletePopup();
+          cy.log('Verified: Document template delete popup displayed');
 
-          cy.log('Action: Confirming Delete operation for document template');
+          cy.log('Action: Confirm document template deletion');
           DocumentTemplatePage.confirmDeleteDocumentTemplate();
+          cy.log('Verified: Document template deletion confirmed');
 
-          cy.log('Action: get document template count before duplicate');
+          cy.log('Action: Capture document template count before duplicate');
           DocumentTemplatePage.getDocumentTemplateCountBeforeDuplicate();
+          cy.log('Verified: Document template count captured');
 
-          cy.log('Action: get first document template name before duplicate');
+          cy.log('Action: Capture first document template before duplicate');
           DocumentTemplatePage.getFirstDocumentTemplateName();
+          cy.log('Verified: First document template captured');
 
-          cy.log('Action: Click Actions menu for first document template');
+          cy.log('Action: Duplicate first document template');
           DocumentTemplatePage.clickDuplicateFirstDocumentTemplate();
+          cy.log('Verified: Duplicate operation submitted');
 
-          cy.log('Action: Verifying Duplicate confirmation for document template');
+          cy.log('Action: Verify document template duplicated');
           DocumentTemplatePage.verifyDocumentTemplateDuplicatedMessage();
+          cy.log('Verified: Document template duplicated');
 
-          cy.log('Action: get document template count after duplicate');
+          cy.log('Action: Verify document template count increased');
           DocumentTemplatePage.verifyDocumentTemplateCountIncreased();
+          cy.log('Verified: Document template count increased');
 
-          cy.log('Action: get first document template name');
+          cy.log('Action: Capture first document template name');
           DocumentTemplatePage.getFirstDocumentTemplateName();
+          cy.log('Verified: First document template name captured');
 
-          cy.log('Action: Click Actions Move for first document template');
+          cy.log('Action: Move first document template');
           DocumentTemplatePage.clickMoveFirstDocumentTemplate();
+          cy.log('Verified: Move operation opened');
 
-          cy.log('Action: Verifying Move to Folder popup for document template');
+          cy.log('Action: Verify Move to Folder popup');
           DocumentTemplatePage.verifyMoveToFolderPopup();
+          cy.log('Verified: Move to Folder popup displayed');
 
           cy.log('Action: Select second folder for move');
           DocumentTemplatePage.selectSecondFolderForMove();
+          cy.log('Verified: Second folder selected');
 
-          cy.log('Action: Confirming Move operation for document template');
+          cy.log('Action: Confirm move operation');
           DocumentTemplatePage.confirmMoveDocumentTemplate();
+          cy.log('Verified: Move operation confirmed');
 
-          cy.log('Action: get first document template name');
+          cy.log('Action: Capture first document template name');
           DocumentTemplatePage.getFirstDocumentTemplateName();
+          cy.log('Verified: First document template name captured');
 
-          cy.log('Action: Click Actions View for first document template');
+          cy.log('Action: View first document template');
           DocumentTemplatePage.clickViewFirstDocumentTemplate();
+          cy.log('Verified: Document template view opened');
 
-          cy.log('Action: Verifying Document Template View page');
+          cy.log('Action: Verify document template view page');
           DocumentTemplatePage.verifyDocumentTemplateViewPage();
+          cy.log('Verified: Document template view page displayed');
 
-          cy.log('Action: Verifying Document Template Name in View page');
+          cy.log('Action: Verify document template name in view');
           DocumentTemplatePage.verifyDocumentTemplateNameInView();
+          cy.log('Verified: Document template name displayed in view');
 
-          cy.log('Action: Verifying Document Template View is Read-Only');
+          cy.log('Action: Verify document template view is read-only');
           DocumentTemplatePage.verifyDocumentTemplateViewIsReadOnly();
+          cy.log('Verified: Document template view is read-only');
 
-          cy.log('Action: Click Edit button in Document Template View page');
+          cy.log('Action: Edit document template');
           DocumentTemplatePage.clickEditDocumentTemplate();
+          cy.log('Verified: Document template edit opened');
 
-          cy.log('Action: Click Advanced options');
+          cy.log('Action: Open Advanced Options');
           DocumentTemplatePage.clickAdvancedOptions();
+          cy.log('Verified: Advanced Options opened');
 
-          cy.log('Action: Verifying Advanced Options popup');
+          cy.log('Action: Verify Advanced Options popup');
           DocumentTemplatePage.verifyAdvancedOptionsPopup();
+          cy.log('Verified: Advanced Options popup displayed');
 
-          cy.log('Action: Verifying Allowed Signature Types in Advanced Options');
+          cy.log('Action: Verify allowed signature types');
           DocumentTemplatePage.verifyAllowedSignatureTypes();
+          cy.log('Verified: Allowed signature types displayed');
 
-          cy.log('Action: click Cancel in Advanced Options');
+          cy.log('Action: Cancel Advanced Options');
           DocumentTemplatePage.clickAdvancedOptionsCancel();
+          cy.log('Verified: Advanced Options cancelled');
 
-          cy.log('Action: click on Document Templates in header');
+          cy.log('Action: Navigate to Document Templates');
           DocumentTemplatePage.clickDocumentTemplates();
+          cy.log('Verified: Document Templates page opened');
 
-          cy.log('Action: Delete all Empty folder');
+          cy.log('Action: Delete all empty folders');
           DocumentTemplatePage.deleteAllEmptyFolders();
+          cy.log('Verified: Empty folders deleted');
 
 
-          cy.log('TC01: Document Templates validation completed successfully');
+          cy.log('Verified: Document Templates validation completed successfully');
         });
       });
   });

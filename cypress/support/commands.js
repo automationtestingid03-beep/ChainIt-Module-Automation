@@ -1,4 +1,6 @@
 import { getEnvUrl } from '../utils/helpers';
+import LoginPage from '../pages/LoginPage';
+import SwitchAccountModal from '../pages/SwitchAccountModal';
 
 const ADMIN_URL = 'https://develop-admin.chainit.online';
 
@@ -132,5 +134,11 @@ Cypress.Commands.add('qrLoginAndSwitchToOrg', () => {
     }
   });
 
+  return cy;
+});
+
+// Complete the shared QR login flow and select the requested account.
+Cypress.Commands.add('qrLoginAndSelectAccount', (accountType = 'individual') => {
+  LoginPage.loginWithQrAndSelectAccount(accountType);
   return cy;
 });

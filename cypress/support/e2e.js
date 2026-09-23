@@ -12,7 +12,7 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 
 // Clear browser state before every test
 
-beforeEach(() => {
+beforeEach(function logTestStart() {
   cy.log('Clearing cookies');
   cy.clearCookies();
 
@@ -20,4 +20,17 @@ beforeEach(() => {
   cy.clearLocalStorage();
 
   cy.log('Browser state cleared successfully');
+
+  const test = this.currentTest;
+  cy.log(`[TEST START] ${test.parent.title} > ${test.title}`);
+});
+
+afterEach(function logTestResult() {
+  const test = this.currentTest;
+  const duration = test.duration || 0;
+
+  cy.log(
+    `[TEST END] ${test.parent.title} > ${test.title} | ` +
+    `Status: ${test.state || 'unknown'} | Duration: ${duration}ms`
+  );
 });

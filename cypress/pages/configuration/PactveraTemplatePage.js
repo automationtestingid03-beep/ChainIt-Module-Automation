@@ -697,7 +697,11 @@ class PactveraTemplatePage extends BasePage {
     cy.log('**Action: Verify duplicated template**');
 
     cy.get('@originalTemplateName').then((originalName) => {
-      const duplicateName = `${originalName} (1)`;
+      const duplicateMatch = originalName.match(/^(.*) \((\d+)\)$/);
+      const duplicateName = duplicateMatch
+        ? `${duplicateMatch[1]} (${Number(duplicateMatch[2]) + 1})`
+        : `${originalName} (1)`;
+
       cy.log(`Expected duplicate template: ${duplicateName}`);
       cy.contains('tbody td', duplicateName)
         .should('be.visible');
@@ -756,8 +760,17 @@ class PactveraTemplatePage extends BasePage {
   }
 
   clickEditTemplate() {
-    cy.log('**Action: Click Edit button on View Pactvera Template page**');
-    cy.contains('button', 'Edit')
+    cy.log('**Action: Open actions menu for the first Pactvera template**');
+    cy.get('tbody tr')
+      .filter(':visible')
+      .first()
+      .find('[data-test="actions-pactvera-template"]')
+      .should('be.visible')
+      .click({ force: true });
+
+    cy.log('Actions menu opened successfully');
+    cy.log('**Action: Click Edit button from the template actions menu**');
+    cy.contains('button', /^Edit$/i)
       .should('be.visible')
       .click({ force: true });
     cy.log('Edit button clicked successfully');
@@ -790,9 +803,17 @@ class PactveraTemplatePage extends BasePage {
 
   verifyTemplateNameInEditPage() {
     cy.log('**Action: Verify template name in Configure page**');
-    cy.get('@viewedTemplateName').then((templateName) => {
-      cy.get('input').filter(':visible').first().should('have.value', templateName);
-      cy.log(`Verified template name: ${templateName}`);
+    cy.get('@originalTemplateName').then((originalName) => {
+      const duplicateMatch = originalName.match(/^(.*) \((\d+)\)$/);
+      const expectedName = duplicateMatch
+        ? `${duplicateMatch[1]} (${Number(duplicateMatch[2]) + 1})`
+        : `${originalName} (1)`;
+
+      cy.get('input')
+        .filter(':visible')
+        .first()
+        .should('have.value', expectedName);
+      cy.log(`Verified template name: ${expectedName}`);
     });
 
     return this;

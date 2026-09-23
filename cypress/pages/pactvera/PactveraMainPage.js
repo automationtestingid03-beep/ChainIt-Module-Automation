@@ -231,7 +231,9 @@ class PactveraMainPage extends BasePage {
   }
 
   get addPartiesStep() {
-    return cy.contains('Define Participating Parties').closest('div[class*="rounded"]').parent();
+    return cy.get('[data-test="tca-add-parties-step"]')
+      .filter(':visible')
+      .first();
   }
 
   get selectPartiesSection() {

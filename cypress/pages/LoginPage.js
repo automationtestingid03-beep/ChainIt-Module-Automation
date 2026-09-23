@@ -1,4 +1,5 @@
 import BasePage from './BasePage';
+import SwitchAccountModal from './SwitchAccountModal';
 
 class LoginPage extends BasePage {
 
@@ -35,6 +36,31 @@ class LoginPage extends BasePage {
     });
 
     cy.log('Scan QR Login heading is visible');
+
+    return this;
+  }
+
+  loginWithQrAndSelectAccount(accountType = 'individual') {
+    cy.log('Opening QR Login page');
+    cy.visit(`${Cypress.env('urls').admin}/scan-qr`);
+    cy.contains('Scan or Tap the QR Code Login').should('be.visible');
+
+    cy.log('Please scan the QR code with the mobile app');
+    if (Cypress.config('isInteractive')) {
+      cy.pause();
+    }
+
+    cy.url({ timeout: 120000 }).should('not.include', '/scan-qr');
+    SwitchAccountModal.verifyVisible();
+
+    if (accountType === 'organization') {
+      SwitchAccountModal.getAllOrganizations().then((organizations) => {
+        cy.log(`Available organizations: ${organizations.join(', ')}`);
+      });
+      SwitchAccountModal.selectSecondOrganization();
+    } else {
+      SwitchAccountModal.clickIndividualAccount();
+    }
 
     return this;
   }

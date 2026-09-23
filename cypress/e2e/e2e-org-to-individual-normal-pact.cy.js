@@ -1,4 +1,5 @@
 import SwitchAccountModal from '../pages/SwitchAccountModal';
+import LoginPage from '../pages/LoginPage';
 import ConfigurationPage from '../pages/ConfigurationPage';
 import SidebarPage from '../pages/SidebarPage';
 import PactveraMainPage from '../pages/pactvera/PactveraMainPage';
@@ -8,42 +9,10 @@ import HomePage from '../pages/HomePage';
 const workFlowTest = 'cypress/fixtures/tca_workflow_test.json';
 const TCAFlowDocument_PDF = 'cypress/fixtures/Age.pdf';
 
-function generateUniqueTitle(prefix) {
-  const timestamp = Date.now();
-  const randomSuffix = Math.random().toString(36).substring(2, 8);
-
-  return `${prefix}_${timestamp}_${randomSuffix}`;
-}
-
 describe('Configuration - end to end normal flow pactvera', () => {
 
   beforeEach(() => {
-    cy.log('Action: Open QR Scan page');
-    cy.visit(`${Cypress.env('urls').admin}/scan-qr`);
-    cy.contains('Scan or Tap the QR Code Login').should('be.visible');
-    cy.log('Verified: QR Scan page is visible');
-
-    cy.log('Action: Manual QR scan');
-    if (Cypress.config('isInteractive')) {
-      cy.pause();
-    }
-    cy.log('Verified: QR scan is resumed');
-
-    cy.log('Action: Wait for login completion');
-    cy.url({ timeout: 120000 }).should('not.include', '/scan-qr');
-    cy.log('Verified: QR login is complete and redirect happened');
-
-    cy.log('Action: Verify Switch Account modal');
-    SwitchAccountModal.verifyVisible();
-    cy.log('Verified: Switch Account modal is visible');
-
-    SwitchAccountModal.getAllOrganizations().then((orgs) => {
-      cy.log(`Action: Get all organizations. Verified: ${orgs.join(', ')}`);
-    });
-
-    cy.log('Action: Select second organization');
-    SwitchAccountModal.selectSecondOrganization();
-    cy.log('Verified: second organization is selected');
+    LoginPage.loginWithQrAndSelectAccount('organization');
   });
 
   it.only('TC01: Verify complete sidebar navigation', () => {

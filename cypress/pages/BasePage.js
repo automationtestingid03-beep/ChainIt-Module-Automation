@@ -1,5 +1,27 @@
 class BasePage {
 
+  constructor() {
+    const pageName = this.constructor.name;
+
+    return new Proxy(this, {
+      get: (target, property, receiver) => {
+        const value = Reflect.get(target, property, receiver);
+
+        if (typeof value !== 'function' || property === 'constructor') {
+          return value;
+        }
+
+        return (...args) => {
+          cy.log(`Action: ${pageName}.${String(property)}`);
+          const result = value.apply(target, args);
+          cy.log(`Verified: ${pageName}.${String(property)}`);
+
+          return result === target ? receiver : result;
+        };
+      },
+    });
+  }
+
   visit(path = '/', options = {}) {
     cy.log(`Opening page: ${path}`);
 

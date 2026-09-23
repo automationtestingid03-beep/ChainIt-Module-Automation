@@ -48,6 +48,7 @@ module.exports = defineConfig({
       contact: '/contact-us/',
       docs: 'https://sdk.chainit.online/docs/intro',
       login: 'https://admin-react.chainit.online/',
+      admin: 'https://develop-admin.chainit.online',
     },
   },
 });

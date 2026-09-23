@@ -181,9 +181,9 @@ class TCATemplatePage extends BasePage {
   }
 
   createUniqueWorkflowTemplate() {
-    const timestamp = Date.now();
-    const workflowName = `Automation Workflow ${timestamp}`;
-    const description = `Automation workflow description ${timestamp}`;
+    const uniqueToken = Math.random().toString(36).substring(2, 8);
+    const workflowName = `Automation Workflow ${uniqueToken}`;
+    const description = `Automation workflow description ${uniqueToken}`;
     cy.log('Action: Enter unique workflow template information');
     this.enterWorkflowTemplateName(workflowName);
     this.enterDescription(description);
