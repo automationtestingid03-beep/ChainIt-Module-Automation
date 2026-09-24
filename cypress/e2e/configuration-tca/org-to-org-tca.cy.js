@@ -1,6 +1,8 @@
 import LoginPage from '../../pages/LoginPage';
 import SidebarPage from '../../pages/SidebarPage';
 import PactveraMainPage from '../../pages/pactvera/PactveraMainPage';
+import SwitchAccountModal from '../../pages/SwitchAccountModal';
+import HomePage from '../../pages/HomePage';
 
 
 const workFlowTest = 'cypress/fixtures/tca_workflow_test.json';
@@ -17,6 +19,16 @@ describe('Configuration - TCA Templates', () => {
     cy.log('Verified: Organization account selected');
   });
 
+  it.only('TC01: should validate All  actions', () => {
+
+    SwitchAccountModal.clickOrganizationAccount('ABC');
+    HomePage.verifyPactveraTaskCardComplete('Automation PT-kw7','Age');
+    cy.log('Verify: Reassign Task modal - all fields and buttons');
+HomePage.verifyCompleteReassignTaskModal();
+
+cy.log('Action: Close modal via X icon');
+HomePage.clickReassignModalClose();
+  });
 
 
  it('TC01: should validate All Pactvera Main page cards and navigation actions', () => {

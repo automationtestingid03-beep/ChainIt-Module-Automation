@@ -37,8 +37,14 @@ class SwitchAccountModal extends BasePage {
       .find('button');
   }
 
-  get accountSwitcherTrigger() {
-    return cy.contains('span', 'Organization').closest('div.cursor-pointer');
+  // get accountSwitcherTrigger() {
+  //   return cy.contains('span', 'Organization').closest('div.cursor-pointer');
+  // }
+
+   get accountSwitcherTrigger() {
+    return cy.get('div.cursor-pointer').filter((i, el) => {
+    return Cypress.$(el).find('svg').length > 0 && Cypress.$(el).text().match(/Personal|Organization/);
+  }).first();
   }
 
   // Verification
@@ -106,6 +112,8 @@ class SwitchAccountModal extends BasePage {
 
   // Switch to a specific Organization by name
   clickOrganizationAccount(orgName) {
+    cy.log('Action: Click account switcher to open Switch Account modal');
+    this.accountSwitcherTrigger.click();
     cy.log(`Getting Organization account: "${orgName}"`);
     this.organizationButtons.contains('span.text-left', orgName).should('be.visible').then(($span) => {
         const name = $span.text().trim();

@@ -18,6 +18,18 @@ class PactveraMainPage extends BasePage {
     return cy.get('[data-test="pactvera-entry-select-template"]');
   }
 
+  get pactveraEntryMenu() {
+    return cy.get('[role="menu"]:visible');
+  }
+
+  get createPactveraOption() {
+    return this.pactveraEntryMenu.find('[role="menuitem"]').contains('Create a Pactvera');
+  }
+
+  get selectTemplatesOption() {
+    return this.pactveraEntryMenu.find('[role="menuitem"]').contains('Select a Template');
+  }
+
   get sendPactveraCard() {
     return cy.contains('h3', 'Send a Pactvera').closest('div.bg-white');
   }
@@ -200,6 +212,10 @@ class PactveraMainPage extends BasePage {
   return cy.contains('label', 'My organization is a party in this agreement');
   }
 
+   get partyAgreementCheckbox() {
+  return cy.contains('label', 'I am a party in this agreement');
+  }
+
   get corporateDocumentCheckboxCheck() {
     return cy.contains('label', 'Mark as a corporate document');
   }
@@ -240,8 +256,20 @@ class PactveraMainPage extends BasePage {
     return this.addPartiesStep.contains('span', 'Select Parties').closest('.flex.flex-col.gap-2');
   }
 
+  get addPartiesStepNormal() {
+    return cy.contains('Define Participating Parties').closest('div[class*="rounded"]').parent();
+  }
+
+  get selectPartiesSectionNormal() {
+    return this.addPartiesStepNormal.contains('span', 'Select Parties').closest('.flex.flex-col.gap-2');
+  }
+
   get participatingPartiesSectionAgreement() {
     return this.addPartiesStep.contains('span', 'Participating Parties').closest('.flex.flex-col.gap-2');
+  }
+
+  get participatingPartiesSectionAgreementNormal() {
+    return this.addPartiesStepNormal.contains('span', 'Participating Parties').closest('.flex.flex-col.gap-2');
   }
 
   get checkboxOptionsSection() {
@@ -250,6 +278,10 @@ class PactveraMainPage extends BasePage {
 
   get addCcRecipientsSection() {
     return this.addPartiesStep.contains('div', 'Add CC recipients').closest('.rounded-xl');
+  }
+
+  get addCcRecipientsSectionNormal() {
+    return this.addPartiesStepNormal.contains('div', 'Add CC recipients').closest('.rounded-xl');
   }
 
   get organizationSection() {
@@ -1160,6 +1192,17 @@ chooseRole(role) {
     return this;
   }
 
+   verifySelectPartiesSectionNormal() {
+    cy.log('Verification: Verify Select Parties section');
+    this.selectPartiesSectionNormal.should('be.visible');
+    this.selectPartiesSectionNormal.should('contain.text', 'Select Parties');
+    this.selectPartiesSectionNormal.contains('button', 'Select from Connections').should('be.visible');
+    this.selectPartiesSectionNormal.contains('button', 'Invite').should('be.visible');
+    cy.log('VERIFIED: Select Parties section and both buttons are displayed');
+
+    return this;
+  }
+
   verifyParticipatingPartiesAgreementSection() {
     cy.log('Verification: Verify Participating Parties table section');
     this.participatingPartiesSectionAgreement.should('be.visible');
@@ -1172,6 +1215,18 @@ chooseRole(role) {
     return this;
   }
 
+  verifyParticipatingPartiesAgreementSectionNormal() {
+    cy.log('Verification: Verify Participating Parties table section');
+    this.participatingPartiesSectionAgreementNormal.should('be.visible');
+    this.participatingPartiesSectionAgreementNormal.should('contain.text', 'Participating Parties');
+    this.participatingPartiesSectionAgreementNormal.should('contain.text', 'Party Type');
+    this.participatingPartiesSectionAgreementNormal.should('contain.text', 'Name');
+    this.participatingPartiesSectionAgreementNormal.should('contain.text', 'Role');
+    cy.log('VERIFIED: Participating Parties table with columns and empty state are displayed');
+
+    return this;
+  }
+
   verifyAddCcRecipientsAgreementSection() {
     cy.log('Verification: Verify Add CC recipients section');
     this.addCcRecipientsSection.should('be.visible');
@@ -1179,6 +1234,18 @@ chooseRole(role) {
     this.addCcRecipientsSection.should('contain.text', 'Should anyone else be kept in the loop?');
     this.addCcRecipientsSection.contains('button', 'Select from Directory').should('be.visible');
     this.addCcRecipientsSection.contains('button', 'Invite').should('be.visible');
+    cy.log('VERIFIED: Add CC recipients section and both buttons are displayed');
+
+    return this;
+  }
+
+    verifyAddCcRecipientsAgreementSectionNormal() {
+    cy.log('Verification: Verify Add CC recipients section');
+    this.addCcRecipientsSectionNormal.should('be.visible');
+    this.addCcRecipientsSectionNormal.should('contain.text', 'Add CC recipients');
+    this.addCcRecipientsSectionNormal.should('contain.text', 'Should anyone else be kept in the loop?');
+    this.addCcRecipientsSectionNormal.contains('button', 'Select from Directory').should('be.visible');
+    this.addCcRecipientsSectionNormal.contains('button', 'Invite').should('be.visible');
     cy.log('VERIFIED: Add CC recipients section and both buttons are displayed');
 
     return this;
@@ -1197,11 +1264,47 @@ chooseRole(role) {
     return this;
   }
 
+    verifyAllPartiesPageElementsNormal() {
+    cy.log('Verification: Verify all elements on Define Participating Parties page');
+    this.verifyPartiesPageHeading();
+    this.verifyAgreementSection();
+    this.verifySelectPartiesSectionNormal();
+    this.verifyParticipatingPartiesAgreementSectionNormal();
+    this.verifyCheckboxOptionsSection();
+    this.verifyAddCcRecipientsAgreementSectionNormal();
+    cy.log('VERIFIED: All elements on Define Participating Parties page are displayed');
+
+    return this;
+  }
+
+   verifyAllPartiesPageElementsNormalPersonal() {
+    cy.log('Verification: Verify all elements on Define Participating Parties page');
+    this.verifyPartiesPageHeading();
+    this.verifyAgreementSection();
+    this.verifySelectPartiesSectionNormal();
+    this.verifyParticipatingPartiesAgreementSectionNormal();
+    this.verifyCheckboxOptionsSectionNormal();
+    this.verifyAddCcRecipientsAgreementSectionNormal();
+    cy.log('VERIFIED: All elements on Define Participating Parties page are displayed');
+
+    return this;
+  }
+
   verifyCheckboxOptionsSection() {
     cy.log('Verification: Verify checkbox options section');
     this.checkboxOptionsSection.should('be.visible');
     this.checkboxOptionsSection.should('contain.text', 'My organization is a party in this agreement');
     this.checkboxOptionsSection.should('contain.text', 'Mark as a corporate document');
+    this.checkboxOptionsSection.should('contain.text', 'Recipient pays for non-ChainIT costs');
+    cy.log('VERIFIED: All three checkbox options are displayed');
+
+    return this;
+  }
+
+    verifyCheckboxOptionsSectionNormal() {
+    cy.log('Verification: Verify checkbox options section');
+    this.checkboxOptionsSection.should('be.visible');
+    this.checkboxOptionsSection.should('contain.text', 'I am a party in this agreement');
     this.checkboxOptionsSection.should('contain.text', 'Recipient pays for non-ChainIT costs');
     cy.log('VERIFIED: All three checkbox options are displayed');
 
@@ -1330,6 +1433,66 @@ selectIndivualemployee() {
   return this;
 }
 
+selectOrganizationsConnection() {
+  cy.log('Action: Get all organizations and select the first organization');
+  cy.get('[role="dialog"]:visible').should('be.visible')
+    .within(() => {
+      // Select Organizations tab
+      cy.get('[data-test="organizations"]').should('be.visible').click({ force: true });
+      cy.get('[data-test="search-input"]').should('be.visible').clear();
+      // Get first organization
+      cy.get('.overflow-y-auto > div.flex.items-center.justify-between').filter(':visible').should('have.length.at.least', 1).first().then(($organization) => {
+          const organizationName = $organization.find('span.text-\\[\\#25282A\\]').first().text().replace(/\s+/g, ' ').trim();
+          expect( organizationName,'First organization name').not.to.be.empty;
+          cy.wrap(organizationName).as('selectedOrganizationConnectionName');
+          cy.log(`First organization found: ${organizationName}`);
+          // Select organization
+          cy.wrap($organization).click({ force: true });
+          cy.log(`VERIFIED: Organization "${organizationName}" selected`);
+        });
+    });
+  cy.get('[role="dialog"]:visible').contains('button', 'Continue').should('be.visible').and('not.be.disabled').click({ force: true });
+  cy.log('Action completed: Continue clicked for Organization Connection');
+  return this;
+}
+
+selectOrganizationByPosition(index = 0) {
+  cy.log(`Action: Get all organizations and select organization at position ${index + 1}`);
+  cy.get('[role="dialog"]:visible').should('be.visible')
+    .within(() => {
+      cy.get('[data-test="organizations"]').should('be.visible').click({ force: true });
+      cy.get('[data-test="search-input"]').should('be.visible').clear();
+      cy.get('.overflow-y-auto > div.flex.items-center.justify-between').filter(':visible').should('have.length.at.least', index + 1)
+        .eq(index).then(($organization) => {
+          const organizationName = $organization.find('span.text-\\[\\#25282A\\]').first().text().replace(/\s+/g, ' ').trim();
+          expect(organizationName, `Organization at position ${index + 1}`).not.to.be.empty;
+          cy.wrap(organizationName).as('selectedOrganizationConnectionName');
+          cy.log(`Organization at position ${index + 1} found: ${organizationName}`);
+          cy.wrap($organization).click({ force: true });
+          cy.log(`VERIFIED: Organization "${organizationName}" selected`);
+        });
+    });
+  cy.get('[role="dialog"]:visible').contains('button', 'Continue').should('be.visible').and('not.be.disabled').click({ force: true });
+  cy.log('Action completed: Continue clicked for Organization Connection');
+  return this;
+}
+
+verifySelectFromConnectionsNormalPopup() {
+  cy.log('Verification: Verify Select from Connections popup');
+  cy.get('[role="dialog"]:visible').should('be.visible')
+    .within(() => {
+      cy.contains('h3', 'Select from Connections').should('be.visible');
+      cy.get('button').first().find('svg').should('be.visible');
+      cy.get('[data-test="individuals"]').should('be.visible').and('contain.text', 'Individuals');
+      cy.get('[data-test="organizations"]').should('be.visible').and('contain.text', 'Organizations');
+      cy.get('[data-test="search-input"]').should('be.visible');
+      cy.contains('button', 'Cancel').should('be.visible');
+      cy.contains('button', 'Continue').should('be.visible').and('be.disabled');
+    });
+  cy.log('VERIFIED: Select from Connections popup, Close, Cancel and Continue buttons are displayed');
+  return this;
+  }
+
 verifyParticipatingPartiesSection() {
   cy.log('Verification: Verify Participating Parties section');
   cy.get('[data-test="tca-parties-review-step"]').contains('div', 'Participating Parties').should('be.visible');
@@ -1403,6 +1566,17 @@ verifySelectedConnectionInParticipatingParties() {
         expect(names).to.include(connectionName);
         cy.log( `VERIFIED: Selected connection "${connectionName}" is displayed in Name column`);
       });
+  });
+
+  return this;
+}
+
+verifySelectedOrganizationInParticipatingParties() {
+  cy.log('Verification: Verify selected organization in Participating Parties');
+  cy.get('@selectedOrganizationConnectionName').then((organizationName) => {
+  cy.contains('span', 'Participating Parties').closest('div.flex.flex-col').find('table tbody tr').filter(':not(.expanded-content)')
+      .first().find('td').eq(1).find('span.truncate').should('be.visible').and('have.text', organizationName);
+  cy.log(`VERIFIED: Organization "${organizationName}" is displayed in Participating Parties`);
   });
 
   return this;
@@ -1692,72 +1866,59 @@ selectPartyWithConditionalFlow() {
 
   dragBasicFieldToForm(fieldKey = 'textfield') {
   cy.log(`Action: Drag Basic field: ${fieldKey}`);
-
-  const fieldSelector =
-    `#group-basic [data-group="basic"][data-key="${fieldKey}"]:not(.gu-mirror)`;
-
+  const fieldSelector = `#group-basic [data-group="basic"][data-key="${fieldKey}"]:not(.gu-mirror)`;
   cy.get('iframe[title="Form Builder"]', { timeout: 30000 })
-    .should('be.visible')
-    .its('0.contentDocument.body')
-    .should('not.be.empty')
-    .find(fieldSelector)
-    .should('be.visible')
-    .then(($field) => {
+    .should('be.visible').its('0.contentDocument.body').should('not.be.empty').find(fieldSelector)
+    .should('be.visible').then(($field) => {
       const fieldEl = $field[0];
-      const dropEl = $field[0].ownerDocument.querySelector(
-        '.builder-components.drag-container.formio-builder-form'
-      );
-
+      const doc = fieldEl.ownerDocument;
+      const dropEl = doc.querySelector('.builder-components.drag-container.formio-builder-form');
       expect(dropEl, 'Form Builder drop zone').to.exist;
-
       const fieldRect = fieldEl.getBoundingClientRect();
       const dropRect = dropEl.getBoundingClientRect();
+
       const startX = fieldRect.left + fieldRect.width / 2;
       const startY = fieldRect.top + fieldRect.height / 2;
       const endX = dropRect.left + dropRect.width / 2;
       const endY = dropRect.top + 100;
 
-      cy.wrap(fieldEl).trigger('mousedown', {
-        button: 0,
-        buttons: 1,
-        clientX: startX,
-        clientY: startY,
-        force: true
-      });
-
+      cy.log(`Start: ${startX}, ${startY}`);
+      cy.log(`End: ${endX}, ${endY}`);
+      // Mouse down on field
+      cy.wrap(fieldEl).trigger('mousedown', {button: 0,buttons: 1,clientX: startX,clientY: startY,force: true});
+      // Move gradually toward drop zone
       const steps = 10;
       for (let step = 1; step <= steps; step += 1) {
-        cy.wrap(fieldEl.ownerDocument).trigger('mousemove', {
-          button: 0,
-          buttons: 1,
-          clientX: startX + ((endX - startX) * step) / steps,
-          clientY: startY + ((endY - startY) * step) / steps,
-          force: true
-        });
+        const x = startX + ((endX - startX) * step) / steps;
+        const y = startY + ((endY - startY) * step) / steps;
+        cy.wrap(doc).trigger('mousemove', {button: 0,buttons: 1,clientX: x,clientY: y,force: true});
       }
+      // Move over drop zone
+      cy.wrap(dropEl).trigger('mousemove', {button: 0,buttons: 1,clientX: endX,clientY: endY,force: true});
 
-      cy.wrap(dropEl).trigger('mousemove', {
-        button: 0,
-        buttons: 1,
-        clientX: endX,
-        clientY: endY,
-        force: true
-      });
+      // Release mouse
+      cy.wrap(doc).trigger('mouseup', {button: 0,buttons: 0,clientX: endX,clientY: endY,force: true});
+      cy.log('Action completed: Field dropped');
 
-      cy.wrap(fieldEl.ownerDocument).trigger('mouseup', {
-        button: 0,
-        buttons: 0,
-        clientX: endX,
-        clientY: endY,
-        force: true
-      });
+      // Important:
+      // Form.io may still keep the dragged component active.
+      // Trigger an outside click to complete the drop.
+      cy.wrap(doc.body).trigger('mousedown', {force: true});
+      cy.wrap(doc.body).trigger('mouseup', {force: true});
+      cy.wrap(doc.body).trigger('click', {force: true});
+      // Blur active element
+      if (
+        doc.activeElement && typeof doc.activeElement.blur === 'function'
+      ) {
+        doc.activeElement.blur();
+      }
+      cy.log('Action completed: Form Builder interaction finalized');
     });
 
-  cy.get('iframe[title="Form Builder"]', { timeout: 30000 })
-    .its('0.contentDocument.body')
-    .should('not.be.empty')
-    .find(`.formio-component-${fieldKey}`, { timeout: 15000 })
-    .should('be.visible');
+  // Verify component was actually created
+  cy.get('iframe[title="Form Builder"]', { timeout: 30000 }).its('0.contentDocument.body')
+    .should('not.be.empty').find(`.formio-component-${fieldKey}`, {timeout: 15000})
+    .should('exist').and('be.visible');
   cy.log(`VERIFIED: "${fieldKey}" added to Form Builder`);
   return this;
   }
@@ -2244,9 +2405,25 @@ selectPartyWithConditionalFlow() {
     return this;
   }
 
+  verifyDropdownOptionsDisplayed() {
+    cy.log('Action: Verify "Create a Pactvera" and "Select a Template" options are displayed');
+    this.createPactveraOption.should('be.visible').and('contain.text', 'Create a Pactvera');
+    this.selectTemplatesOption.should('be.visible').and('contain.text', 'Select a Template');
+    cy.log('VERIFIED: "Create a Pactvera" and "Select a Template" options are displayed');
+
+    return this;
+  }
+
   clickCreatePactveraFromScratch() {
     cy.log('Action: Click "Create a Pactvera" option from dropdown');
     this.createPactveraFromScratchOption.should('be.visible').click();
+    cy.log('Action: "Create a Pactvera" option clicked successfully');
+    return this;
+  }
+
+  clickCreatePactvera() {
+    cy.log('Action: Click "Create a Pactvera" option from dropdown');
+    this.createPactveraOption.should('be.visible').click();
     cy.log('Action: "Create a Pactvera" option clicked successfully');
     return this;
   }
@@ -2257,7 +2434,6 @@ selectPartyWithConditionalFlow() {
     cy.log('Action: "Select a Template" option clicked successfully');
     return this;
   }
-
 
   clickSelectFromConnections() {
     cy.log('Action: Click "Select from Connections" button');
@@ -2352,6 +2528,14 @@ selectPartyWithConditionalFlow() {
     this.checkCorporateDocumentCheckbox();
     this.checkRecipientPaysCheckbox();
     cy.log('Action: All three checkboxes checked successfully');
+    return this;
+  }
+
+  checkOrganizationAndRecipientCheckboxes() {
+    cy.log('Action: Check all checkboxes (My organization, Recipient pays)');
+    this.checkMyOrganizationCheckbox();
+    this.checkRecipientPaysCheckbox();
+    cy.log('Action: All checkboxes checked successfully');
     return this;
   }
 
@@ -2480,6 +2664,15 @@ selectPartyWithConditionalFlow() {
     this.verifyReviewSectionsNotEditable();
   }
 
+   verifyCompleteReviewSectionsNormal() {
+    cy.log('Action: Verify complete Review page - Participating Parties and Documents/Forms sections');
+    this.verifyParticipatingPartiesSectionNotEmpty();
+    this.verifyDocumentsTableNotEmpty();
+    this.partyAgreementCheckbox.should('be.visible');
+    this.verifyFooterButtonsDisplayed();
+    this.verifyReviewSectionsNotEditable();
+  }
+
   selectOtherPartyNotYourOrganization() {
     cy.log('Action: Open Select a party dropdown');
     cy.contains('Select a party').click({ force: true });
@@ -2500,6 +2693,30 @@ selectPartyWithConditionalFlow() {
 
     return this;
   }
+
+  selectPreviouslyConnectedOrganizationAsParty() {
+  cy.log('Action: Open Select a party dropdown');
+  cy.contains('Select a party').click({ force: true });
+  cy.get('@selectedOrganizationConnectionName').then((selectedOrgName) => {
+  cy.log(`Action: Looking for previously connected organization - "${selectedOrgName}"`);
+  cy.get('[role="option"]').filter(':visible').then(($options) => {
+      const optionTexts = [...$options].map((el) => el.textContent.replace(/\s+/g, ' ').trim());
+      cy.log(`Available party options: ${optionTexts.join(', ')}`);
+      const matchedIndex = optionTexts.findIndex((text) => text.includes(selectedOrgName));
+      if (matchedIndex !== -1) {
+        const matchedPartyName = optionTexts[matchedIndex];
+        cy.log(`Action: Select matching party - "${matchedPartyName}"`);
+        cy.wrap($options[matchedIndex]).click({ force: true });
+        cy.log(`VERIFIED: "${matchedPartyName}" selected (matched previously connected organization)`);
+      } else {
+        cy.log(`ERROR: "${selectedOrgName}" not found among available party options`);
+        throw new Error(`Expected to find "${selectedOrgName}" in party options, but it was not present`);
+      }
+    });
+  });
+
+  return this;
+}
 
   searchInSentByTitle(titleText) {
     cy.log(`Action: Search in Sent list for title - "${titleText}"`);

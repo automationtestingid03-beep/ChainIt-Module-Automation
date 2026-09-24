@@ -1,0 +1,239 @@
+import SwitchAccountModal from '../pages/SwitchAccountModal';
+import LoginPage from '../pages/LoginPage';
+import SidebarPage from '../pages/SidebarPage';
+import PactveraMainPage from '../pages/pactvera/PactveraMainPage';
+import PactveraTemplatePage from '../pages/configuration/PactveraTemplatePage';
+import HomePage from '../pages/HomePage';
+
+const workFlowTest = 'cypress/fixtures/tca_workflow_test.json';
+const TCAFlowDocument_PDF = 'cypress/fixtures/Age.pdf';
+
+describe('Configuration - end to end normal flow pactvera', () => {
+
+  beforeEach(() => {
+    LoginPage.loginWithQrAndSelectAccount('organization');
+  });
+
+  it.only('TC01: Verify complete end to end normal flow pactvera', () => { 
+
+      cy.log('Action: Switch to personal organization');
+      SwitchAccountModal.selectPersonalOrganization();
+      cy.log('Verified: personal organization is selected');
+
+      cy.log('Action: Open Pactvera menu');
+      SidebarPage.clickPactvera();
+      cy.log('Verified: Pactvera menu is visible');
+  
+      cy.log('Action: Navigate to Pactvera Main page');
+      SidebarPage.clickPactveraMain();
+      cy.log('Verified: Pactvera Main page is displayed');
+  
+      cy.log('Action: Open Create & Send flow');
+      PactveraMainPage.clickCreateAndSend();
+      cy.log('Verified: Create a Pactvera popup is open');
+  
+      cy.log('Action: Verify template options');
+      PactveraMainPage.verifyDropdownOptionsDisplayed();
+      cy.log('Verified: Create a Pactvera and Select a Template options are displayed');
+  
+      cy.log('Action: Choose create-from-scratch flow');
+      PactveraMainPage.clickCreatePactvera();
+      cy.log('Verified: scratch flow is selected');
+  
+      cy.log('Action: Verify Agreement Type step');
+      PactveraMainPage.verifyAgreementTypeStep();
+      cy.log('Verified: Agreement Type step is displayed');
+  
+      cy.log('Action: Verify workflow steps');
+      PactveraMainPage.verifyAllFourStepsDisplayed();
+      cy.log('Verified: all 4 workflow steps are displayed');
+  
+      cy.log('Action: Verify Step 1 state');
+      PactveraMainPage.verifyStep1Active();
+      cy.log('Verified: Step 1 is active');
+  
+      cy.log('Action: Verify Continue button without agreement name');
+      PactveraMainPage.verifyContinueButtonDisplayedAndDisabled();
+      cy.log('Verified: Continue button is disabled without agreement name');
+  
+      cy.log('Action: Enter unique agreement name');
+      PactveraMainPage.enterUniqueAgreementName();
+      cy.log('Verified: unique agreement name is entered');
+  
+      cy.log('Action: Continue to agreement type screen');
+      PactveraMainPage.clickContinueButton();
+      cy.log('Verified: flow moved to the agreement type section');
+  
+      cy.log('Action: Verify Step 1 completion');
+      PactveraMainPage.verifyStep1Completed();
+      cy.log('Verified: Step 1 is completed');
+  
+      cy.log('Action: Check action button states');
+      PactveraMainPage.verifyActionButtonsDisabled();
+      cy.log('Verified: Cancel, Save as Draft, and Continue buttons are disabled');
+  
+      cy.log('Action: Select first available folder');
+      PactveraMainPage.selectFirstFolder();
+      cy.log('Verified: first available folder is selected');
+  
+      cy.log('Action: Recheck action button states');
+      PactveraMainPage.verifyActionButtonsEnabled();
+      cy.log('Verified: Cancel, Save as Draft, and Continue buttons are enabled');
+  
+      cy.log('Action: Continue after folder selection');
+      PactveraMainPage.clickContinueButton();
+      cy.log('Verified: next page is displayed');
+  
+      cy.log('Action: Verify Parties page elements');
+      PactveraMainPage.verifyAllPartiesPageElementsNormalPersonal();
+      cy.log('Verified: all display elements on the Parties page are present');
+  
+      cy.log('Action: Open Select from Connections popup');
+      PactveraMainPage.clickSelectFromConnections();
+      cy.log('Verified: Select from Connections popup is displayed');
+
+      cy.log('Action: Verify popup content');
+      PactveraMainPage.verifySelectFromConnectionsNormalPopup();
+      cy.log('Verified: Select from Connections popup is visible');
+
+      cy.log('Action: Select Organizations connection');
+      PactveraMainPage.selectOrganizationByPosition(1);
+      cy.log('Verified: Organizations connection is selected');
+
+      cy.log('Action: selected organization in Participating Parties');
+      PactveraMainPage.verifySelectedOrganizationInParticipatingParties();
+      cy.log('Verified: Organization is displayed in Participating Parties');
+
+      cy.log('Action: Check all checkboxes');
+      PactveraMainPage.checkOrganizationAndRecipientCheckboxes();
+      cy.log('Verified: all checkboxes are checked');
+
+      cy.log('Action: Move to next wizard step');
+      PactveraMainPage.clickNextButton();
+      cy.log('Verified: next wizard step is displayed');
+
+      cy.log('Action: Move to next wizard step again');
+      PactveraMainPage.clickNextButton();
+      cy.log('Verified: next wizard section is reached');
+
+      cy.log('Action: Send agreement request');
+      PactveraMainPage.clickSend();
+      cy.log('Verified: send action is triggered');
+    
+      cy.log('Action: Validate required document validation');
+      PactveraMainPage.verifyAttachDocumentsErrorDisplayed();
+      cy.log('Verified: "Please attach documents or forms" error is displayed');
+    
+      cy.log('Action: Navigate back to Documents step');
+      PactveraMainPage.navigateToDocumentsStep();
+      cy.log('Verified: user is back on the Documents step');  
+        
+      cy.log('Action: Add document to agreement');
+      PactveraTemplatePage.clickAddDocumentForAgreement();
+      cy.log('Verified: add document flow started');
+    
+      cy.log('Action: Verify Add Document popup');
+      PactveraTemplatePage.verifyAddDocumentPopupDisplayed();
+      cy.log('Verified: Add Document popup is displayed');
+    
+      cy.log('Action: Select Upload New option');
+      PactveraTemplatePage.clickUploadNew();
+      cy.log('Verified: Upload New flow is active');
+    
+      cy.log('Action: Upload PDF file');
+      PactveraTemplatePage.uploadPdfFile(TCAFlowDocument_PDF);
+      cy.log('Verified: PDF file is uploaded');
+    
+      cy.log('Action: Confirm PDF upload');
+      PactveraTemplatePage.clickUploadConfirm();
+      cy.log('Verified: upload confirmation is complete');
+    
+      cy.log('Action: Verify Add Participants section');
+      PactveraTemplatePage.verifyAddParticipantsSectionDisplayed();
+      cy.log('Verified: Add Participants section is displayed');  
+      
+      cy.log('Action: Select the previously connected organization as party for form');
+      PactveraMainPage.selectPreviouslyConnectedOrganizationAsParty();
+      cy.log('Result: Previously connected organization selected as party');
+
+      cy.log('Action: Continue after document participant selection');
+      PactveraTemplatePage.clickContinue();
+      cy.log('Verified: document setup continues to canvas step');
+
+      cy.log('Action: Drag signature field onto document');
+      PactveraTemplatePage.dragFieldToCanvas(PactveraTemplatePage.signatureField);
+      cy.log('Verified: signature field is placed on the document');
+
+      cy.log('Action: Add document to request');
+      PactveraMainPage.clickAddToRequest();
+      cy.log('Verified: document is added to request'); 
+      
+      cy.log('Action: Move to next review step');
+      PactveraMainPage.clickNextButton();
+      cy.log('Verified: review step is reached');
+
+      cy.log('Action: Verify full review page');
+      PactveraMainPage.verifyCompleteReviewSectionsNormal();
+      cy.log('Verified: complete Review page is displayed');  
+      
+      cy.log('Action: Send final agreement');
+      PactveraMainPage.clickSend();
+      cy.log('Verified: agreement is sent');
+
+      cy.get('@agreementName').then((title) => {
+        cy.log(`Action: Search created agreement "${title}". Verified: agreement is present in Sent list.`);
+        PactveraMainPage.searchAndVerifyRecordCreated(title);
+      });
+
+      cy.log('Action: Switch to the previously connected organization account');
+      cy.get('@selectedOrganizationConnectionName').then((orgName) => {
+      SwitchAccountModal.clickOrganizationAccount(orgName);
+      });
+      cy.log('Result: Switched to previously connected organization account'); 
+
+      cy.log('Action: Verify Pactvera Task card using stored agreement name');
+      cy.get('@agreementName').then((title) => {
+        HomePage.verifyPactveraTaskCardComplete(title, 'Age');
+      });
+
+      cy.pause();
+      cy.log('Verify: Reassign Task modal - all fields and buttons');
+      HomePage.verifyCompleteReassignTaskModal();
+      cy.log('Action: Close modal via X icon');
+      HomePage.clickReassignModalClose(); 
+
+      cy.log('Action: Switch to personal organization');
+      SwitchAccountModal.selectPersonalOrganization();
+      cy.log('Verified: personal organization is selected');
+
+      cy.log('Action: Open Todo tab');
+      HomePage.clickTodoTab();
+      cy.log('Verified: Todo tab is open');
+
+      cy.log('Action: Verify and start document task');
+      HomePage.verifyAndStartDocumentTaskNormal(TCAFlowDocument_PDF);
+      cy.log('Verified: document task is started');
+
+      cy.log('Action: Verify task detail page');
+      HomePage.verifyTaskDetailPageDisplayed(TCAFlowDocument_PDF);
+      cy.log('Verified: Task detail page is displayed with correct info');
+
+      cy.log('Action: Verify task field values');
+      HomePage.verifyTaskDetailFieldsNotEmpty();
+      cy.log('Verified: task detail fields are populated');
+
+      cy.log('Action: Verify Continue and Cancel buttons');
+      HomePage.verifyCancelAndContinueButtonsDisplayed();
+      cy.log('Verified: Cancel and Continue buttons are displayed');
+
+      cy.log('Action: Continue signing flow');
+      HomePage.clickTaskContinue();
+      cy.log('Verified: signing flow continues');
+
+      cy.log('Action: Complete document signing flow');
+      HomePage.completeDocumentSigningFlow();
+      cy.log('Verified: document signing flow is complete');      
+      
+      
+     });
+  });

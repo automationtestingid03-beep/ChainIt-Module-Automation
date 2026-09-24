@@ -27,8 +27,8 @@ class HomePage extends BasePage {
     return cy.get('[data-test="button-start-task"]');
   }
 
-  get taskDetailHeading() {
-    return cy.get('h1');
+   get taskDetailHeading() {
+      return cy.get('h1');
     }
 
     get taskDetailBackButton() {
@@ -57,6 +57,27 @@ class HomePage extends BasePage {
 
     get taskContinueButton() {
        return cy.get('[data-test="button-continue"]');
+    }  
+
+    get pactveraTaskCardByTitle() {
+      return (agreementTitle) => cy.contains('div', `Pactvera Task: ${agreementTitle}`)
+        .closest('[id^="headlessui-disclosure-button-"]').parent();
+    }
+
+    get taskStatusBadge() {
+      return cy.contains('PENDING');
+    }
+
+    get documentNameInTask() {
+      return cy.contains('div', /^New Document\s*:/);
+    }
+
+    get viewDetailsButton() {
+      return cy.get('[data-test="button-view-details"]').filter(':visible');
+    }
+
+    get viewAssignmentButton() {
+      return cy.get('[data-test="button-view-assignment"]').filter(':visible');
     }
 
    getDocumentNameFromPath(pdfPath) {
@@ -129,30 +150,73 @@ class HomePage extends BasePage {
     return cy.get('[data-test="complete-sign"]');
     }
 
-  get confirmSignButton(){
-    return cy.get('[data-test="button-confirm"]');
+    get confirmSignButton(){
+      return cy.get('[data-test="button-confirm"]');
+    }
+
+    // ===== Signing Complete (success screen) =====
+    get signingCompleteIcon() {
+      return cy.get('img[alt="Success"]');
+    }
+
+    get signingCompleteHeading() {
+      return cy.contains('span', 'Signing Complete!');
+    }
+
+    get signingCompleteMessage() {
+      return cy.contains('You have successfully submitted the document.');
+    }
+
+    get backToTasksButton() {
+      return cy.get('[data-test="button-back-to-tasks"]');
+    }
+
+    get viewPactveraDetailsButton() {
+      return cy.get('[data-test="button-view-pactvera-details"]');
+    }
+
+    // ===== Reassign Task Modal =====
+    get reassignTaskModal() {
+      return cy.get('[id^="headlessui-dialog-panel-"]').contains('Reassign Task').parents('[id^="headlessui-dialog-panel-"]');
+    }
+
+    get reassignModalCloseIcon() {
+      return cy.contains('h3', 'Reassign Task').parent().find('button').first();
+    }
+
+    get taskNameInput() {
+      return cy.get('[data-test="name-input"]');
+    }
+
+    get taskDescriptionTextarea() {
+    return cy.contains('label', 'Task Description').parent().find('textarea');
   }
 
-  // ===== Signing Complete (success screen) =====
-  get signingCompleteIcon() {
-    return cy.get('img[alt="Success"]');
-  }
+    get requestedByInput() {
+      return cy.get('[data-test="requestorName-input"]');
+    }
 
-  get signingCompleteHeading() {
-    return cy.contains('span', 'Signing Complete!');
-  }
+    get currentAuthorizedUserCard() {
+      return cy.contains('Current Authorized User').next();
+    }
 
-  get signingCompleteMessage() {
-    return cy.contains('You have successfully submitted the document.');
-  }
+    get currentAuthorizedUserCheckIcon() {
+      return this.currentAuthorizedUserCard.find('svg').last();
+    }
 
-  get backToTasksButton() {
-    return cy.get('[data-test="button-back-to-tasks"]');
-  }
+    get selectAuthorizedUserButton() {
+      return cy.get('[data-test="button-select-authorized-user"]');
+    }
 
-  get viewPactveraDetailsButton() {
-    return cy.get('[data-test="button-view-pactvera-details"]');
-  }
+    get reassignCancelButton() {
+      return cy.get('[data-test="button-Cancel"]');
+    }
+
+    get reassignConfirmButton() {
+      return cy.get('[data-test="button-Reassign"]');
+    }
+
+
 
   // ===== Actions =====
   clickTodoTab() {
@@ -297,6 +361,48 @@ class HomePage extends BasePage {
     verifyAndStartDocumentTask(pdfPath) {
       const documentName = pdfPath.split('/').pop().replace(/\.pdf$/i, '').trim();
   const expectedTaskTitle = `New Document Request: ${documentName}`;
+  const escapedTitle = expectedTaskTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const exactMatchRegex = new RegExp(`^${escapedTitle}$`);
+
+  cy.log(`Extracted document name: "${documentName}"`);
+  cy.log(`Verify: Task "${expectedTaskTitle}" is displayed in To-Do list (exact match)`);
+
+  cy.get('body').then(($body) => {
+    const taskExists = $body.find('[data-test="user-task-card"]')
+      .toArray()
+      .some((card) => card.textContent.trim() === expectedTaskTitle
+        || exactMatchRegex.test(card.querySelector('span, h1')?.textContent.trim() || ''));
+
+    if (!taskExists) {
+      cy.log('Exact task not found in current view - clicking "View all"');
+      cy.contains('a', 'View all').click();
+      cy.wait(1000);
+    } else {
+      cy.log('Task already visible - no navigation needed');
+    }
+  });
+
+  cy.get('[data-test="user-task-card"]')
+    .contains(exactMatchRegex, { timeout: 15000 })
+    .should('be.visible');
+
+  cy.log(`VERIFIED: "${expectedTaskTitle}" task found`);
+
+  cy.get('[data-test="user-task-card"]')
+    .contains(exactMatchRegex)
+    .parents('[data-test="user-task-card"]')
+    .find('[data-test="button-start-task"]')
+    .should('be.visible')
+    .click();
+
+  cy.log(`Action: Start Task clicked for "${expectedTaskTitle}"`);
+  return this;
+    }
+
+
+    verifyAndStartDocumentTaskNormal(pdfPath) {
+      const documentName = pdfPath.split('/').pop().replace(/\.pdf$/i, '').trim();
+  const expectedTaskTitle = `New Document: ${documentName}`;
   const escapedTitle = expectedTaskTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const exactMatchRegex = new RegExp(`^${escapedTitle}$`);
 
@@ -565,6 +671,116 @@ class HomePage extends BasePage {
         this.verifySigningCompleteScreenDisplayed();
         cy.log('VERIFIED: Document signing flow completed successfully');
     }
+
+
+    // ===== Verifications =====
+        verifyPactveraTaskDisplayed(agreementTitle) {
+          cy.log(`Verify: Pactvera Task "${agreementTitle}" is displayed`);
+          cy.contains('div', `Pactvera Task: ${agreementTitle}`).should('be.visible');
+          cy.log(`VERIFIED: "Pactvera Task: ${agreementTitle}" found`);
+        }
+
+        verifyDocumentStatusPending(documentName) {
+          cy.log(`Verify: Document "${documentName}" status is PENDING`);
+          cy.contains('div', `New Document : ${documentName}`).parents('[id^="headlessui-disclosure-button-"]').parent()
+            .within(() => {
+              cy.contains('PENDING').should('be.visible');
+            });
+          cy.log(`VERIFIED: "${documentName}" status confirmed PENDING`);
+        }
+
+        verifyViewAssignmentButtonDisplayed(documentName) {
+          cy.log(`Verify: View Assignment button displayed for "${documentName}"`);
+          cy.contains('div', `New Document : ${documentName}`).parents('.p-2\\.5').find('[data-test="button-view-assignment"]')
+            .should('be.visible').and('contain.text', 'View Assignment');
+          cy.log(`VERIFIED: View Assignment button confirmed for "${documentName}"`);
+        }
+
+        // ===== Actions =====
+        clickViewAssignment(documentName) {
+          cy.log(`Action: Click View Assignment for "${documentName}"`);
+          cy.contains('div', `New Document : ${documentName}`).parents('.p-2\\.5')
+            .find('[data-test="button-view-assignment"]').should('be.visible').click();
+          cy.log(`Action: View Assignment clicked for "${documentName}"`);
+        }
+
+        // ===== Combined full verification =====
+       verifyPactveraTaskCardComplete(agreementTitle, documentName) {
+         cy.log(`Action: Verify complete Pactvera Task card - "${agreementTitle}" / "${documentName}"`);
+         this.verifyPactveraTaskDisplayed(agreementTitle);
+         cy.pause();
+         this.verifyViewAssignmentButtonDisplayed(documentName);
+         cy.log('Action: Click View Assignment');
+         this.clickViewAssignment(documentName);
+         cy.log('VERIFIED: Pactvera Task card fully verified and View Assignment clicked');
+      }
+
+      // ===== Verifications =====
+      verifyTaskNameNotEmpty() {
+        cy.log('Verify: Task Name field is not empty');
+        this.taskNameInput.invoke('val').should('not.be.empty');
+      }
+
+      verifyTaskDescriptionNotEmpty() {
+        cy.log('Verify: Task Description field is not empty');
+        this.taskDescriptionTextarea.invoke('text').should('not.be.empty');
+      }
+
+      verifyRequestedByNotEmpty() {
+        cy.log('Verify: Requested By field is not empty');
+        this.requestedByInput.invoke('val').should('not.be.empty');
+      }
+
+      verifyCurrentAuthorizedUserDisplayed() {
+        cy.log('Verify: Current Authorized User card is displayed with name and email');
+        this.currentAuthorizedUserCard.should('be.visible');
+        this.currentAuthorizedUserCard.find('span').first().invoke('text').should('not.be.empty');
+        this.currentAuthorizedUserCard.find('span').eq(1).invoke('text').should('not.be.empty');
+      }
+
+      verifyCurrentAuthorizedUserCheckIconDisplayed() {
+        cy.log('Verify: Current Authorized User green check icon is displayed');
+        this.currentAuthorizedUserCheckIcon.should('be.visible');
+      }
+
+      verifyReassignCancelButtonDisplayed() {
+        cy.log('Verify: Cancel button is displayed');
+        this.reassignCancelButton.should('be.visible').and('contain.text', 'Cancel');
+      }
+
+      verifyReassignConfirmButtonDisabled() {
+        cy.log('Verify: Reassign button is displayed and disabled');
+        this.reassignConfirmButton.should('be.visible').and('be.disabled');
+      }
+
+      verifyCompleteReassignTaskModal() {
+        cy.log('Action: Verify complete Reassign Task modal');
+        this.verifyTaskNameNotEmpty();
+        this.verifyTaskDescriptionNotEmpty();
+        this.verifyRequestedByNotEmpty();
+        this.verifyCurrentAuthorizedUserDisplayed();
+        this.verifyCurrentAuthorizedUserCheckIconDisplayed();
+        this.verifyReassignCancelButtonDisplayed();
+        this.verifyReassignConfirmButtonDisabled();
+        cy.log('VERIFIED: All Reassign Task modal fields and buttons confirmed');
+      }
+
+      // ===== Actions =====
+      clickReassignModalClose() {
+        cy.log('Action: Click close (X) icon on Reassign Task modal');
+        this.reassignModalCloseIcon.click();
+        cy.log('Result: Reassign Task modal closed');
+      }
+
+      clickReassignCancel() {
+        cy.log('Action: Click Cancel button');
+        this.reassignCancelButton.click();
+      }
+
+      clickSelectAuthorizedUser() {
+        cy.log('Action: Click Select Authorized User button');
+        this.selectAuthorizedUserButton.click();
+      }
 
 }
 

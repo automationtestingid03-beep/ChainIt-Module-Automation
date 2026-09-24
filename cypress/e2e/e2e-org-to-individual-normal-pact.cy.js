@@ -92,7 +92,7 @@ describe('Configuration - end to end normal flow pactvera', () => {
     cy.log('Verified: next page is displayed');
 
     cy.log('Action: Verify Parties page elements');
-    PactveraMainPage.verifyAllPartiesPageElements();
+    PactveraMainPage.verifyAllPartiesPageElementsNormal();
     cy.log('Verified: all display elements on the Parties page are present');
 
     cy.log('Action: Open Select from Connections popup');
